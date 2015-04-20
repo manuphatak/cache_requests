@@ -18,8 +18,8 @@ Cache Requests
     :target: https://coveralls.io/r/bionikspoon/cache_requests?branch=develop
     :alt: Coverage Status
 
-.. image:: https://readthedocs.org/projects/cache_requests/badge/?version=develop
-    :target: https://readthedocs.org/projects/cache_requests/?badge=develop
+.. image:: https://readthedocs.org/projects/cache-requests/badge/?version=latest
+    :target: https://readthedocs.org/projects/cache-requests/?badge=latest
     :alt: Documentation Status
 
 
