@@ -11,7 +11,7 @@ Submodules
 
 .. automodule:: cache_requests.cache_requests
     :members:
-    :undoc-members:
     :show-inheritance:
+    :special-members:
 
 
