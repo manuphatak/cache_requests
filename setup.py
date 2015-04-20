@@ -48,7 +48,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read().replace('.. :changelog:', '')
 
 # TODO: put package requirements here
-requirements = []
+requirements = ['redislite', 'requests']
 
 # TODO: put package test requirements here
 test_requirements = ['pytest', 'mock']
@@ -57,7 +57,7 @@ test_requirements = ['pytest', 'mock']
 setup(
     name='cache_requests',
     version=version,
-    description="Persistent lru caching of the requests library.",
+    description="Persistent LRU caching of the requests library.",
     long_description=readme + '\n\n' + __doc__ + '\n\n' + history,
     author="Manu Phatak",
     author_email='bionikspoon@gmail.com',
@@ -79,7 +79,7 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
-        "Programming Language :: Python :: 2",
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',

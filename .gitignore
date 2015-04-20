@@ -45,3 +45,4 @@ docs/build/
 
 # Pycharm
 .idea/
+cache_requests/redis/

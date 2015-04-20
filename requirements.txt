@@ -1,3 +1,5 @@
 pytest
 wheel
 mock
+requests
+redislite
