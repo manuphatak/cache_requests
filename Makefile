@@ -50,12 +50,12 @@ coverage:
 	$(MAKE) -C docs coverage
 
 docs:
-	rm -f docs/cache_requests.rst
-	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ cache_requests
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
-	xdg-open docs/_build/html/index.html
+	rm -f docs/source/cache_requests.rst
+	rm -f docs/source/modules.rst
+	sphinx-apidoc --no-headings --private -o docs/source cache_requests
+	$(MAKE) -C docs/ clean
+	$(MAKE) -C docs/ singlehtml
+	xdg-open docs/build/singlehtml/index.html
 
 release: clean
 	python setup.py register

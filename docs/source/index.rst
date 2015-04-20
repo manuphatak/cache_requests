@@ -1,17 +1,12 @@
 
-.. include:: readme.rst
-
-Contents:
-=========
-
 .. toctree::
    :maxdepth: 4
 
-    Readme <readme>
-    contributing
-    authors
-    history
-    modules
+   Readme <readme>
+   contributing
+   authors
+   history
+   modules
 
 Feedback
 ========

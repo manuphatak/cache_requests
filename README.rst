@@ -1,6 +1,6 @@
-===============================
+==============
 Cache Requests
-===============================
+==============
 
 .. image:: https://pypip.in/status/cache_requests/badge.svg
     :target: https://pypi.python.org/pypi/cache_requests/

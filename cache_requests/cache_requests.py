@@ -17,13 +17,14 @@ EXPIRATION: (int) Keys are destroyed in this amount of time.  Can be set to None
 """
 import copy
 import cPickle as pickle
+import os
 
 import requests
 import redislite
 
 
 try:
-    # hook into project logger
+    #: hook into project logger
     from log import set_up_log
 
     log = set_up_log(__name__)
@@ -34,8 +35,8 @@ except ImportError:
     log.basicConfig(level=log.DEBUG, format=format_)
 
 EXPIRATION = 1 * 60 * 60  # 1 hour
-
-redis_connection = redislite.StrictRedis(dbfilename='redis/requests.redis')
+DB = os.environ.get('REDIS_DB') or 'redis/requests.redis'
+# redis_connection = redislite.StrictRedis(dbfilename='redis/requests.redis')
 
 
 def make_hash(obj):
@@ -60,7 +61,7 @@ class Memoize(object):
     """
 
     def __init__(self, function):
-        self.redis = redis_connection
+        self.redis = redislite.StrictRedis(dbfilename=DB)
         self.function = function
 
     def __getitem__(self, item):

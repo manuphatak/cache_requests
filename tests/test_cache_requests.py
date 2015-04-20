@@ -3,9 +3,9 @@
 
 """
 test_cache_requests
-----------------------------------
+-------------------
 
-Tests for `cache_requests` module.
+Tests for ``cache_requests`` module.
 """
 import pytest
 
