@@ -1,6 +1,11 @@
 cache_requests package
 ======================
 
+.. automodule:: cache_requests
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Submodules
 ----------
 
@@ -10,10 +15,3 @@ Submodules
     :show-inheritance:
 
 
-Module contents
----------------
-
-.. automodule:: cache_requests
-    :members:
-    :undoc-members:
-    :show-inheritance:

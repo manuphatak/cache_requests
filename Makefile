@@ -52,7 +52,7 @@ coverage:
 docs:
 	rm -f docs/source/cache_requests.rst
 	rm -f docs/source/modules.rst
-	sphinx-apidoc --no-headings --private -o docs/source cache_requests
+	sphinx-apidoc --no-toc --no-headings --private --module-first -o docs/source cache_requests
 	$(MAKE) -C docs/ clean
 	$(MAKE) -C docs/ singlehtml
 	xdg-open docs/build/singlehtml/index.html

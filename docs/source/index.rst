@@ -6,7 +6,7 @@
    contributing
    authors
    history
-   modules
+   cache_requests
 
 Feedback
 ========

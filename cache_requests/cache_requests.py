@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
 """
-cache_requests
---------------
-
 This module implements a basic LRU decorator that syncs calls with a redislite database.
 
 ELI5:  If you call the same function with the same parameters, it does not recalculate

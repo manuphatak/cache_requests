@@ -1,7 +1,8 @@
 .. :changelog:
 
+=======
 History
--------
+=======
 
 Next Release
 ------------
