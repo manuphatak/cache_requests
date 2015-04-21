@@ -10,10 +10,11 @@ install:
 env:
   - TOXENV=py26
   - TOXENV=py27
-  - TOXENV=py32
+#  - TOXENV=py32
   - TOXENV=py33
   - TOXENV=py34
   - TOXENV=pypy
+  - TOXENV=docs
 
 script:
   - tox -e $TOXENV
