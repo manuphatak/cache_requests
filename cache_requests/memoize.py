@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding=utf-8
 """
-cache_requests
+memoize module
 --------------
 
 This module implements a basic LRU decorator that syncs calls with a redislite database.
 
 """
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import
 import copy
 # noinspection PyPep8Naming
 import cPickle as pickle
@@ -43,7 +43,10 @@ class Memoize(object):
     Decorator.  Standard LRU PLUS get/set keys with redis.
     """
 
-    _redis = config.REDIS_CONNECTION
+    _redis_connection = config.REDIS_CONNECTION or redislite.StrictRedis(
+        dbfilename=config.REDISLITE_DB)
+
+    _redis_expiration = config.EXPIRATION
 
     def __init__(self, function):
         """
@@ -59,9 +62,10 @@ class Memoize(object):
 
         :return: redis handle
         """
-        if not self.__class__._redis:
-            self.__class__._redis = redislite.StrictRedis(dbfilename=config.REDISLITE_DB)
-        return self.__class__._redis
+        # if not self.__class__._redis_connection:
+        #     self.__class__._redis_connection = redislite.StrictRedis(
+        #         dbfilename=config.REDISLITE_DB)
+        return self.__class__._redis_connection
 
     def __getitem__(self, item):
         """
@@ -81,7 +85,8 @@ class Memoize(object):
         :param key: hash key
         :param value: object to store
         """
-        self.redis.set(name=key, value=pickle.dumps(value), ex=config.EXPIRATION)
+        self.redis.set(name=key, value=pickle.dumps(value),
+                       ex=self.__class__._redis_expiration)
 
     def __call__(self, *args, **kwargs):
         """
