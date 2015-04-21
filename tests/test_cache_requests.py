@@ -7,6 +7,10 @@ test_cache_requests
 
 Tests for ``cache_requests`` module.
 """
+import os
+
+os.environ['PYTHONHASHSEED'] = '0'
+
 from functools import wraps
 import time
 
