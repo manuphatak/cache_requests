@@ -4,8 +4,7 @@
 Persistent lru caching of the requests library.
 This module implements a basic LRU decorator that syncs calls with a redislite database.
 
-ELI5:
-~~~~~
+**ELI5:**
     **If you call the same function with the same parameters, it does not recalculate the
     function.**  Instead, the first time, the results are stored, the second time the
     results are retrieved from storage.
