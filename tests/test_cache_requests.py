@@ -14,7 +14,8 @@ import pytest
 import redislite
 import sys
 
-PY27 = sys.version_info[0:2] == (2, 7)
+PYPY = '__pypy__' in sys.builtin_module_names
+PY27 = sys.version_info[0:2] == (2, 7) and not PYPY
 is_int = lambda x: isinstance(x, int)
 
 
