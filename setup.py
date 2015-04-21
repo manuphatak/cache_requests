@@ -4,7 +4,7 @@
 Documentation
 -------------
 
-The full documentation is at https://cache_requests.readthedocs.org.
+The full documentation is at http://cache-requests.readthedocs.org/en/latest/.
 """
 
 import os
