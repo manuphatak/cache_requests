@@ -23,6 +23,9 @@ REDISLITE_DB: (filepath)
 
     TIP:  Redislite automatically creates the file, but will not create directories.
 """
+from __future__ import absolute_import
+
+
 __title__ = 'cache_requests'
 __author__ = 'Manu Phatak'
 __email__ = 'bionikspoon@gmail.com'
@@ -30,10 +33,10 @@ __version__ = '0.1.0'
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2015 Manu Phatak'
 
-import decorate_requests
+from . import decorate_requests
+from .memoize import Memoize
 
 requests = decorate_requests
-from memoize import Memoize
 
 import logging
 

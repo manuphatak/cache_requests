@@ -9,8 +9,13 @@ This module implements a basic LRU decorator that syncs calls with a redislite d
 """
 from __future__ import absolute_import
 import copy
-# noinspection PyPep8Naming
-import cPickle as pickle
+
+try:
+    # PY2X
+    # noinspection PyPep8Naming
+    import cPickle as pickle
+except ImportError:
+    import pickle
 import redislite
 
 from cache_requests import config
@@ -63,8 +68,8 @@ class Memoize(object):
         :return: redis handle
         """
         # if not self.__class__._redis_connection:
-        #     self.__class__._redis_connection = redislite.StrictRedis(
-        #         dbfilename=config.REDISLITE_DB)
+        # self.__class__._redis_connection = redislite.StrictRedis(
+        # dbfilename=config.REDISLITE_DB)
         return self.__class__._redis_connection
 
     def __getitem__(self, item):
