@@ -24,7 +24,7 @@ Cache Requests
 
 
 
-Persistent lru caching of the requests library.
+Persistent LRU caching of the requests library.
 
 * Free software: MIT license
 * Documentation: https://cache_requests.readthedocs.org.
