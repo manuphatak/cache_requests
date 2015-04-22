@@ -47,3 +47,4 @@ docs/build/
 .idea/
 cache_requests/redis/
 *redis.log
+docs/source/cache_requests.redislite
