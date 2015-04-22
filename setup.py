@@ -75,7 +75,7 @@ setup(
     cmdclass={'test': PyTest},
     keywords='cache_requests cache requests redis redislite Manu Phatak',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',

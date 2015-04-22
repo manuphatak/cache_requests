@@ -128,9 +128,11 @@ Automatically expire old content.
 One line of code to use a ``redis`` full database.
     * You might be surprised how much ``redislite`` can handle.
     * Using redis full is a drop in.
+
     .. code-block:: python
 
         conf.REDIS_CONNECTION  = redis.StrictRedis(host='localhost', port=6379, db=0)
+
     * Everything else just works.  There's no magic.  Look at the code, it's really simple stuff.
 
 .. code-block:: python
