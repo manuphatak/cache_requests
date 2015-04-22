@@ -73,6 +73,7 @@ When you publicly release your work you quickly find out it will be used in ways
 
 Use Case: Development
 ---------------------
+
 Make a request one time. Cache the results for the rest of your work session.
 
 * Stop doing weird things. Like pickling and copypasta while you work.
@@ -121,6 +122,7 @@ Alternatively setup inline with the ``.config.`` submodule.
 
 Use Case: Production: Web Scraping
 ----------------------------------
+
 Automatically expire old content.
     * How often? After a day? A week? A Month? etc.  100% of this logic is built in with the ``EXPIRATION`` setting.
     * Effectively it can manage all of the time-based rotation.
