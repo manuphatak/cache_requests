@@ -30,10 +30,10 @@ Cache Requests
 Features
 --------
 
-* Drop in replacement for the requests library.
+* Drop in wrapper  to decorate requests library.
 * Optional expiration timer on stored items.
-* Backed by yahoo's powerful ````redislite````.
-* Scalable. Optionally accepts a ``redis`` connection.  Take advantage of the full power of ````redis````.
+* Backed by yahoo's powerful ``redislite``.
+* Scalable. Optionally accepts a ``redis`` connection.  Take advantage of the full power of ``redis``.
 * Exposes the powerful underlying ``@Memoize`` decorator.
 * ``@Memoize`` can decorate any function to add persistent storage.  Great for expensive calculations.
 * Tested. Covered. Documented. Lightweight. Simple logic. Lightning fast.
