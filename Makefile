@@ -13,6 +13,8 @@ help:
 	@echo "release - package and upload a release"
 	@echo "dist - package"
 	@echo "install - install the package to the active Python's site-packages"
+	@echo "register - update pypi"
+
 
 clean: clean-build clean-pyc clean-test
 
@@ -56,8 +58,7 @@ docs:
 	$(MAKE) -C docs/ html
 	xdg-open docs/build/html/index.html
 
-release: clean
-	python setup.py register
+release: clean register
 	python setup.py sdist upload
 	python setup.py bdist_wheel upload
 
@@ -68,3 +69,6 @@ dist: clean
 
 install: clean
 	python setup.py install
+
+register:
+	python setup.py register
