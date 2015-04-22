@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # coding=utf-8
 """
-Persistent lru caching of the requests library.
-This module implements a basic LRU decorator that syncs calls with a redislite database.
+**Simple. Powerful. Persistent LRU caching.**
+
 
 **ELI5:**
+
     **If you call the same function with the same parameters, it does not recalculate the
     function.**  Instead, the first time, the results are stored, the second time the
     results are retrieved from storage.
@@ -12,16 +13,24 @@ This module implements a basic LRU decorator that syncs calls with a redislite d
     It gets worse.  Unlike a regular LRU cache, this storage survives after the program
     finishes. It's destroyed based on an expiration timer.
 
-EXPIRATION: (int)
+``config.EXPIRATION``: (int)
+
     Keys are destroyed in this amount of time.  Can be set to None
 
-REDISLITE_DB: (filepath)
+``config.REDISLITE_DB``: (filepath)
+
     Location of redislite db.  Default ``os.environ.get('REDISLITE_DB')`` AKA ``None``.
     None automatically uses a unique tmp file.  Unique tmp file means NO data
     persistence; which makes this an ordinary LRU cache.
+
     **TLDR; Set this if you want data persistence.**
 
     TIP:  Redislite automatically creates the file, but will not create directories.
+
+``config.REDIS_CONNECTION``: (redis connection handle)
+
+    Default is None.  If set this overrides the default behavior of creating a
+    redislite connection string.  This can be used to connect to to a real redis db.
 """
 from __future__ import absolute_import
 

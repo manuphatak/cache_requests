@@ -8,4 +8,6 @@ from .memoize import Memoize
 # monkeypatch + decorate requests library
 requests.get = Memoize(requests.get)
 requests.post = Memoize(requests.post)
+
+# noinspection PyUnresolvedReferences
 from requests import *

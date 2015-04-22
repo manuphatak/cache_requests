@@ -23,16 +23,20 @@ Cache Requests
     :alt: Documentation Status
 
 
-
-Persistent LRU caching of the requests library.
+**Simple. Powerful. Persistent LRU caching.**
 
 * Free software: MIT license
-* Documentation: https://cache_requests.readthedocs.org.
+* Documentation: https://cache-requests.readthedocs.org.
 
 Features
 --------
 
-* TODO
+* Drop in replacement for the requests library.
+* Optional expiration timer on stored items.
+* Backed by yahoo's powerful redislite db
+* Scalable. Optionally accepts a redis connection.  Take advantage of the full power of redis.
+
+
 
 Installation
 ------------

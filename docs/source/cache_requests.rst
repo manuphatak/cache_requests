@@ -9,9 +9,19 @@ cache_requests package
 Submodules
 ----------
 
-.. automodule:: cache_requests.cache_requests
+.. automodule:: cache_requests.config
     :members:
+    :undoc-members:
     :show-inheritance:
-    :special-members:
+
+.. automodule:: cache_requests.decorate_requests
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: cache_requests.memoize
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 

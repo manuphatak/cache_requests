@@ -11,9 +11,8 @@ from __future__ import absolute_import
 import copy
 
 try:
-    # PY2X
     # noinspection PyPep8Naming
-    import cPickle as pickle
+    import cPickle as pickle  # PY2X
 except ImportError:
     import pickle
 import redislite
@@ -63,13 +62,10 @@ class Memoize(object):
     @property
     def redis(self):
         """
-        Lazy load redis or redislite connection handle.
+        Alias for class attribute.
 
         :return: redis handle
         """
-        # if not self.__class__._redis_connection:
-        # self.__class__._redis_connection = redislite.StrictRedis(
-        # dbfilename=config.REDISLITE_DB)
         return self.__class__._redis_connection
 
     def __getitem__(self, item):
