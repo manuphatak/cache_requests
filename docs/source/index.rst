@@ -7,7 +7,7 @@
    contributing
    authors
    history
-   Package Documentation <cache_requests>
+   Code Documentation <cache_requests>
 
 Feedback
 ========

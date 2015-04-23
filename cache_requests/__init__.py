@@ -1,36 +1,19 @@
 #!/usr/bin/env python
 # coding=utf-8
 """
-**Simple. Powerful. Persistent LRU caching.**
+**Simple. Powerful. Persistent LRU caching for the requests library.**
 
 
-**ELI5:**
+.. topic:: ELI5
 
-    **If you call the same function with the same parameters, it does not recalculate the
-    function.**  Instead, the first time, the results are stored, the second time the
-    results are retrieved from storage.
+    **If you call the same function with the same parameters TWO times, it only does
+    the work ONE time.**  Results from the function are cached in storage and retrieved
+    from storage.
 
-    It gets worse.  Unlike a regular LRU cache, this storage survives after the program
-    finishes. It's destroyed based on an expiration timer.
+    It gets worse.  Unlike a regular LRU cache, the results are not destroyed when the
+    program finishes. Instead its destroyed when it expires.
 
-``config.EXPIRATION``: (int)
 
-    Keys are destroyed in this amount of time.  Can be set to None
-
-``config.REDISLITE_DB``: (filepath)
-
-    Location of redislite db.  Default ``os.environ.get('REDISLITE_DB')`` AKA ``None``.
-    None automatically uses a unique tmp file.  Unique tmp file means NO data
-    persistence; which makes this an ordinary LRU cache.
-
-    **TLDR; Set this if you want data persistence.**
-
-    TIP:  Redislite automatically creates the file, but will not create directories.
-
-``config.REDIS_CONNECTION``: (redis connection handle)
-
-    Default is None.  If set this overrides the default behavior of creating a
-    redislite connection string.  This can be used to connect to to a real redis db.
 """
 from __future__ import absolute_import
 
@@ -46,6 +29,7 @@ from . import decorate_requests
 from .memoize import Memoize
 
 requests = decorate_requests
+"""Decorate requests library"""
 
 import logging
 

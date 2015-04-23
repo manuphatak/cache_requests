@@ -57,7 +57,7 @@ test_requirements = ['pytest', 'mock']
 setup(
     name='cache_requests',
     version=version,
-    description="Persistent LRU caching of the requests library.",
+    description="Simple. Powerful. Persistent LRU caching for the requests library.",
     long_description=readme + '\n\n' + __doc__ + '\n\n' + history,
     author="Manu Phatak",
     author_email='bionikspoon@gmail.com',

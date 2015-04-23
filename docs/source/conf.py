@@ -40,6 +40,8 @@ author = cache_requests.__author__
 version = cache_requests.__version__
 release = cache_requests.__version__
 
+
+primary_domain = 'py'
 # language = None
 #today = ''
 #today_fmt = '%B %d, %Y'
