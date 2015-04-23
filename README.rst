@@ -44,6 +44,7 @@ Features
 * Free software: MIT license
 * Documentation: https://cache-requests.readthedocs.org.
 * Python version agnostic: tested against Python 2.6, 2.7, 3.3, 3.4, and Pypy
+
 ..
 
 * Drop in decorator for the requests library.
@@ -54,6 +55,7 @@ Features
 * Tested with high coverage.
 * Lightweight. Simple logic.
 * Lightning fast.
+
 ..
 
 * Jump start your development cycle.
@@ -259,4 +261,3 @@ Manually decorate requests.
 
     print(requests.get('http://google.com').text[:60])
     # u'<!doctype html><html itemscope="" itemtype="http://schema.or'
-
