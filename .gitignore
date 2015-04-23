@@ -45,3 +45,6 @@ docs/build/
 
 # Pycharm
 .idea/
+cache_requests/redis/
+*redis.log
+docs/source/cache_requests.redislite

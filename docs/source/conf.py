@@ -14,7 +14,6 @@ def _warn_node(func):
     return wrapper
 
 
-
 sphinx.environment.BuildEnvironment.warn_node = _warn_node(
     sphinx.environment.BuildEnvironment.warn_node)
 
@@ -41,7 +40,9 @@ author = cache_requests.__author__
 version = cache_requests.__version__
 release = cache_requests.__version__
 
-#language = None
+
+primary_domain = 'py'
+# language = None
 #today = ''
 #today_fmt = '%B %d, %Y'
 exclude_patterns = ['build']
@@ -81,15 +82,12 @@ htmlhelp_basename = 'cache_requestsdoc'
 # -- Options for LaTeX output ------------------------------------------
 
 latex_elements = {}
-    #'papersize': 'letterpaper',
-    #'pointsize': '10pt',
-    #'preamble': '',
+#'papersize': 'letterpaper',
+#'pointsize': '10pt',
+#'preamble': '',
 
-latex_documents = [
-    ('index', 'cache_requests.tex',
-     u'Cache Requests Documentation',
-     u'Manu Phatak', 'manual'),
-]
+latex_documents = [('index', 'cache_requests.tex', u'Cache Requests Documentation',
+                    u'Manu Phatak', 'manual'), ]
 
 #latex_logo = None
 #latex_use_parts = False
@@ -101,22 +99,14 @@ latex_documents = [
 # -- Options for manual page output ------------------------------------
 
 man_pages = [
-    ('index', 'cache_requests',
-     u'Cache Requests Documentation',
-     [u'Manu Phatak'], 1)
-]
+    ('index', 'cache_requests', u'Cache Requests Documentation', [u'Manu Phatak'], 1)]
 #man_show_urls = False
 
 # -- Options for Texinfo output ----------------------------------------
 
-texinfo_documents = [
-    ('index', 'cache_requests',
-     u'Cache Requests Documentation',
-     u'Manu Phatak',
-     'cache_requests',
-     'One line description of project.',
-     'Miscellaneous'),
-]
+texinfo_documents = [('index', 'cache_requests', u'Cache Requests Documentation',
+                      u'Manu Phatak', 'cache_requests',
+                      'One line description of project.', 'Miscellaneous'), ]
 #texinfo_appendices = []
 #texinfo_domain_indices = True
 #texinfo_show_urls = 'footnote'

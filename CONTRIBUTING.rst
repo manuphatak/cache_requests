@@ -57,7 +57,7 @@ Get Started!
 
 Ready to contribute? Here's how to set up `cache_requests` for local development.
 
-1. Fork the `cache_requests` repo on GitHub.
+1. Fork the :mod:`cache_requests` repo on GitHub.
 2. Clone your fork locally::
 
     $ git clone git@github.com:your_name_here/cache_requests.git
@@ -110,3 +110,4 @@ Tips
 To run a subset of tests::
 
     $ py.test tests/test_cache_requests
+

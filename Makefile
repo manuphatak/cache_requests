@@ -13,6 +13,8 @@ help:
 	@echo "release - package and upload a release"
 	@echo "dist - package"
 	@echo "install - install the package to the active Python's site-packages"
+	@echo "register - update pypi"
+
 
 clean: clean-build clean-pyc clean-test
 
@@ -50,15 +52,13 @@ coverage:
 	$(MAKE) -C docs coverage
 
 docs:
-	rm -f docs/cache_requests.rst
-	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ cache_requests
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
-	xdg-open docs/_build/html/index.html
+	# rm -f docs/source/cache_requests.rst
+	# sphinx-apidoc --no-toc --no-headings --private --module-first -o docs/source cache_requests
+	$(MAKE) -C docs/ clean
+	$(MAKE) -C docs/ html
+	xdg-open docs/build/html/index.html
 
-release: clean
-	python setup.py register
+release: clean register
 	python setup.py sdist upload
 	python setup.py bdist_wheel upload
 
@@ -69,3 +69,6 @@ dist: clean
 
 install: clean
 	python setup.py install
+
+register:
+	python setup.py register

@@ -4,7 +4,7 @@
 Documentation
 -------------
 
-The full documentation is at https://cache_requests.readthedocs.org.
+The full documentation is at http://cache-requests.readthedocs.org/en/latest/.
 """
 
 import os
@@ -48,7 +48,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read().replace('.. :changelog:', '')
 
 # TODO: put package requirements here
-requirements = []
+requirements = ['redislite', 'requests']
 
 # TODO: put package test requirements here
 test_requirements = ['pytest', 'mock']
@@ -57,7 +57,7 @@ test_requirements = ['pytest', 'mock']
 setup(
     name='cache_requests',
     version=version,
-    description="Persistent lru caching of the requests library.",
+    description="Simple. Powerful. Persistent LRU caching for the requests library.",
     long_description=readme + '\n\n' + __doc__ + '\n\n' + history,
     author="Manu Phatak",
     author_email='bionikspoon@gmail.com',
@@ -73,19 +73,29 @@ setup(
     license="MIT",
     zip_safe=False,
     cmdclass={'test': PyTest},
-    keywords='cache_requests',
+    keywords='cache_requests cache requests redis redislite Manu Phatak',
     classifiers=[
-        'Development Status :: 1 - Planning',
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
-        "Programming Language :: Python :: 2",
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Programming Language :: Python :: Implementation :: PyPy',
+        'Topic :: Database',
+        'Topic :: Database :: Database Engines/Servers',
+        'Topic :: Internet :: WWW/HTTP',
+        'Topic :: Internet :: WWW/HTTP :: Session',
+        'Topic :: Internet :: WWW/HTTP :: Site Management',
+        'Topic :: Software Development',
+        'Topic :: Utilities'
     ],
     test_suite='tests',
     tests_require=test_requirements
