@@ -22,6 +22,8 @@ Cache Requests
     :target: https://readthedocs.org/projects/cache-requests/?badge=latest
     :alt: Documentation Status
 
+------------
+
 .. image:: https://pypip.in/py_versions/cache_requests/badge.svg
     :target: https://pypi.python.org/pypi/cache_requests/
     :alt: Supported Python versions
@@ -30,6 +32,10 @@ Cache Requests
     :target: https://pypi.python.org/pypi/cache_requests/
     :alt: Supported Python implementations
 
+.. image:: https://pypip.in/license/cache_requests/badge.svg
+    :target: https://pypi.python.org/pypi/cache_requests/
+    :alt: License
+
 **Simple. Powerful. Persistent LRU caching for the requests library.**
 
 Features
@@ -37,7 +43,7 @@ Features
 
 * Free software: MIT license
 * Documentation: https://cache-requests.readthedocs.org.
-* Python version agnostic: Tested against Python 2.6, 2.7, 3.3, 3.4, and Pypy
+* Python version agnostic: tested against Python 2.6, 2.7, 3.3, 3.4, and Pypy
 ..
 
 * Drop in decorator for the requests library.

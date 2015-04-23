@@ -12,11 +12,18 @@ Next Release
 ------------------
 
 * First real release.
-* Feature/ Unit test suite, very high coverage
-* Feature/ ``redislite`` integration
+* Feature/ Unit test suite, very high coverage.
+* Feature/ ``redislite`` integration.
 * Feature/ Documentation.  https://cache-requests.readthedocs.org.
 * Feature/ Exposed the beefed up ``Memoize`` decorator.
-* Feature/ Upgraded compatibility to almost every version of python
+* Feature/ Upgraded compatibility to:
+    * PY26
+    * PY27
+    * PY33
+    * PY34
+    * PYPY
+* Added examples and case studies.
+
 
 0.1.0 (2015-04-19)
 ------------------
