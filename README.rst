@@ -34,7 +34,7 @@ Features
 * Automatic timer based expiration on stored items (optional).
 * Backed by yahoo's powerful ``redislite``.
 * Scalable with redis. Optionally accepts a ``redis`` connection.
-* Exposes the powerful underlying :class:`Memoize` decorator to decorate any function.
+* Exposes the powerful underlying ``Memoize`` decorator to decorate any function.
 * Tested with high coverage.
 * Lightweight. Simple logic.
 * Lightning fast.
