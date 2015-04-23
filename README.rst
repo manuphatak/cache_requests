@@ -22,6 +22,14 @@ Cache Requests
     :target: https://readthedocs.org/projects/cache-requests/?badge=latest
     :alt: Documentation Status
 
+.. image:: https://pypip.in/py_versions/cache_requests/badge.svg
+    :target: https://pypi.python.org/pypi/cache_requests/
+    :alt: Supported Python versions
+
+.. image:: https://pypip.in/implementation/cache_requests/badge.svg
+    :target: https://pypi.python.org/pypi/cache_requests/
+    :alt: Supported Python implementations
+
 **Simple. Powerful. Persistent LRU caching for the requests library.**
 
 Features
@@ -29,6 +37,8 @@ Features
 
 * Free software: MIT license
 * Documentation: https://cache-requests.readthedocs.org.
+* Python version agnostic: Tested against Python 2.6, 2.7, 3.3, 3.4, and Pypy
+..
 
 * Drop in decorator for the requests library.
 * Automatic timer based expiration on stored items (optional).
@@ -38,6 +48,7 @@ Features
 * Tested with high coverage.
 * Lightweight. Simple logic.
 * Lightning fast.
+..
 
 * Jump start your development cycle.
 * Collect and reuse entire response objects.
