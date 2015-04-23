@@ -21,7 +21,7 @@ from __future__ import absolute_import
 __title__ = 'cache_requests'
 __author__ = 'Manu Phatak'
 __email__ = 'bionikspoon@gmail.com'
-__version__ = '0.1.0'
+__version__ = '1.0.0'
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2015 Manu Phatak'
 
