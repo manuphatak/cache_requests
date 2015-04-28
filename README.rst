@@ -26,7 +26,7 @@ Cache Requests
 
 .. image:: https://pypip.in/py_versions/cache_requests/badge.svg
     :target: https://pypi.python.org/pypi/cache_requests/
-    :alt: https://img.shields.io/badge/python-2.7,3.4,pypy-blue.svg
+    :alt: Supported Python versions
 
 .. image:: https://pypip.in/implementation/cache_requests/badge.svg
     :target: https://pypi.python.org/pypi/cache_requests/
