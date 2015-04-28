@@ -26,13 +26,13 @@ Cache Requests
 
 .. image:: https://pypip.in/py_versions/cache_requests/badge.svg
     :target: https://pypi.python.org/pypi/cache_requests/
-    :alt: Supported Python versions
+    :alt: https://img.shields.io/badge/python-2.7,3.4,pypy-blue.svg
 
 .. image:: https://pypip.in/implementation/cache_requests/badge.svg
     :target: https://pypi.python.org/pypi/cache_requests/
     :alt: Supported Python implementations
 
-.. image:: https://img.shields.io/github/license/cache_requests/apistatus.svg
+.. image:: https://img.shields.io/pypi/l/cache_requests.svg
     :target: https://pypi.python.org/pypi/cache_requests/
     :alt: License
 
