@@ -2,7 +2,7 @@
 Cache Requests
 ==============
 
-.. image:: https://img.shields.io/badge/Status-Stable-green.svg
+.. image:: https://img.shields.io/badge/Status-Production/Stable-green.svg
     :target: https://pypi.python.org/pypi/cache_requests/
     :alt: Development Status
 
