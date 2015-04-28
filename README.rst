@@ -10,7 +10,7 @@ Cache Requests
     :target: https://travis-ci.org/bionikspoon/cache_requests?branch=develop
     :alt: Build Status
 
-.. image:: https://pypip.in/version/cache_requests/badge.svg
+.. image:: https://img.shields.io/pypi/v/cache_requests.svg
     :target: https://pypi.python.org/pypi/cache_requests
     :alt: Latest Version
 
@@ -32,7 +32,7 @@ Cache Requests
     :target: https://pypi.python.org/pypi/cache_requests/
     :alt: Supported Python implementations
 
-.. image:: https://pypip.in/license/cache_requests/badge.svg
+.. image:: https://img.shields.io/github/license/cache_requests/apistatus.svg
     :target: https://pypi.python.org/pypi/cache_requests/
     :alt: License
 
