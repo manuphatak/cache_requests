@@ -2,7 +2,7 @@
 Cache Requests
 ==============
 
-.. image:: https://pypip.in/status/cache_requests/badge.svg
+.. image:: https://img.shields.io/badge/Status-Stable-green.svg
     :target: https://pypi.python.org/pypi/cache_requests/
     :alt: Development Status
 
@@ -10,7 +10,7 @@ Cache Requests
     :target: https://travis-ci.org/bionikspoon/cache_requests?branch=develop
     :alt: Build Status
 
-.. image:: https://pypip.in/version/cache_requests/badge.svg
+.. image:: https://img.shields.io/pypi/v/cache_requests.svg
     :target: https://pypi.python.org/pypi/cache_requests
     :alt: Latest Version
 
@@ -24,15 +24,12 @@ Cache Requests
 
 ------------
 
-.. image:: https://pypip.in/py_versions/cache_requests/badge.svg
+.. image:: https://img.shields.io/badge/Python-2.6,_2.7,_3.3,_3.4,_pypy-brightgreen.svg
     :target: https://pypi.python.org/pypi/cache_requests/
     :alt: Supported Python versions
 
-.. image:: https://pypip.in/implementation/cache_requests/badge.svg
-    :target: https://pypi.python.org/pypi/cache_requests/
-    :alt: Supported Python implementations
 
-.. image:: https://pypip.in/license/cache_requests/badge.svg
+.. image:: https://img.shields.io/pypi/l/cache_requests.svg
     :target: https://pypi.python.org/pypi/cache_requests/
     :alt: License
 
@@ -86,7 +83,7 @@ To use ``cache_requests`` in a project:
 
     >>> from cache_requests import requests
 
-    # source of following sample: python-requests.org
+    # from python-requests.org
     >>> r = requests.get('https://api.github.com/user', auth=('user', 'pass'))
     >>> r.status_code
     200
