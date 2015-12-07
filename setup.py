@@ -9,21 +9,12 @@ The full documentation is at https://cache_requests.readthedocs.org.
 
 """
 
-import os
-import sys
-import re
-
-
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
 
 from setuptools.command.test import test as TestCommand
-
-if sys.argv[-1] == 'publish':
-    os.system('python setup.py sdist upload')
-    sys.exit()
 
 
 class PyTest(TestCommand):
@@ -34,14 +25,11 @@ class PyTest(TestCommand):
 
     def run_tests(self):
         import pytest
+        import sys
 
         errno = pytest.main(self.test_args)
         sys.exit(errno)
 
-
-_version_re = re.compile(r"(?<=^__version__ = \')[\w\.]+(?=\'$)", re.U | re.M)
-with open('cache_requests/__init__.py', 'rb') as f:
-    version = _version_re.search(f.read().decode('utf-8')).group()
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -55,40 +43,35 @@ requirements = ['redislite', 'requests']
 # TODO: put package test requirements here
 test_requirements = ['pytest', 'mock']
 
-# @:off
-setup(
+setup(  # :off
     name='cache_requests',
-    version=version,
-    description="Simple. Powerful. Persistent LRU caching for the requests library.",
-    long_description=readme + '\n\n' + __doc__ + '\n\n' + history,
-    author="Manu Phatak",
+    version='1.0.0',
+    description='Simple. Powerful. Persistent LRU caching for the requests library.',
+    long_description='\n\n'.join([readme, __doc__, history]),
+    author='Manu Phatak',
     author_email='bionikspoon@gmail.com',
-    url='https://github.com/bionikspoon'
-        '/cache_requests',
-    packages=[
-        'cache_requests',
-    ],
-    package_dir={'cache_requests':
-                 'cache_requests'},
+    url='https://github.com/bionikspoon/cache_requests',
+    packages=['cache_requests',],
+    package_dir={'cache_requests':'cache_requests'},
     include_package_data=True,
     install_requires=requirements,
-    license="MIT",
+    license='MIT',
     zip_safe=False,
     cmdclass={'test': PyTest},
-    keywords='cache_requests cache requests redis redislite Manu Phatak',
+    keywords='cache_requests',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Environment :: Web Environment',
+        'Development Status :: 1 - Planning',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
-        'Operating System :: OS Independent',
+        'Programming Language :: Python',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
         'Topic :: Database',
@@ -101,5 +84,4 @@ setup(
     ],
     test_suite='tests',
     tests_require=test_requirements
-)
-# @:on
+)  # :on

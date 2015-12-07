@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # coding=utf-8
 """
+==============
+cache_requests
+==============
 
 **Simple. Powerful. Persistent LRU caching for the requests library.**
-
 
 .. topic:: ELI5
 
@@ -33,9 +35,8 @@ except ImportError:  # pragma: no cover
 
 logging.getLogger(__name__).addHandler(NullHandler())
 
-__title__ = 'cache_requests'
-__license__ = 'MIT'
-__copyright__ = 'Copyright 2015 Manu Phatak'
+
+
 __author__ = 'Manu Phatak'
 __email__ = 'bionikspoon@gmail.com'
 __version__ = '1.0.0'

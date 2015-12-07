@@ -1,5 +1,5 @@
 ==============
-Cache Requests
+cache_requests
 ==============
 
 .. image:: https://img.shields.io/github/downloads/bionikspoon/cache_requests/total.svg
@@ -18,10 +18,6 @@ Cache Requests
     :target: https://travis-ci.org/bionikspoon/cache_requests?branch=develop
     :alt: Build Status
 
-.. image:: https://img.shields.io/pypi/v/cache_requests.svg
-    :target: https://pypi.python.org/pypi/cache_requests
-    :alt: Latest Version
-
 .. image:: https://coveralls.io/repos/bionikspoon/cache_requests/badge.svg?branch=develop
     :target: https://coveralls.io/github/bionikspoon/cache_requests?branch=develop&service=github
     :alt: Coverage Status
@@ -32,7 +28,7 @@ Cache Requests
 
 ------------
 
-.. image:: https://img.shields.io/badge/Python-2.6,_2.7,_3.3,_3.4,_pypy-brightgreen.svg
+.. image:: https://img.shields.io/badge/Python-2.6,_2.7,_3.3,_3.4,,_3.5,_pypy-brightgreen.svg
     :target: https://pypi.python.org/pypi/cache_requests/
     :alt: Supported Python versions
 
@@ -47,7 +43,7 @@ Features
 --------
 
 * Free software: MIT license
-* Documentation: https://cache-requests.readthedocs.org.
+* Documentation: https://cache_requests.readthedocs.org.
 * Python version agnostic: tested against Python 2.6, 2.7, 3.3, 3.4, and Pypy
 
 ..
@@ -266,3 +262,15 @@ Manually decorate requests.
 
     print(requests.get('http://google.com').text[:60])
     # u'<!doctype html><html itemscope="" itemtype="http://schema.or'
+
+Credits
+-------
+
+Tools used in rendering this package:
+
+*  Cookiecutter_
+*  `bionikspoon/cookiecutter-pypackage`_ forked from `audreyr/cookiecutter-pypackage`_
+
+.. _Cookiecutter: https://github.com/audreyr/cookiecutter
+.. _`bionikspoon/cookiecutter-pypackage`: https://github.com/bionikspoon/cookiecutter-pypackage
+.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
