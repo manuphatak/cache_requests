@@ -7,12 +7,12 @@ test_cache_requests
 
 Tests for ``cache_requests`` module.
 """
-from functools import wraps
+import sys
 import time
+from functools import wraps
 
 import pytest
 import redislite
-import sys
 
 PYPY = '__pypy__' in sys.builtin_module_names
 PY27 = sys.version_info[0:2] == (2, 7) and not PYPY
@@ -88,8 +88,13 @@ def test_make_hash_tuple_of_strings(memoize):
 def test_make_hash_mixed(memoize):
     """Freeze results"""
 
-    mixed_object = {"this": ["is", "a", {"test": ("of", "hashing", "mixed objects", 42)}],
-                    '42': "what a strange dictionary", "done": "completed"}
+    mixed_object = {
+        "this": ["is", "a", {
+            "test": ("of", "hashing", "mixed objects", 42)
+        }],
+        '42': "what a strange dictionary",
+        "done": "completed"
+    }
     assert is_int(memoize.make_hash(mixed_object))
     if PY27:
         assert memoize.make_hash(mixed_object) == -2248685659113089918
@@ -140,8 +145,7 @@ def test_memoized_decorated_function_only_calls_function_once(amazing_function):
     assert amazing_function.function.calls == 7
     assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
     assert amazing_function.function.calls == 7
-    assert amazing_function(1, 2, 'three', 45, this="is not", a="test", or_is="it?") == (
-        4, 3)
+    assert amazing_function(1, 2, 'three', 45, this="is not", a="test", or_is="it?") == (4, 3)
     assert amazing_function.function.calls == 8
 
 
@@ -160,5 +164,3 @@ def test_memoized_expiration(amazing_function, ):
     assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
 
     assert amazing_function.function.calls == 2
-
-

@@ -18,6 +18,7 @@ cache_requests
 
 """
 from __future__ import absolute_import
+
 from . import decorate_requests
 from .memoize import Memoize
 
@@ -34,8 +35,6 @@ except ImportError:  # pragma: no cover
             pass
 
 logging.getLogger(__name__).addHandler(NullHandler())
-
-
 
 __author__ = 'Manu Phatak'
 __email__ = 'bionikspoon@gmail.com'

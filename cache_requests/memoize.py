@@ -7,6 +7,7 @@ memoize module
 This module implements a basic LRU decorator that syncs calls with a redislite database.
 """
 from __future__ import absolute_import
+
 import copy
 import functools
 import logging
@@ -19,8 +20,6 @@ try:
 except ImportError:
     import pickle
 import redislite
-
-
 
 log = logging.getLogger(__name__)
 
@@ -51,8 +50,7 @@ class Memoize(object):
     Decorator Class.  Standard LRU. With redis key/value caching.
     """
 
-    _redis_connection = config.REDIS_CONNECTION or redislite.StrictRedis(
-        dbfilename=config.REDISLITE_DB)
+    _redis_connection = config.REDIS_CONNECTION or redislite.StrictRedis(dbfilename=config.REDISLITE_DB)
 
     _redis_expiration = config.EXPIRATION
 
@@ -88,9 +86,7 @@ class Memoize(object):
         :param key: hash key
         :param object value: object to store
         """
-        self.redis.set(name=key, value=pickle.dumps(value),
-                       ex=self.__class__._redis_expiration)
-
+        self.redis.set(name=key, value=pickle.dumps(value), ex=self.__class__._redis_expiration)
 
     def __call__(self, *args, **kwargs):
         """

@@ -8,7 +8,6 @@ Module configuration options
 """
 import os
 
-
 EXPIRATION = os.environ.get('EXPIRATION', 60 * 60)  # 1 hour
 """
 Time in seconds until the key is destroyed.
