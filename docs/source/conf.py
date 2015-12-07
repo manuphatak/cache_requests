@@ -14,16 +14,13 @@ def _warn_node(func):
     return wrapper
 
 
-sphinx.environment.BuildEnvironment.warn_node = _warn_node(
-    sphinx.environment.BuildEnvironment.warn_node)
+sphinx.environment.BuildEnvironment.warn_node = _warn_node(sphinx.environment.BuildEnvironment.warn_node)
 
 sys.path.insert(0, abspath(relpath('../', __file__)))
 
 import cache_requests
 
-
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.coverage',
-              'sphinx.ext.viewcode', ]
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.coverage', 'sphinx.ext.viewcode', ]
 
 templates_path = ['_templates']
 
@@ -34,8 +31,8 @@ source_encoding = 'utf-8-sig'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Cache Requests'
-copyright = u'2015, Manu Phatak'
+project = 'cache_requests'
+copyright = '2015, Manu Phatak'
 author = cache_requests.__author__
 version = cache_requests.__version__
 release = cache_requests.__version__

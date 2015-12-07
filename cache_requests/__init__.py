@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 """
+
 **Simple. Powerful. Persistent LRU caching for the requests library.**
 
 
@@ -13,18 +14,8 @@
     It gets worse.  Unlike a regular LRU cache, the results are not destroyed when the
     program finishes. Instead its destroyed when it expires.
 
-
 """
 from __future__ import absolute_import
-
-
-__title__ = 'cache_requests'
-__author__ = 'Manu Phatak'
-__email__ = 'bionikspoon@gmail.com'
-__version__ = '1.0.0'
-__license__ = 'MIT'
-__copyright__ = 'Copyright 2015 Manu Phatak'
-
 from . import decorate_requests
 from .memoize import Memoize
 
@@ -42,4 +33,10 @@ except ImportError:  # pragma: no cover
 
 logging.getLogger(__name__).addHandler(NullHandler())
 
+__title__ = 'cache_requests'
+__license__ = 'MIT'
+__copyright__ = 'Copyright 2015 Manu Phatak'
+__author__ = 'Manu Phatak'
+__email__ = 'bionikspoon@gmail.com'
+__version__ = '1.0.0'
 __all__ = ['requests', 'Memoize']

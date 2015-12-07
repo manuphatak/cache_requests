@@ -1,0 +1,1 @@
+{"unixsocket": "/tmp/manu/tmpl_0yVn/redis.socket", "dbdir": "/home/manu/Code/cache_requests", "pidfile": "/tmp/manu/tmpl_0yVn/redis.pid", "dbfilename": "cache_requests.redislite"}

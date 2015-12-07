@@ -36,8 +36,8 @@ is open to whoever wants to implement it.
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
 
-Cache Requests could always use more documentation, whether as part of the
-official Cache Requests docs, in docstrings, or even on the web in blog posts,
+cache_requests could always use more documentation, whether as part of the
+official cache_requests docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 Submit Feedback
@@ -57,7 +57,7 @@ Get Started!
 
 Ready to contribute? Here's how to set up `cache_requests` for local development.
 
-1. Fork the :mod:`cache_requests` repo on GitHub.
+1. Fork the `cache_requests` repo on GitHub.
 2. Clone your fork locally::
 
     $ git clone git@github.com:your_name_here/cache_requests.git
@@ -100,7 +100,7 @@ Before you submit a pull request, check that it meets these guidelines:
 2. If the pull request adds functionality, the docs should be updated. Put
    your new functionality into a function with a docstring, and add the
    feature to the list in README.rst.
-3. The pull request should work for Python 2.6, 2.7, 3.3, and 3.4, and for PyPy. Check
+3. The pull request should work for Python 2.6, 2.7, 3.3, 3.4, 3.5, and for PyPy. Check
    https://travis-ci.org/bionikspoon/cache_requests/pull_requests
    and make sure that the tests pass for all supported Python versions.
 
@@ -109,5 +109,4 @@ Tips
 
 To run a subset of tests::
 
-    $ py.test tests/test_cache_requests
-
+    $ py.test tests/test_cache_requests.py

@@ -2,7 +2,15 @@
 Cache Requests
 ==============
 
-.. image:: https://img.shields.io/badge/Status-Production/Stable-green.svg
+.. image:: https://img.shields.io/github/downloads/bionikspoon/cache_requests/total.svg
+    :target: https://github.com/bionikspoon/cache_requests
+    :alt: Github Downloads
+
+.. image:: https://badge.fury.io/py/cache_requests.svg
+    :target: https://pypi.python.org/pypi/cache_requests/
+    :alt: Latest Version
+
+.. image:: https://img.shields.io/pypi/status/cache_requests.svg
     :target: https://pypi.python.org/pypi/cache_requests/
     :alt: Development Status
 
@@ -15,11 +23,11 @@ Cache Requests
     :alt: Latest Version
 
 .. image:: https://coveralls.io/repos/bionikspoon/cache_requests/badge.svg?branch=develop
-    :target: https://coveralls.io/r/bionikspoon/cache_requests?branch=develop
+    :target: https://coveralls.io/github/bionikspoon/cache_requests?branch=develop&service=github
     :alt: Coverage Status
 
-.. image:: https://readthedocs.org/projects/cache-requests/badge/?version=latest
-    :target: https://readthedocs.org/projects/cache-requests/?badge=latest
+.. image:: https://readthedocs.org/projects/cache_requests/badge/?version=develop
+    :target: https://cache_requests.readthedocs.org/en/develop/?badge=develop
     :alt: Documentation Status
 
 ------------
