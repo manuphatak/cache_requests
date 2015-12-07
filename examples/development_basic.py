@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # coding=utf-8
 import logging
-from cache_requests import requests, config
+from cache_requests import requests, Config
 
-config.EXPIRATION = 15
-config.REDISLITE_DB = 'redis/requests.redislite'
+Config.EXPIRATION = 15
+Config.REDISLITE_DB = 'redis/requests.redislite'
 
 format_ = '%(relativeCreated)-5d %(name)-12s %(levelname)-8s %(message)s'
 logging.basicConfig(level=logging.DEBUG, format=format_)

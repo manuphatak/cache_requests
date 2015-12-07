@@ -12,18 +12,16 @@ import time
 from functools import wraps
 
 import pytest
-import redislite
+from redislite import StrictRedis
+
+from cache_requests.cache_requests import deep_hash
 
 PYPY = '__pypy__' in sys.builtin_module_names
 PY27 = sys.version_info[0:2] == (2, 7) and not PYPY
-is_int = lambda x: isinstance(x, int)
 
 
-@pytest.fixture
-def memoize():
-    from cache_requests import memoize
-
-    return memoize
+def is_int(variable):
+    return not not isinstance(variable, int)
 
 
 @pytest.fixture
@@ -31,12 +29,9 @@ def amazing_function(tmpdir):
     """
     Memoized Decorated function. With a counter
     """
-    from cache_requests.memoize import Memoize
+    from cache_requests import redis_memoize
 
     db_path = tmpdir.join('test_redis.db').strpath
-
-    Memoize._redis_connection = redislite.StrictRedis(dbfilename=db_path)
-    Memoize._redis_expiration = 1
 
     def counter(function):
         """Count how many times the actual function was called"""
@@ -49,43 +44,43 @@ def amazing_function(tmpdir):
         wrapper.calls = 0
         return wrapper
 
-    @Memoize
+    @redis_memoize(ex=1, connection=StrictRedis(dbfilename=db_path))
     @counter
-    def amazing_function_(*args, **kwargs):
+    def _amazing_function(*args, **kwargs):
         """Sample function, return tuple of length of args and kwargs"""
         return len(args), len(kwargs)
 
-    assert amazing_function_.function.calls == 0
+    assert _amazing_function.function.calls == 0
 
-    return amazing_function_
+    return _amazing_function
 
 
-def test_make_hash_string(memoize):
+def test_make_hash_string():
     """Freeze results"""
-    assert memoize.make_hash('this is a test') == memoize.make_hash('this is a test')
-    assert is_int(memoize.make_hash('this is a test'))
-    assert is_int(memoize.make_hash('this is a test '))
+    assert deep_hash('this is a test') == deep_hash('this is a test')
+    assert is_int(deep_hash('this is a test'))
+    assert is_int(deep_hash('this is a test '))
 
     if PY27:
-        assert memoize.make_hash('this is a test') == -7693282272941567447
-        assert memoize.make_hash('this is a test ') == 1496872550775508506
+        assert deep_hash('this is a test') == -7693282272941567447
+        assert deep_hash('this is a test ') == 1496872550775508506
 
 
-def test_make_hash_tuple_of_strings(memoize):
+def test_make_hash_tuple_of_strings():
     """Freeze results"""
     test_tuple = ('this is a test', 'And another')
-    assert memoize.make_hash(test_tuple) == memoize.make_hash(test_tuple)
+    assert deep_hash(test_tuple) == deep_hash(test_tuple)
 
-    hash_1, hash_2 = memoize.make_hash(test_tuple)
+    hash_1, hash_2 = deep_hash(test_tuple)
 
     assert is_int(hash_1)
     assert is_int(hash_2)
 
     if PY27:
-        assert memoize.make_hash(test_tuple) == (-7693282272941567447, 503894645807253565)
+        assert deep_hash(test_tuple) == (-7693282272941567447, 503894645807253565)
 
 
-def test_make_hash_mixed(memoize):
+def test_make_hash_mixed():
     """Freeze results"""
 
     mixed_object = {
@@ -95,25 +90,25 @@ def test_make_hash_mixed(memoize):
         '42': "what a strange dictionary",
         "done": "completed"
     }
-    assert is_int(memoize.make_hash(mixed_object))
+    assert is_int(deep_hash(mixed_object))
     if PY27:
-        assert memoize.make_hash(mixed_object) == -2248685659113089918
-    assert memoize.make_hash(mixed_object) == memoize.make_hash(mixed_object)
+        assert deep_hash(mixed_object) == -2248685659113089918
+    assert deep_hash(mixed_object) == deep_hash(mixed_object)
 
     mixed_object['this'][2]['test'] = ("of", "hashing", "mixed objects", 42)
-    assert is_int(memoize.make_hash(mixed_object))
+    assert is_int(deep_hash(mixed_object))
     if PY27:
-        assert memoize.make_hash(mixed_object) == -2248685659113089918
+        assert deep_hash(mixed_object) == -2248685659113089918
 
     mixed_object['this'][2]['test'] = ("of", "ha5hing", "mixed objects", 42)
-    assert is_int(memoize.make_hash(mixed_object))
+    assert is_int(deep_hash(mixed_object))
     if PY27:
-        assert memoize.make_hash(mixed_object) == 5850416323757308216
+        assert deep_hash(mixed_object) == 5850416323757308216
 
 
 def test_memoized_decorated_function_only_calls_function_once(amazing_function):
     """Function is only called with unique parameters"""
-
+    assert amazing_function.redis.dbsize() == 0
     assert amazing_function.function.calls == 0
     assert amazing_function(1, 2, 'three', '45') == (4, 0)
     assert amazing_function(1, 2, 'three', '45') == (4, 0)
@@ -147,9 +142,13 @@ def test_memoized_decorated_function_only_calls_function_once(amazing_function):
     assert amazing_function.function.calls == 7
     assert amazing_function(1, 2, 'three', 45, this="is not", a="test", or_is="it?") == (4, 3)
     assert amazing_function.function.calls == 8
+    assert amazing_function.redis.dbsize() == 8
+    assert amazing_function.redis.flushdb()
+    assert amazing_function.redis.dbsize() == 0
 
 
-def test_memoized_expiration(amazing_function, ):
+def test_memoized_expiration(amazing_function):
+    assert amazing_function.redis.dbsize() == 0
     assert amazing_function.function.calls == 0
     assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
     assert amazing_function.function.calls == 1

@@ -20,6 +20,7 @@ coverage
 # -------------------------------------
 sphinx
 watchdog
+
 # DIST UTILITIES
 # -------------------------------------
 # required by `travis_pypi_setup.py`
