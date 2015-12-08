@@ -3,11 +3,11 @@
 from __future__ import absolute_import
 
 import logging
+import weakref
+from collections import defaultdict
 from copy import deepcopy
-from functools import partial
-from functools import update_wrapper
-from os import environ
-from os.path import join
+from functools import partial, update_wrapper
+from os import environ, path
 from tempfile import gettempdir
 
 from redislite import StrictRedis
@@ -20,7 +20,7 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-temp_file = partial(join, gettempdir())
+temp_file = partial(path.join, gettempdir())
 
 
 def decorate_requests():
@@ -39,7 +39,7 @@ class Config:
     """
     Time in seconds until the key is destroyed.
 
-    Default: ``os.environ.get('EXPIRATION', 60 * 60)``  # 1 hour
+    Default: ``os.environ.get('ex', 60 * 60)``  # 1 hour
 
     .. tip::
 
@@ -48,7 +48,7 @@ class Config:
     """
     Filepath to redislite DB.
 
-    Default: ``os.environ.get('REDISLITE_DB', 'cache_requests.redislite')``
+    Default: ``os.environ.get('dbfilename', 'cache_requests.redislite')``
 
     None automatically uses a unique tmp file.  Unique tmp file means NO
     data persistence; which makes this an ordinary LRU cache.
@@ -69,15 +69,15 @@ class Config:
 
     Default: ``os.environ.get('connection', None)``
 
-    This connection takes precedence, overriding behavior related to :const:`REDISLITE_DB`
+    This connection takes precedence, overriding behavior related to :const:`dbfilename`
 
     .. note::
         Fully compatible with a full version of ``redis``.
     """
 
-    EXPIRATION = environ.get('EXPIRATION', 60 * 60)  # 1 hour
-    REDISLITE_DB = environ.get('REDISLITE_DB', temp_file('cache_requests.redislite'))
-    connection = environ.get('connection') or StrictRedis(dbfilename=REDISLITE_DB)
+    ex = environ.get('ex', 60 * 60)  # 1 hour
+    dbfilename = environ.get('dbfilename', temp_file('cache_requests.redislite'))
+    connection = environ.get('connection') or partial(StrictRedis, dbfilename=dbfilename)
 
 
 def deep_hash(*args, **kwargs):
@@ -105,43 +105,59 @@ def deep_hash(*args, **kwargs):
     return hash(tuple(frozenset(copied_obj.items())))
 
 
-def redis_memoize(outer_func=None, ex=Config.EXPIRATION, connection=Config.connection):
-    class MemoizeDecorator(object):
-        def __init__(self, inner_func):
-            self.function = inner_func
-            self.connection = connection
-            self.expiration = ex
-            update_wrapper(self, inner_func)
+def redis_memoize(outer_func=None, ex=Config.ex, connection=Config.connection):
+    if outer_func and callable(outer_func):
+        return MemoizeDecorator(outer_func, ex=ex, connection=connection)
 
-        def __call__(self, *args, **kwargs):
-            memo_key = deep_hash(args, kwargs)
+    return partial(MemoizeDecorator, ex=ex, connection=connection)
 
-            if self[memo_key]:
-                logger.debug('Results from cache hash: %s', memo_key)
-                return self[memo_key]
 
-            self[memo_key] = self.function(*args, **kwargs)
-            logger.debug('Caching results for hash: %s ', memo_key)
+class KeepRefs(object):
+    __weakref__ = defaultdict(list)
+
+    def __init__(self):
+        self.__weakref__[self.__class__].append(weakref.ref(self))
+
+    @classmethod
+    def get_instances(cls):
+        for instance_ref in cls.__weakref__[cls]:
+            instance = instance_ref()
+            if instance is not None:
+                yield instance
+
+
+class MemoizeDecorator(KeepRefs):
+    def __init__(self, inner_func, ex=Config.ex, connection=Config.connection):
+        super(MemoizeDecorator, self).__init__()
+        self.function = inner_func
+        self.connection = connection() if callable(connection) else connection
+        self.expiration = ex
+        update_wrapper(self, inner_func)
+
+    def __call__(self, *args, **kwargs):
+        memo_key = deep_hash(args, kwargs)
+
+        if self[memo_key]:
+            logger.debug('Results from cache hash: %s', memo_key)
             return self[memo_key]
 
-        def __setitem__(self, key, value):
-            self.redis.set(name=key, value=pickle.dumps(value), ex=self.expiration)
+        self[memo_key] = self.function(*args, **kwargs)
+        logger.debug('Caching results for hash: %s ', memo_key)
+        return self[memo_key]
 
-        def __getitem__(self, item):
-            value = self.redis.get(item)
-            if not value:
-                return None
+    def __setitem__(self, key, value):
+        self.redis.set(name=key, value=pickle.dumps(value), ex=self.expiration)
 
-            return pickle.loads(value)
+    def __getitem__(self, item):
+        value = self.redis.get(item)
+        if not value:
+            return None
 
-        @property
-        def redis(self):
-            return self.connection
+        return pickle.loads(value)
 
-    if outer_func and callable(outer_func):
-        return MemoizeDecorator(outer_func)
-
-    return MemoizeDecorator
+    @property
+    def redis(self):
+        return self.connection
 
 # class Memoize(object):
 #     """
@@ -152,7 +168,7 @@ def redis_memoize(outer_func=None, ex=Config.EXPIRATION, connection=Config.conne
 #         self.function = function
 #         update_wrapper(self, function)
 #         self.connection = Config.connection()
-#         self.expiration = Config.EXPIRATION
+#         self.expiration = Config.ex
 #
 #     @property
 #     def redis(self):

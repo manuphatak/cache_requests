@@ -3,8 +3,8 @@
 import logging
 from cache_requests import requests, Config
 
-Config.EXPIRATION = 15
-Config.REDISLITE_DB = 'redis/requests.redislite'
+Config.ex = 15
+Config.dbfilename = 'redis/requests.redislite'
 
 format_ = '%(relativeCreated)-5d %(name)-12s %(levelname)-8s %(message)s'
 logging.basicConfig(level=logging.DEBUG, format=format_)
