@@ -3,8 +3,7 @@
 from __future__ import absolute_import
 
 import logging
-import weakref
-from collections import defaultdict
+from collections import namedtuple
 from copy import deepcopy
 from functools import partial, update_wrapper
 from os import environ, path
@@ -23,7 +22,7 @@ logger = logging.getLogger(__name__)
 temp_file = partial(path.join, gettempdir())
 
 
-def decorate_requests():
+def patch_requests():
     import requests
 
     # monkeypatch + decorate requests library
@@ -112,23 +111,10 @@ def redis_memoize(outer_func=None, ex=Config.ex, connection=Config.connection):
     return partial(MemoizeDecorator, ex=ex, connection=connection)
 
 
-class KeepRefs(object):
-    __weakref__ = defaultdict(list)
+class MemoizeDecorator(object):
+    _info = namedtuple('MemoizeDecorator', ['hits', 'misses', 'maxsize', 'currsize'])
 
-    def __init__(self):
-        self.__weakref__[self.__class__].append(weakref.ref(self))
-
-    @classmethod
-    def get_instances(cls):
-        for instance_ref in cls.__weakref__[cls]:
-            instance = instance_ref()
-            if instance is not None:
-                yield instance
-
-
-class MemoizeDecorator(KeepRefs):
     def __init__(self, inner_func, ex=Config.ex, connection=Config.connection):
-        super(MemoizeDecorator, self).__init__()
         self.function = inner_func
         self.connection = connection() if callable(connection) else connection
         self.expiration = ex
@@ -158,6 +144,15 @@ class MemoizeDecorator(KeepRefs):
     @property
     def redis(self):
         return self.connection
+
+    @property
+    def cache_info(self):
+        """TODO: use `self._info`, get cache info"""
+        raise NotImplemented
+
+    def cache_clear(self):
+        """TODO: clear cache"""
+        raise NotImplemented
 
 # class Memoize(object):
 #     """

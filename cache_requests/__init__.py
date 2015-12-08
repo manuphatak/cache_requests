@@ -18,11 +18,11 @@ cache_requests
 
 """
 from __future__ import absolute_import
-from .cache_requests import decorate_requests, redis_memoize, Config
+from .cache_requests import patch_requests, redis_memoize, Config
 
 import logging
 
-requests = decorate_requests()
+requests = patch_requests()
 try:  # Python 2.7+
     from logging import NullHandler
 except ImportError:  # pragma: no cover

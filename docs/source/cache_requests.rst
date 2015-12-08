@@ -11,7 +11,7 @@ cache_requests package
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: cache_requests.decorate_requests
+.. automodule:: cache_requests.patch_requests
     :members:
     :undoc-members:
     :show-inheritance:

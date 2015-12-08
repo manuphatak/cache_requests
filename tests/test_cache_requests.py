@@ -14,7 +14,7 @@ from pytest import fixture
 
 
 @fixture
-def amazing_function(tmpdir, request):
+def amazing_function(tmpdir):
     """
     Memoized Decorated function. With a counter
     :param _pytest.python.FixtureRequest request:
