@@ -3,7 +3,6 @@
 from __future__ import absolute_import
 
 import logging
-from collections import namedtuple
 from copy import deepcopy
 from functools import partial, update_wrapper
 from os import environ, path
@@ -34,8 +33,6 @@ def patch_requests():
 class Config:
     """
 
-    """
-    """
     Time in seconds until the key is destroyed.
 
     Default: ``os.environ.get('ex', 60 * 60)``  # 1 hour
@@ -43,8 +40,7 @@ class Config:
     .. tip::
 
         Set to ``None`` for permanent caching.
-    """
-    """
+
     Filepath to redislite DB.
 
     Default: ``os.environ.get('dbfilename', 'cache_requests.redislite')``
@@ -62,8 +58,7 @@ class Config:
     .. note::
 
         ``redislite`` will NOT implicitly create directories.
-    """
-    """
+
     Redis connection handle.
 
     Default: ``os.environ.get('connection', None)``
@@ -112,8 +107,6 @@ def redis_memoize(outer_func=None, ex=Config.ex, connection=Config.connection):
 
 
 class MemoizeDecorator(object):
-    _info = namedtuple('MemoizeDecorator', ['hits', 'misses', 'maxsize', 'currsize'])
-
     def __init__(self, inner_func, ex=Config.ex, connection=Config.connection):
         self.function = inner_func
         self.connection = connection() if callable(connection) else connection
@@ -144,15 +137,6 @@ class MemoizeDecorator(object):
     @property
     def redis(self):
         return self.connection
-
-    @property
-    def cache_info(self):
-        """TODO: use `self._info`, get cache info"""
-        raise NotImplemented
-
-    def cache_clear(self):
-        """TODO: clear cache"""
-        raise NotImplemented
 
 # class Memoize(object):
 #     """

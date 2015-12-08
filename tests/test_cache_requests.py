@@ -8,80 +8,65 @@ test_cache_requests
 Tests for ``cache_requests`` module.
 """
 import time
-from functools import wraps
 
+from mock import Mock
 from pytest import fixture
 
 
 @fixture
 def amazing_function(tmpdir):
     """
-    Memoized Decorated function. With a counter
-    :param _pytest.python.FixtureRequest request:
-
+    :param py.path.local tmpdir:
     """
     from cache_requests import redis_memoize
     from redislite import StrictRedis
 
     db_path = tmpdir.join('test_redis.db').strpath
+    connection = StrictRedis(dbfilename=db_path)
+    wrapper = redis_memoize(ex=1, connection=connection)
+    _amazing_function = Mock()
+    _amazing_function.side_effect = lambda *args, **kwargs: (len(args), len(kwargs))
+    _amazing_function = wrapper(_amazing_function)
 
-    def counter(function):
-        """Count how many times the actual function was called"""
-
-        @wraps(function)
-        def wrapper(*args, **kwargs):
-            wrapper.calls += 1
-            return function(*args, **kwargs)
-
-        wrapper.calls = 0
-        return wrapper
-
-    @redis_memoize(ex=1, connection=StrictRedis(dbfilename=db_path))
-    @counter
-    def _amazing_function(*args, **kwargs):
-        """Sample function, return tuple of length of args and kwargs"""
-        return len(args), len(kwargs)
-
-    assert _amazing_function.function.calls == 0
     return _amazing_function
 
 
-def test_memoized_decorated_function_only_calls_function_once(amazing_function):
+def test_memoized_functions_called_only_once(amazing_function):
     """Function is only called with unique parameters"""
     assert amazing_function.redis.dbsize() == 0
-    assert amazing_function.function.calls == 0
+    assert amazing_function.function.call_count == 0
     assert amazing_function(1, 2, 'three', '45') == (4, 0)
     assert amazing_function(1, 2, 'three', '45') == (4, 0)
     assert amazing_function(1, 2, 'three', '45') == (4, 0)
     assert amazing_function(1, 2, 'three', '45') == (4, 0)
     assert amazing_function(1, 2, 'three', '45') == (4, 0)
     assert amazing_function(1, 2, 'three', '45') == (4, 0)
-    assert amazing_function.function.calls == 1
+    assert amazing_function.function.call_count == 1
     assert amazing_function(1, 2, 'three', '45') == (4, 0)
-    assert amazing_function.function.calls == 1
+    assert amazing_function.function.call_count == 1
     assert amazing_function(1, 2, 'three3', '45') == (4, 0)
-    assert amazing_function.function.calls == 2
+    assert amazing_function.function.call_count == 2
     assert amazing_function(1, 3, 'three', '45') == (4, 0)
-    assert amazing_function.function.calls == 3
+    assert amazing_function.function.call_count == 3
     assert amazing_function(1, 2, 'three', 45) == (4, 0)
-    assert amazing_function.function.calls == 4
+    assert amazing_function.function.call_count == 4
 
     assert amazing_function(1, 2, 'three', 45, this="test") == (4, 1)
-    assert amazing_function.function.calls == 5
+    assert amazing_function.function.call_count == 5
 
     assert amazing_function(1, 2, 'three', 45, this="not", a="test") == (4, 2)
-    assert amazing_function.function.calls == 6
+    assert amazing_function.function.call_count == 6
 
     assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
-    assert amazing_function.function.calls == 7
+    assert amazing_function.function.call_count == 7
     assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
-    assert amazing_function.function.calls == 7
+    assert amazing_function.function.call_count == 7
     assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
-    assert amazing_function.function.calls == 7
+    assert amazing_function.function.call_count == 7
     assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
-    assert amazing_function.function.calls == 7
+    assert amazing_function.function.call_count == 7
     assert amazing_function(1, 2, 'three', 45, this="is not", a="test", or_is="it?") == (4, 3)
-    assert amazing_function.function.calls == 8
+    assert amazing_function.function.call_count == 8
     assert amazing_function.redis.dbsize() == 8
     assert amazing_function.redis.flushdb()
     assert amazing_function.redis.dbsize() == 0
@@ -89,17 +74,17 @@ def test_memoized_decorated_function_only_calls_function_once(amazing_function):
 
 def test_memoized_expiration(amazing_function):
     assert amazing_function.redis.dbsize() == 0
-    assert amazing_function.function.calls == 0
+    assert amazing_function.function.call_count == 0
     assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
-    assert amazing_function.function.calls == 1
-    assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
-    assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
+    assert amazing_function.function.call_count == 1
     assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
     assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
     assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
-    assert amazing_function.function.calls == 1
+    assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
+    assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
+    assert amazing_function.function.call_count == 1
     time.sleep(1)
-    assert amazing_function.function.calls == 1
+    assert amazing_function.function.call_count == 1
     assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
 
-    assert amazing_function.function.calls == 2
+    assert amazing_function.function.call_count == 2
