@@ -21,8 +21,8 @@ from __future__ import absolute_import
 
 import logging
 
-from .cache_requests import redis_memoize, RedisMemoize, Config
-from .patch import patch_requests, unpatch_requests
+from .memoize import redis_memoize, RedisMemoize, Config
+from .sessions import Session
 
 try:  # Python 2.7+
     from logging import NullHandler
@@ -36,4 +36,4 @@ logging.getLogger(__name__).addHandler(NullHandler())
 __author__ = 'Manu Phatak'
 __email__ = 'bionikspoon@gmail.com'
 __version__ = '1.0.0'
-__all__ = ['redis_memoize', 'RedisMemoize', 'Config', 'patch_requests', 'unpatch_requests']
+__all__ = ['redis_memoize', 'RedisMemoize', 'Config', 'Session']

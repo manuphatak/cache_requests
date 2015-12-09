@@ -6,7 +6,7 @@ cache_requests package
     :show-inheritance:
 
 
-.. automodule:: cache_requests.config
+.. automodule:: cache_requests.Config
     :members:
     :undoc-members:
     :show-inheritance:

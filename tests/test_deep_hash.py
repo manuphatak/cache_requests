@@ -5,7 +5,7 @@ from copy import deepcopy
 
 from pytest import fixture
 
-from cache_requests.cache_requests import deep_hash
+from cache_requests.memoize import deep_hash
 
 PYPY = '__pypy__' in sys.builtin_module_names
 PY27 = sys.version_info[0:2] == (2, 7) and not PYPY

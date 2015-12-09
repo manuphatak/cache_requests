@@ -134,9 +134,9 @@ Make a request one time. Cache the results for the rest of your work session.
     import os
 
     if os.environ.get('ENV') == develop:
-        from cache_requests import requests, config
-        config.REDISLITE_DB = 'redis/requests.redislite'
-        config.EXPIRATION = 60 * 60  # 60 min
+        from cache_requests import requests, Config
+        Config.REDISLITE_DB = 'redis/requests.redislite'
+        Config.EXPIRATION = 60 * 60  # 60 min
     else:
         import requests
 
@@ -192,11 +192,11 @@ One line of code to use a ``redis`` full database.
 
 .. code-block:: python
 
-    from cache_requests import requests, config
+    from cache_requests import requests, Config
     # conf.REDIS_CONNECTION  = redis.StrictRedis(host='localhost', port=6379, db=0)
     # let's use lite for now
-    config.REDISLITE_DB = 'redis/requests.redislite'
-    config.EXPIRATION = 7 * 24 * 60 * 60 # 1 week, I hope, for my ego :)
+    Config.REDISLITE_DB = 'redis/requests.redislite'
+    Config.EXPIRATION = 7 * 24 * 60 * 60 # 1 week, I hope, for my ego :)
 
     # TODO: get a non-lame example
     for i in range(1000)
@@ -220,9 +220,9 @@ When your external API/web resource changes. Delete the database, it'll repopula
 
 .. code-block:: python
 
-    from cache_requests import requests, config
-    config.REDISLITE_DB = 'redis/requests.redislite'
-    config.EXPIRATION = None
+    from cache_requests import requests, Config
+    Config.REDISLITE_DB = 'redis/requests.redislite'
+    Config.EXPIRATION = None
 
     def test_weird_things_here()
         assert requests.get('http://amazing_tool') == 'cache_requests'
@@ -238,9 +238,9 @@ Options=Unlimited
 
 .. code-block:: python
 
-    from cache_requests import Memoize, config
-    config.REDISLITE_DB = 'redis/requests.redislite'
-    config.EXPIRATION = 15 * 60 # 15 min
+    from cache_requests import Memoize, Config
+    Config.REDISLITE_DB = 'redis/requests.redislite'
+    Config.EXPIRATION = 15 * 60 # 15 min
 
     @Memoize
     def amazing_but_expensive_function(*args, **kwargs)
@@ -251,11 +251,11 @@ Manually decorate requests.
 
 .. code-block:: python
 
-    from cache_requests import Memoize, config
+    from cache_requests import Memoize, Config
     import requests
 
-    config.REDISLITE_DB = 'redis/requests.redislite'
-    config.EXPIRATION = 15 * 60 # 15 min
+    Config.REDISLITE_DB = 'redis/requests.redislite'
+    Config.EXPIRATION = 15 * 60 # 15 min
 
     requests.get = Memoize(requests.get)
     requests.post = Memoize(requests.post)

@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 # coding=utf-8
 from __future__ import absolute_import
-
 import logging
 import types
 from functools import partial, wraps, update_wrapper
 from os import environ, path
 from tempfile import gettempdir
-
 from redislite import StrictRedis
 from singledispatch import singledispatch
 
@@ -106,7 +104,17 @@ def _(args):
     return hash(frozenset(sorted(args_copy.items())))
 
 
-def redis_memoize(func=None, ex=Config.ex, connection=Config.connection):
+def redis_memoize(func=None, ex=Config.ex, connection=Config.connection, on=True):
+    if not on:
+        def empty_decorator(func):
+            @wraps(func)
+            def wrapper(*args, **kwargs):
+                return func(*args, **kwargs)
+
+            return wrapper
+
+        return empty_decorator
+
     if func is not None and callable(func):
         return RedisMemoize(func, ex=ex, connection=connection)
 
