@@ -22,9 +22,6 @@ logger = logging.getLogger(__name__)
 temp_file = partial(path.join, gettempdir())
 
 
-
-
-
 class Config:
     """
 

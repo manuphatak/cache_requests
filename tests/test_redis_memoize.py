@@ -9,6 +9,7 @@ Tests for ``cache_requests`` module.
 """
 import time
 
+from mock import MagicMock
 from pytest import fixture
 
 
@@ -19,12 +20,11 @@ def amazing_function(tmpdir):
     """
     from cache_requests import redis_memoize
     from redislite import StrictRedis
-    from mock import Mock
 
     def _side_effect(*args, **kwargs):
         return len(args), len(kwargs)
 
-    _amazing_function = Mock(spec=_side_effect, side_effect=_side_effect)
+    _amazing_function = MagicMock(spec=_side_effect, side_effect=_side_effect)
 
     db_path = tmpdir.join('test_redis.db').strpath
     connection = StrictRedis(dbfilename=db_path)
