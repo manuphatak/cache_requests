@@ -3,12 +3,13 @@
 from __future__ import absolute_import
 
 import logging
-from copy import deepcopy
-from functools import partial, update_wrapper
+import types
+from functools import partial, wraps
 from os import environ, path
 from tempfile import gettempdir
 
 from redislite import StrictRedis
+from singledispatch import singledispatch
 
 try:
     # noinspection PyPep8Naming
@@ -74,47 +75,62 @@ class Config:
     connection = environ.get('connection') or partial(StrictRedis, dbfilename=dbfilename)
 
 
-def deep_hash(*args, **kwargs):
+def normalize_signature(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if kwargs:
+            args = args, kwargs
+        if len(args) is 1:
+            args = args[0]
+        return func(args)
+
+    return wrapper
+
+
+@normalize_signature
+@singledispatch
+def deep_hash(args):
     """
     Recursively hash nested mixed objects (dicts, lists, other).
 
-    :param tuple args: an object
+    :param args: an object
     :return: hash representation of the object
     :rtype: int
     """
-    if kwargs:
-        args = args, kwargs
-    if len(args) is 1:
-        args = args[0]
-    if isinstance(args, (set, tuple, list)):
-        return tuple(deep_hash(item) for item in args if item)
-
-    if not isinstance(args, dict):
-        return hash(args)
-
-    copied_obj = deepcopy(args)
-    for key, value in copied_obj.items():
-        copied_obj[key] = deep_hash(value)
-
-    return hash(tuple(frozenset(copied_obj.items())))
+    return hash(args)
 
 
-def redis_memoize(outer_func=None, ex=Config.ex, connection=Config.connection):
+@deep_hash.register(tuple)
+@deep_hash.register(set)
+@deep_hash.register(list)
+def _(args):
+    return hash(tuple(deep_hash(item) for item in args))
+
+
+@deep_hash.register(dict)  # noqa
+def _(args):
+    args_copy = {}
+    for key, value in args.items():
+        args_copy[key] = deep_hash(value)
+    return hash(frozenset(sorted(args_copy.items())))
+
+
+def redis_memoize(outer_func=None, *, ex=Config.ex, connection=Config.connection):
     if outer_func and callable(outer_func):
-        return MemoizeDecorator(outer_func, ex=ex, connection=connection)
+        return RedisMemoize(outer_func, ex=ex, connection=connection)
 
-    return partial(MemoizeDecorator, ex=ex, connection=connection)
+    return partial(RedisMemoize, ex=ex, connection=connection)
 
 
-class MemoizeDecorator(object):
-    def __init__(self, inner_func, ex=Config.ex, connection=Config.connection):
-        self.function = inner_func
+class RedisMemoize(object):
+    def __init__(self, function, ex=Config.ex, connection=Config.connection):
+        wraps(function)(self)
+        self.function = function
         self.connection = connection() if callable(connection) else connection
-        self.expiration = ex
-        update_wrapper(self, inner_func)
+        self.ex = ex
 
     def __call__(self, *args, **kwargs):
-        memo_key = deep_hash(args, kwargs)
+        memo_key = deep_hash(*args, **kwargs)
 
         if self[memo_key]:
             logger.debug('Results from cache hash: %s', memo_key)
@@ -125,14 +141,23 @@ class MemoizeDecorator(object):
         return self[memo_key]
 
     def __setitem__(self, key, value):
-        self.redis.set(name=key, value=pickle.dumps(value), ex=self.expiration)
+        if value is None:
+            return False
+
+        return self.redis.set(name=key, value=pickle.dumps(value), ex=self.ex)
 
     def __getitem__(self, item):
         value = self.redis.get(item)
         if not value:
-            return None
+            return value
 
         return pickle.loads(value)
+
+    def __get__(self, instance, _):
+        if instance is None:
+            return self
+        else:
+            return types.MethodType(self, instance)
 
     @property
     def redis(self):
@@ -147,7 +172,7 @@ class MemoizeDecorator(object):
 #         self.function = function
 #         update_wrapper(self, function)
 #         self.connection = Config.connection()
-#         self.expiration = Config.ex
+#         self.ex = Config.ex
 #
 #     @property
 #     def redis(self):
@@ -178,7 +203,7 @@ class MemoizeDecorator(object):
 #         :param key: hash key
 #         :param object value: object to store
 #         """
-#         self.redis.set(name=key, value=pickle.dumps(value), ex=self.expiration)
+#         self.redis.set(name=key, value=pickle.dumps(value), ex=self.ex)
 #
 #     def __call__(self, *args, **kwargs):
 #         """

@@ -4,3 +4,4 @@ requests
 redislite
 pytest
 mock
+singledispatch

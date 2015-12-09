@@ -21,11 +21,17 @@ def amazing_function(tmpdir):
     from cache_requests import redis_memoize
     from redislite import StrictRedis
 
+    def _side_effect(*args, **kwargs):
+        return len(args), len(kwargs)
+
+    assert _side_effect(1, 2, 'three', 45, this="test") == (4, 1)
+    assert _side_effect(1, 2, 'three', 45, this="not", a="test") == (4, 2)
+
     db_path = tmpdir.join('test_redis.db').strpath
     connection = StrictRedis(dbfilename=db_path)
     wrapper = redis_memoize(ex=1, connection=connection)
     _amazing_function = Mock()
-    _amazing_function.side_effect = lambda *args, **kwargs: (len(args), len(kwargs))
+    _amazing_function.side_effect = _side_effect
     _amazing_function = wrapper(_amazing_function)
 
     return _amazing_function

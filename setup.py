@@ -44,10 +44,7 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read().replace('.. :changelog:', '')
 
-# TODO: put package requirements here
-requirements = ['redislite', 'requests']
-
-# TODO: put package test requirements here
+requirements = ['redislite', 'requests', 'singledispatch']
 test_requirements = ['pytest', 'mock']
 
 setup(  # :off

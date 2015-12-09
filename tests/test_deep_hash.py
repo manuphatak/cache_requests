@@ -1,55 +1,92 @@
 #!/usr/bin/env python
 # coding=utf-8
+import sys
+from copy import deepcopy
+
+from pytest import fixture
+
 from cache_requests.cache_requests import deep_hash
-from tests import is_int, PY27
+
+PYPY = '__pypy__' in sys.builtin_module_names
+PY27 = sys.version_info[0:2] == (2, 7) and not PYPY
+PY34 = sys.version_info[0:2] == (3, 4) and not PYPY
 
 
-def test_make_hash_string():
-    """Freeze results"""
-    assert deep_hash('this is a test') == deep_hash('this is a test')
-    assert is_int(deep_hash('this is a test'))
-    assert is_int(deep_hash('this is a test '))
-
-    if PY27:
-        assert deep_hash('this is a test') == -7693282272941567447
-        assert deep_hash('this is a test ') == 1496872550775508506
+def is_int(p_object):
+    return isinstance(p_object, int)
 
 
-def test_make_hash_tuple_of_strings():
-    """Freeze results"""
-    test_tuple = ('this is a test', 'And another')
-    assert deep_hash(test_tuple) == deep_hash(test_tuple)
-
-    hash_1, hash_2 = deep_hash(test_tuple)
-
-    assert is_int(hash_1)
-    assert is_int(hash_2)
-
-    if PY27:
-        assert deep_hash(test_tuple) == (-7693282272941567447, 503894645807253565)
+sample_string_1 = 'this is a test'
+sample_string_2 = """
+                    this is a doc string.
+                    with lines.
+"""
+sample_tuple = sample_string_1, sample_string_2
 
 
-def test_make_hash_mixed():
-    """Freeze results"""
-
-    mixed_object = {
+@fixture
+def sample_object():
+    return deepcopy({
         "this": ["is", "a", {
             "test": ("of", "hashing", "mixed objects", 42)
         }],
         '42': "what a strange dictionary",
         "done": "completed"
-    }
-    assert is_int(deep_hash(mixed_object))
-    if PY27:
-        assert deep_hash(mixed_object) == -2248685659113089918
-    assert deep_hash(mixed_object) == deep_hash(mixed_object)
+    })
 
-    mixed_object['this'][2]['test'] = ("of", "hashing", "mixed objects", 42)
-    assert is_int(deep_hash(mixed_object))
-    if PY27:
-        assert deep_hash(mixed_object) == -2248685659113089918
 
-    mixed_object['this'][2]['test'] = ("of", "ha5hing", "mixed objects", 42)
-    assert is_int(deep_hash(mixed_object))
-    if PY27:
-        assert deep_hash(mixed_object) == 5850416323757308216
+def test_deep_hash_with_string_sample_1():
+    assert deep_hash(sample_string_1) == deep_hash(sample_string_1)
+    assert is_int(deep_hash(sample_string_1))
+
+
+def test_deep_hash_with_string_sample_2():
+    assert deep_hash(sample_string_2) == deep_hash(sample_string_2)
+    assert is_int(deep_hash(sample_string_2))
+
+
+def test_deep_hash_with_tuple():
+    assert deep_hash(sample_tuple) == deep_hash(sample_tuple)
+    assert is_int(deep_hash(sample_tuple))
+
+
+def test_deep_hash_with_mixed_object(sample_object):
+    assert is_int(deep_hash(sample_object))
+    assert deep_hash(sample_object) == deep_hash(sample_object)
+
+
+def test_deep_hash_with_gets_same_results_based_on_value(sample_object):
+    sample_object_1 = sample_object
+    sample_object_2 = deepcopy(sample_object)
+    assert deep_hash(sample_object_1) == deep_hash(sample_object_2)
+
+    sample_object_2['this'][2]['test'] = ("of", "hashing", "mixed objects", 42)
+    assert deep_hash(sample_object_1) == deep_hash(sample_object_2)
+    assert is_int(deep_hash(sample_object_2))
+
+
+def test_deep_hash_with_mutated_mixed_object(sample_object):
+    sample_object_1 = sample_object
+    sample_object_2 = deepcopy(sample_object)
+    assert deep_hash(sample_object_1) == deep_hash(sample_object_2)
+
+    sample_object_2['this'][2]['test'] = ("of", "ha5hing", "mixed objects", 42)
+    assert deep_hash(sample_object_1) != deep_hash(sample_object_2)
+
+    assert is_int(deep_hash(sample_object_2))
+
+
+def test_deep_hash_args_and_kwargs(sample_object):
+    assert deep_hash(*sample_tuple, **sample_object) == deep_hash(*sample_tuple, **sample_object)
+
+
+def test_deep_hash_args_similiar_values():
+    assert deep_hash(1, 2, 'three', '45') != deep_hash(1, 2, 'three3', '45')
+
+
+def test_can_compare_args_and_kwargs():
+    assert deep_hash(1, 2, 'three', 45) != deep_hash(1, 2, 'three', 45, this="test")
+
+
+def test_can_compare_args_and_kwargs_2():
+    assert deep_hash(1, 2, 'three', 45, this="test") != deep_hash(1, 2, 'three', 45, this="not", a="test")
