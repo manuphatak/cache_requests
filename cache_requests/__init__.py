@@ -18,11 +18,12 @@ cache_requests
 
 """
 from __future__ import absolute_import
-from .cache_requests import patch_requests, redis_memoize, Config
 
 import logging
 
-requests = patch_requests()
+from .cache_requests import redis_memoize, RedisMemoize, Config
+from .patch import patch_requests, unpatch_requests
+
 try:  # Python 2.7+
     from logging import NullHandler
 except ImportError:  # pragma: no cover
@@ -32,8 +33,7 @@ except ImportError:  # pragma: no cover
 
 logging.getLogger(__name__).addHandler(NullHandler())
 
-
 __author__ = 'Manu Phatak'
 __email__ = 'bionikspoon@gmail.com'
 __version__ = '1.0.0'
-__all__ = ['requests', 'redis_memoize', 'Config']
+__all__ = ['redis_memoize', 'RedisMemoize', 'Config', 'patch_requests', 'unpatch_requests']

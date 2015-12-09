@@ -22,13 +22,7 @@ logger = logging.getLogger(__name__)
 temp_file = partial(path.join, gettempdir())
 
 
-def patch_requests():
-    import requests
 
-    # monkeypatch + decorate requests library
-    requests.get = redis_memoize(requests.get)
-    requests.post = redis_memoize(requests.post)
-    return requests
 
 
 class Config:
