@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 
 from collections import defaultdict
+from importlib import reload
 
 import requests
 
@@ -31,7 +32,7 @@ def patch_requests():
 
     # noinspection PyUnresolvedReferences
     original_modules['requests'] = requests
-    requests = _patch_requests()
+    _patch_requests()
     requests_patched = True
 
 
