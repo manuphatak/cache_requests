@@ -1,14 +1,19 @@
 #!/usr/bin/env python
 # coding=utf-8
-import logging
-from cache_requests import requests, Config
+from pytest import fixture
 
-Config.ex = 15
-Config.dbfilename = 'redis/requests.redislite'
 
-format_ = '%(relativeCreated)-5d %(name)-12s %(levelname)-8s %(message)s'
-logging.basicConfig(level=logging.DEBUG, format=format_)
 
+@fixture
+def requests():
+    from cache_requests import requests as r, Config
+
+    Config.ex = 1
+    Config.dbfilename = 'redis/requests.redislite'
+
+    return r
+
+def test_requests_properly_patched()
 
 # 1st unique call
 response = requests.get('http://google.com')
@@ -35,16 +40,3 @@ response = requests.get('http://google.com/search', headers=headers, params=payl
 print(response)
 print(response)
 print(response)
-
-# Pay attention to the number of requests made.   Even though there are 10
-# `requests.get`s, there's only 3 requests being sent out.
-
-# Now run it again within 15 seconds.
-
-# This time there was 0 unique `requests.get`s.  It pulls 100% from cache.
-
-# Wait 15 seconds, and run it one last time.  Now that those keys have expired it
-# will resend those requests and repopulate the cache storage.
-
-# One more thing, you may notice.  It runs almost 10x faster when it's not sending
-# requests.

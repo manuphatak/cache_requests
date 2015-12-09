@@ -4,7 +4,7 @@ from __future__ import absolute_import
 
 import logging
 import types
-from functools import partial, wraps
+from functools import partial, wraps, update_wrapper
 from os import environ, path
 from tempfile import gettempdir
 
@@ -115,17 +115,20 @@ def _(args):
     return hash(frozenset(sorted(args_copy.items())))
 
 
-def redis_memoize(outer_func=None, *, ex=Config.ex, connection=Config.connection):
-    if outer_func and callable(outer_func):
-        return RedisMemoize(outer_func, ex=ex, connection=connection)
+def redis_memoize(func=None, ex=Config.ex, connection=Config.connection):
+    if func is not None and callable(func):
+        return RedisMemoize(func, ex=ex, connection=connection)
+
+    if func is not None:
+        raise TypeError('func must be a callable function.')
 
     return partial(RedisMemoize, ex=ex, connection=connection)
 
 
 class RedisMemoize(object):
-    def __init__(self, function, ex=Config.ex, connection=Config.connection):
-        wraps(function)(self)
-        self.function = function
+    def __init__(self, func, ex=Config.ex, connection=Config.connection):
+        update_wrapper(self, func)
+        self.func = func
         self.connection = connection() if callable(connection) else connection
         self.ex = ex
 
@@ -136,7 +139,7 @@ class RedisMemoize(object):
             logger.debug('Results from cache hash: %s', memo_key)
             return self[memo_key]
 
-        self[memo_key] = self.function(*args, **kwargs)
+        self[memo_key] = self.func(*args, **kwargs)
         logger.debug('Caching results for hash: %s ', memo_key)
         return self[memo_key]
 
@@ -168,9 +171,9 @@ class RedisMemoize(object):
 #     Decorator Class.  Standard LRU. With redis key/value caching.
 #     """
 #
-#     def __init__(self, function):
-#         self.function = function
-#         update_wrapper(self, function)
+#     def __init__(self, func):
+#         self.func = func
+#         update_wrapper(self, func)
 #         self.connection = Config.connection()
 #         self.ex = Config.ex
 #
@@ -207,11 +210,11 @@ class RedisMemoize(object):
 #
 #     def __call__(self, *args, **kwargs):
 #         """
-#         Wrap :attr:`self.function`
+#         Wrap :attr:`self.func`
 #
-#         :param args: Arguments passed to decorated function
-#         :param kwargs: Keyword Arguments passed to decorated function
-#         :return: function results
+#         :param args: Arguments passed to decorated func
+#         :param kwargs: Keyword Arguments passed to decorated func
+#         :return: func results
 #         """
 #
 #         memo_key = deep_hash((args, kwargs))
@@ -220,6 +223,6 @@ class RedisMemoize(object):
 #             logger.debug('Results from cache hash: %s', memo_key)
 #             return self[memo_key]
 #
-#         self[memo_key] = self.function(*args, **kwargs)
+#         self[memo_key] = self.func(*args, **kwargs)
 #         logger.info('Caching results for hash: %s ', memo_key)
 #         return self[memo_key]
