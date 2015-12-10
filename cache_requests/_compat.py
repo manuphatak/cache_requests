@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 # coding=utf-8
+"""
+cache_requests._compat
+~~~~~~~~~~~~~~~~~~~~~~
+
+Python 2to3 compatibility handling.
+"""
 import logging
 
 try:  # Python 2.7+

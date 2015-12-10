@@ -1,5 +1,20 @@
 #!/usr/bin/env python
 # coding=utf-8
+"""
+cache_requests.sessions
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Public API:
+
+    * ``Session``
+
+Private API:
+
+    * ``@Memoize``
+    * ``CacheConfig``
+
+
+"""
 from __future__ import absolute_import
 
 from requests import Session as RequestsSession

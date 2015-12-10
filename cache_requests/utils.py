@@ -1,5 +1,16 @@
 #!/usr/bin/env python
 # coding=utf-8
+"""
+cache_requests.utils
+~~~~~~~~~~~~~~~~~~~~~~
+
+Private API:
+
+    * ``AttributeDict``
+    * ``deep_hash``
+    * ``@normalize_signature``
+
+"""
 from __future__ import absolute_import
 
 from collections import namedtuple

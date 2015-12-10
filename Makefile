@@ -75,7 +75,7 @@ coverage:
 
 docs: clean-docs
 	# -P include private; -M modules first (before submodules); -T No TOC
-	sphinx-apidoc -PMT --output-dir=$(DOCSSOURCEDIR)/ cache_requests
+	sphinx-apidoc -PMTE --output-dir=$(DOCSSOURCEDIR)/ cache_requests
 	$(MAKE) -C docs html
 	$(BROWSER) $(DOCSBUILDDIR)/html/index.html
 

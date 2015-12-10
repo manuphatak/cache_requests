@@ -105,11 +105,13 @@ Production: Web Scraping
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Automatically expire old content.
+
     * How often? After a day? A week? A Month? etc.  100% of this logic is built in with the ``config.ex`` setting.
     * Effectively it can manage all of the time-based rotation.
     * Perfect if you theres more data then what your API caps allow.
 
 One line of code to use a ``redis`` full database.
+
     * Try ``redislite``; it can handle quite a bit.  The ``redislite`` api used by this module is 1:1 with the redis package.  Just replace the connection parameter/config value.
     * ``redis`` is a drop in:
 

@@ -1,5 +1,18 @@
 #!/usr/bin/env python
 # coding=utf-8
+"""
+cache_requests.config
+~~~~~~~~~~~~~~~~~~~~~~
+
+Global config, default settings.
+
+These are all easily overridden following python scope rules. Hierarchy: instance variables > class variables > config settings > environment variable settings.
+
+.. note ::
+
+    Environment variables are all caps prefixed with ``REDIS_``
+
+"""
 from __future__ import absolute_import
 
 from functools import partial

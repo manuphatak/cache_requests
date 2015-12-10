@@ -1,5 +1,17 @@
 #!/usr/bin/env python
 # coding=utf-8
+"""
+cache_requests.memoize
+~~~~~~~~~~~~~~~~~~~~~~
+
+Public Api:
+
+    * ``@memoize``: Simple recipe for decorator that optionally takes parameters
+    * ``@RedisMemoize``  The actual decorator.
+
+    ``@memoize`` is a perfectly valid LRU cache (using redislite).  It can be applied to most any function.
+
+"""
 from __future__ import absolute_import
 
 import logging
