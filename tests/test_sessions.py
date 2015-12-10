@@ -124,21 +124,11 @@ def test_requests_delete(requests, mock_requests):
     assert mock_requests.call_count == 1
     mock_requests.assert_called_with('http://google.com')
 
-# def test_requests_cache_all(requests):
-#     assert requests.cache.get is True
-#     assert requests.cache.options is True
-#     assert requests.cache.head is True
-#     assert requests.cache.post is False
-#     assert requests.cache.put is False
-#     assert requests.cache.patch is False
-#     assert requests.cache.delete is False
-#
-#     requests.cache.all = True
-#
-#     assert requests.cache.get is True
-#     assert requests.cache.options is True
-#     assert requests.cache.head is True
-#     assert requests.cache.post is True
-#     assert requests.cache.put is True
-#     assert requests.cache.patch is True
-#     assert requests.cache.delete is True
+
+def test_memoize_toggled_off(requests, mock_requests):
+    requests.cache.get = False
+
+    mock_requests.assert_not_called()
+    requests.get('http://google.com')
+    requests.get('http://google.com')
+    assert mock_requests.call_count == 2
