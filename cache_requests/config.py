@@ -12,6 +12,6 @@ temp_file = partial(path.join, gettempdir())
 
 __all__ = ['ex', 'dbfilename', 'connection']
 
-ex = environ.get('ex', 60 * 60)  # 1 hour
-dbfilename = environ.get('dbfilename', temp_file('cache_requests.redislite'))
-connection = environ.get('connection') or partial(StrictRedis, dbfilename=dbfilename)
+ex = environ.get('REDIS_EX', 60 * 60)  # 1 hour
+dbfilename = environ.get('REDIS_DBFILENAME', temp_file('cache_requests.redislite'))
+connection = environ.get('REDIS_CONNECTION') or partial(StrictRedis, dbfilename=dbfilename)
