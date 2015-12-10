@@ -1,13 +1,19 @@
-.. include:: ../../README.rst
+Welcome to cache_requests's documentation!
+==========================================
+
+Contents:
+=========
 
 .. toctree::
    :maxdepth: 4
 
    Readme <readme>
-   contributing
-   authors
-   history
-   Code Documentation <cache_requests>
+   Installation <installation>
+   Usage <usage>
+   Contributing <contributing>
+   Authors <authors>
+   History <history>
+   API Docs <cache_requests>
 
 Feedback
 ========

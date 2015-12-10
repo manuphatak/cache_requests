@@ -4,9 +4,16 @@
 History
 =======
 
-Next Release
-------------
+Next Release (2.0.0)
+--------------------
 
+* TODO: Rewrite docs
+* API completely rewritten; using ``requests.Session`` instead of monkeypatching.
+* Entire package is redesigned to be more maintainable, more modular, and more usable.
+* Dependencies are pinned.
+* Tests are expanded.
+* PY26 support is dropped, because of dependency constraints.
+* PY35 support is added.
 
 1.0.0 (2015-04-23)
 ------------------
