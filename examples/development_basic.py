@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 # coding=utf-8
 import logging
-from cache_requests import requests, Config
 
-Config.ex = 15
-Config.dbfilename = 'redis/requests.redislite'
+from cache_requests import Session, config
 
+# setup log (used internally)
 format_ = '%(relativeCreated)-5d %(name)-12s %(levelname)-8s %(message)s'
 logging.basicConfig(level=logging.DEBUG, format=format_)
+
+config.ex = 15  # 15 seconds, default: 60 minutes
+requests = Session()
 
 
 # 1st unique call
@@ -15,7 +17,10 @@ response = requests.get('http://google.com')
 response = requests.get('http://google.com')
 response = requests.get('http://google.com')
 
-headers = {"accept-encoding": "gzip, deflate, sdch", "accept-language": "en-US,en;q=0.8"}
+headers = {
+    "accept-encoding": "gzip, deflate, sdch",
+    "accept-language": "en-US,en;q=0.8"
+}
 payload = dict(sourceid="chrome-instant", ion="1", espv="2", ie="UTF-8", client="ubuntu",
                q="hash%20a%20dictionary%20python")
 # 2nd unique call
