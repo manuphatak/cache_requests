@@ -13,7 +13,7 @@ from .utils import deep_hash
 logger = logging.getLogger(__name__)
 
 
-def memoize(func=None, ex=config.ex, connection=config.connection):
+def memoize(func=None, ex=None, connection=None):
     if func is not None and callable(func):
         return RedisMemoize(func, ex=ex, connection=connection)
 
@@ -24,11 +24,12 @@ def memoize(func=None, ex=config.ex, connection=config.connection):
 
 
 class RedisMemoize(object):
-    def __init__(self, func, ex=config.ex, connection=config.connection):
+    def __init__(self, func, ex=None, connection=None):
         update_wrapper(self, func)
         self.func = func
+        connection = config.connection if connection is None else connection
         self.connection = connection() if callable(connection) else connection
-        self.ex = ex
+        self.ex = config.ex if ex is None else ex
 
     def __call__(self, *args, **kwargs):
         memo_key = deep_hash(*args, **kwargs)
@@ -56,7 +57,7 @@ class RedisMemoize(object):
 
     def __get__(self, instance, _):
         if instance is None:
-            return self
+            return self  # pragma: no cover
         else:
             return types.MethodType(self, instance)
 

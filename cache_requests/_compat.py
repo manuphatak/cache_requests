@@ -17,8 +17,7 @@ except ImportError:
 
 try:
     from functools import singledispatch
-except ImportError:
-
+except ImportError:  # pragma: no cover
     from singledispatch import singledispatch
 
 __all__ = ['pickle', 'singledispatch', 'NullHandler']

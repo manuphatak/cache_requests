@@ -14,10 +14,8 @@ from pytest import fixture, raises
 
 
 @fixture
-def amazing_function(tmpdir):
-    """
-    :param py.path.local tmpdir:
-    """
+def amazing_function():
+    from cache_requests import config
     from redislite import StrictRedis
 
     def _side_effect(*args, **kwargs):
@@ -25,8 +23,7 @@ def amazing_function(tmpdir):
 
     _amazing_function = MagicMock(spec=_side_effect, side_effect=_side_effect)
 
-    db_path = tmpdir.join('test_redis.db').strpath
-    connection = StrictRedis(dbfilename=db_path)
+    connection = StrictRedis(dbfilename=config.dbfilename)
 
     from cache_requests import memoize
 
@@ -97,3 +94,29 @@ def test_raises_with_bad_params():
 
     with raises(TypeError):
         memoize(func=1)
+
+
+def test_access_to_memoized_functions_attributes():
+    from cache_requests import memoize, config
+
+    config.ex = 1
+
+    @memoize
+    def hello():
+        pass
+
+    assert hello.ex == 1 == config.ex
+
+
+def test_decorator_with_params():
+    from cache_requests import memoize, config
+
+    assert config.ex == 3600
+
+    @memoize(ex=1)
+    def hello():
+        pass
+
+    assert hello.ex == 1
+    hello()
+    assert hello.redis.dbsize() == 0
