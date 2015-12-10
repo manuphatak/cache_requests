@@ -36,7 +36,7 @@ class AttributeDict(object):
         setattr(self, key, value)
 
     def __getitem__(self, item):
-        getattr(self, item)
+        return getattr(self, item)
 
     def __repr__(self):
         _info = namedtuple(self.__class__.__name__, self.__attr__)
