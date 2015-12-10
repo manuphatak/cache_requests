@@ -10,7 +10,7 @@ Tests for ``cache_requests`` module.
 import time
 
 from mock import MagicMock
-from pytest import fixture
+from pytest import fixture, raises
 
 
 @fixture
@@ -18,7 +18,6 @@ def amazing_function(tmpdir):
     """
     :param py.path.local tmpdir:
     """
-    from cache_requests import redis_memoize
     from redislite import StrictRedis
 
     def _side_effect(*args, **kwargs):
@@ -29,7 +28,9 @@ def amazing_function(tmpdir):
     db_path = tmpdir.join('test_redis.db').strpath
     connection = StrictRedis(dbfilename=db_path)
 
-    return redis_memoize(_amazing_function, ex=1, connection=connection)
+    from cache_requests import memoize
+
+    return memoize(_amazing_function, ex=1, connection=connection)
 
 
 def test_memoized_function_called_only_once_per_arguments(amazing_function):
@@ -73,7 +74,7 @@ def test_memoized_function_called_only_once_per_arguments(amazing_function):
     assert amazing_function.redis.dbsize() == 0
 
 
-def test__expiration(amazing_function):
+def test_expiration(amazing_function):
     assert amazing_function.redis.dbsize() == 0
     assert amazing_function.func.call_count == 0
     assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
@@ -89,3 +90,10 @@ def test__expiration(amazing_function):
     assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
 
     assert amazing_function.func.call_count == 2
+
+
+def test_raises_with_bad_params():
+    from cache_requests import memoize
+
+    with raises(TypeError):
+        memoize(func=1)

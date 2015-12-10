@@ -1,15 +1,10 @@
 #!/usr/bin/env python
 # coding=utf-8
-import sys
 from copy import deepcopy
 
 from pytest import fixture
 
-from cache_requests.memoize import deep_hash
-
-PYPY = '__pypy__' in sys.builtin_module_names
-PY27 = sys.version_info[0:2] == (2, 7) and not PYPY
-PY34 = sys.version_info[0:2] == (3, 4) and not PYPY
+from cache_requests.utils import deep_hash
 
 
 def is_int(p_object):

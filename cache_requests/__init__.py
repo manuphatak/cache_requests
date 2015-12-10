@@ -21,19 +21,13 @@ from __future__ import absolute_import
 
 import logging
 
-from .memoize import redis_memoize, RedisMemoize, Config
+from ._compat import NullHandler
+from .memoize import memoize, RedisMemoize
 from .sessions import Session
-
-try:  # Python 2.7+
-    from logging import NullHandler
-except ImportError:  # pragma: no cover
-    class NullHandler(logging.Handler):
-        def emit(self, record):
-            pass
 
 logging.getLogger(__name__).addHandler(NullHandler())
 
 __author__ = 'Manu Phatak'
 __email__ = 'bionikspoon@gmail.com'
 __version__ = '1.0.0'
-__all__ = ['redis_memoize', 'RedisMemoize', 'Config', 'Session']
+__all__ = ['config', 'Session', 'memoize', 'RedisMemoize', ]

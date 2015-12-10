@@ -8,7 +8,7 @@ from pytest import fixture
 @fixture
 def mock_requests(monkeypatch, tmpdir):
     """:type request: _pytest.python.FixtureRequest"""
-    from cache_requests import Config
+    from cache_requests import config
 
     def mock_response(*args, **kwargs):
         return args, kwargs
@@ -23,8 +23,8 @@ def mock_requests(monkeypatch, tmpdir):
     monkeypatch.setattr('requests.sessions.Session.patch', mock)
     monkeypatch.setattr('requests.sessions.Session.delete', mock)
 
-    Config.ex = 1
-    Config.dbfilename = tmpdir.join('test_redis.db').strpath
+    config.ex = 1
+    config.dbfilename = tmpdir.join('test_redis.db').strpath
 
     return mock
 
@@ -36,7 +36,7 @@ def requests():
     return Session()
 
 
-def test_requests_get_properly_patched(requests, mock_requests):
+def test_requests_get(requests, mock_requests):
     mock_requests.assert_not_called()
     # 1st unique call
     requests.get('http://google.com')
@@ -69,8 +69,76 @@ def test_requests_get_properly_patched(requests, mock_requests):
     assert mock_requests.call_count == 3
 
 
-def test_requests_posts_properly_patched(requests, mock_requests):
+def test_requests_options(requests, mock_requests):
     mock_requests.assert_not_called()
+    requests.options('http://google.com')
+    requests.options('http://google.com')
+    assert mock_requests.call_count == 1
+    mock_requests.assert_called_with('http://google.com')
+
+
+def test_requests_head(requests, mock_requests):
+    mock_requests.assert_not_called()
+    requests.head('http://google.com')
+    requests.head('http://google.com')
+    assert mock_requests.call_count == 1
+    mock_requests.assert_called_with('http://google.com')
+
+
+def test_requests_post(requests, mock_requests):
+    requests.cache.post = True
+
+    mock_requests.assert_not_called()
+    requests.post('http://google.com')
     requests.post('http://google.com')
     assert mock_requests.call_count == 1
     mock_requests.assert_called_with('http://google.com', data=None, json=None)
+
+
+def test_requests_put(requests, mock_requests):
+    requests.cache.put = True
+
+    mock_requests.assert_not_called()
+    requests.put('http://google.com')
+    requests.put('http://google.com')
+    assert mock_requests.call_count == 1
+    mock_requests.assert_called_with('http://google.com', data=None)
+
+
+def test_requests_patch(requests, mock_requests):
+    requests.cache.patch = True
+
+    mock_requests.assert_not_called()
+    requests.patch('http://google.com')
+    requests.patch('http://google.com')
+    assert mock_requests.call_count == 1
+    mock_requests.assert_called_with('http://google.com', data=None)
+
+
+def test_requests_delete(requests, mock_requests):
+    requests.cache.delete = True
+
+    mock_requests.assert_not_called()
+    requests.delete('http://google.com')
+    requests.delete('http://google.com')
+    assert mock_requests.call_count == 1
+    mock_requests.assert_called_with('http://google.com')
+
+# def test_requests_cache_all(requests):
+#     assert requests.cache.get is True
+#     assert requests.cache.options is True
+#     assert requests.cache.head is True
+#     assert requests.cache.post is False
+#     assert requests.cache.put is False
+#     assert requests.cache.patch is False
+#     assert requests.cache.delete is False
+#
+#     requests.cache.all = True
+#
+#     assert requests.cache.get is True
+#     assert requests.cache.options is True
+#     assert requests.cache.head is True
+#     assert requests.cache.post is True
+#     assert requests.cache.put is True
+#     assert requests.cache.patch is True
+#     assert requests.cache.delete is True
