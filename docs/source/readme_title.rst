@@ -1,3 +1,5 @@
+:orphan:
+
 ==============
 cache_requests
 ==============
@@ -38,4 +40,3 @@ cache_requests
     :alt: License
 
 **Simple. Powerful. Persistent LRU caching for the requests library.**
-

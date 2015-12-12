@@ -51,28 +51,36 @@ def read_file(file_name):
 
 
 def read_text(text):
+    """:param str text:"""
     yield from text.splitlines(True)
 
 
 def concatenate(sources):
+    """:param ((str)) sources:"""
     for source in sources:
         yield from source
         yield '\n\n'
 
 
 def sanitize(lines):
+    """:param (str) lines:"""
     # optional: text manipulation goes here.
     for line in lines:
+        if line.startswith(':orphan:'):
+            continue
+
         yield line
 
 
 def write_file(file_name, lines):
+    """:param (str) lines:"""
     with open(file_name, 'w') as f:
         for line in lines:
             yield f.write(line)
 
 
 def notify(lines):
+    """:param (str) lines:"""
     print('Writing', README, end='')
     for i, line in enumerate(lines):
         if i % 5 is 0:

@@ -1,5 +1,7 @@
+:orphan:
+
 Features
-========
+--------
 
 * Free software: MIT license
 * Documentation: https://cache_requests.readthedocs.org.

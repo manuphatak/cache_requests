@@ -1,5 +1,7 @@
+:orphan:
+
 Credits
-=======
+-------
 
 Tools used in rendering this package:
 
