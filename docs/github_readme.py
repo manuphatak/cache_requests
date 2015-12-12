@@ -34,12 +34,10 @@ def include_documents(*_):
 # PRE CONFIGURED PARTIALS
 # ----------------------------------------------------------------------------
 def read_source(file_name):
-    # noinspection PyCompatibility
     yield from read_file(SOURCE(file_name))
 
 
 def write_out(lines):
-    # noinspection PyCompatibility
     yield from write_file(OUT_FILE, lines)
 
 
@@ -47,18 +45,15 @@ def write_out(lines):
 # ----------------------------------------------------------------------------
 def read_file(file_name):
     with open(file_name) as f:
-        # noinspection PyCompatibility
         yield from f
 
 
 def read_text(text):
-    # noinspection PyCompatibility
     yield from text.splitlines(True)
 
 
 def concatenate(file_iterators):
     for file_iterator in file_iterators:
-        # noinspection PyCompatibility
         yield from file_iterator
         yield '\n\n'
 
@@ -90,10 +85,8 @@ def notify(lines):
 # ----------------------------------------------------------------------------
 def pipeline(steps, initial=None):
     def apply(result, step):
-        # noinspection PyCompatibility
         yield from step(result)
 
-    # noinspection PyCompatibility
     yield from reduce(apply, steps, initial)
 
 
