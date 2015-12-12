@@ -31,11 +31,7 @@ To use ``cache_requests`` in a project::
 
 Config Options
 --------------
-
-::
-
-    >>
-
+    * TODO
 
 Use Case Scenarios
 ------------------

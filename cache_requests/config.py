@@ -1,16 +1,47 @@
 #!/usr/bin/env python
 # coding=utf-8
 """
-cache_requests.config
-~~~~~~~~~~~~~~~~~~~~~~
+:mod:`cache_requests.config`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Global config, default settings.
+.. module:: cache_requests.config
+    :synopsis: Global config, default package settings.
+.. moduleauthor:: Manu Phatak <bionikspoon@gmail.com>
 
-These are all easily overridden following python scope rules. Hierarchy: instance variables > class variables > config settings > environment variable settings.
+Global config, default package settings.
 
-.. note ::
+.. note:: Environment variables are all caps prefixed with ``REDIS_``
 
-    Environment variables are all caps prefixed with ``REDIS_``
+.. data:: ex
+
+    Default expiration for cached keys in seconds.
+
+    :default: ``3600``  # 1 hour
+    :env: :envvar:`REDIS_EX`
+
+    .. tip:: Set to ``None`` for permanent caching.
+
+.. data:: dbfilename
+
+    Filepath for :mod:`redislite` connection.
+
+    :default: ``temp_file('cache_requests.redislite')``
+    :env: :envvar:`REDIS_EX`
+
+    .. tip:: :mod:`redislite` will automatically use a unique tmp file if this is set to ``None``.  This can be used
+    to turn off persistence between sessions.
+
+    .. note:: :mod:`redislite` will NOT implicitly create directories.
+
+.. data:: connection
+
+    Callback to create a :mod:`redislite` connection handle.  This can be either callable or already opened.
+
+    :default: ``functools.partial(redislite.StrictRedis, dbfilename=config.dbfilename)``
+    :env: :envvar:`REDIS_CONNECTION`
+
+    .. tip:: Use a :mod:`redis` connection here as a drop in replacement.
+
 
 """
 from __future__ import absolute_import

@@ -1,14 +1,22 @@
 #!/usr/bin/env python
 # coding=utf-8
 """
-cache_requests.utils
-~~~~~~~~~~~~~~~~~~~~~~
+:mod:`cache_requests.utils`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Private API:
+.. module:: cache_requests.utils
+    :synopsis:
+.. moduleauthor:: Manu Phatak <bionikspoon@gmail.com>
 
-    * ``AttributeDict``
-    * ``deep_hash``
-    * ``@normalize_signature``
+
+
+Private API
+***********
+    * :class:`AttributeDict`
+    * :func:`deep_hash`
+    * :func:`normalize_signature`
+Source
+******
 
 """
 from __future__ import absolute_import
@@ -18,7 +26,7 @@ from functools import wraps
 
 from ._compat import singledispatch
 
-__all__ = ['deep_hash', 'AttributeDict']
+__all__ = ['AttributeDict', 'normalize_signature', 'deep_hash']
 
 
 class AttributeDict(object):

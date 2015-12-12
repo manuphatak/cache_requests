@@ -1,16 +1,21 @@
 #!/usr/bin/env python
 # coding=utf-8
 """
-cache_requests.memoize
-~~~~~~~~~~~~~~~~~~~~~~
+:mod:`cache_requests.memoize`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Public Api:
+.. module:: cache_requests.memoize
+    :synopsis: Memoize cache decorator.
+.. moduleauthor:: Manu Phatak <bionikspoon@gmail.com>
 
-    * ``@memoize``: Simple recipe for decorator that optionally takes parameters
-    * ``@Memoize``  The actual decorator.
+:class:`Memoize` cache decorator.
 
-    ``@memoize`` is a perfectly valid LRU cache (using redislite).  It can be applied to most any function.
+Public Api
+**********
+    * :class:`Memoize`
 
+Source
+******
 """
 from __future__ import absolute_import
 
@@ -24,11 +29,22 @@ from .utils import deep_hash
 
 logger = logging.getLogger(__name__)
 
+__all__ = ['Memoize']
+
 
 class Memoize(object):
+    """Class decorator.  Implements LRU cache pattern with :mod:`redislite` storage."""
     _ex = NotImplemented
 
     def __new__(cls, func=None, ex=None, connection=None):
+        """
+
+        :param func:
+        :param ex:
+        :param connection:
+        :return:
+        """
+
         if func is not None and callable(func):
             return object.__new__(cls)
 
@@ -38,6 +54,14 @@ class Memoize(object):
         return partial(cls, ex=ex, connection=connection)
 
     def __init__(self, func, ex=None, connection=None):
+        """
+
+        :param func:
+        :param ex:
+        :param connection:
+        :return:
+        """
+
         update_wrapper(self, func)
         self.func = func
         connection = config.connection if connection is None else connection
@@ -45,6 +69,13 @@ class Memoize(object):
         self.ex = ex
 
     def __call__(self, *args, **kwargs):
+        """
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
+
         memo_key = deep_hash(*args, **kwargs)
 
         if self[memo_key]:
@@ -56,12 +87,24 @@ class Memoize(object):
         return self[memo_key]
 
     def __setitem__(self, key, value):
+        """
+
+        :param key:
+        :param value:
+        :return:
+        """
         if value is None:
             return False
 
         return self.redis.set(name=key, value=pickle.dumps(value), ex=self.ex)
 
     def __getitem__(self, item):
+        """
+
+        :param item:
+        :return:
+        """
+
         value = self.redis.get(item)
         if not value:
             return value
@@ -69,6 +112,13 @@ class Memoize(object):
         return pickle.loads(value)
 
     def __get__(self, instance, _):
+        """
+
+        :param instance:
+        :param _:
+        :return:
+        """
+
         if instance is None:
             return self  # pragma: no cover
         else:
@@ -76,12 +126,28 @@ class Memoize(object):
 
     @property
     def redis(self):
+        """
+
+        :return:
+        """
+
         return self.connection
 
     @property
     def ex(self):
+        """
+
+        :return:
+        """
+
         return self._ex or config.ex
 
     @ex.setter
     def ex(self, value):
+        """
+
+        :param value:
+        :return:
+        """
+
         self._ex = value

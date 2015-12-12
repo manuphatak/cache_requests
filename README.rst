@@ -122,6 +122,11 @@ To use ``cache_requests`` in a project::
     >>> r.json()
     {u'private_gists': 419, u'total_private_repos': 77, ...}
 
+
+Config Options
+--------------
+    * TODO
+
 Use Case Scenarios
 ------------------
 

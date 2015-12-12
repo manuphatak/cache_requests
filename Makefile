@@ -69,7 +69,7 @@ test-all: lint
 
 coverage:
 	coverage run --source cache_requests setup.py test
-	coverage report -m
+	coverage report --show-missing
 	coverage html
 	$(BROWSER) htmlcov/index.html
 	$(MAKE) -C docs coverage
@@ -77,14 +77,27 @@ coverage:
 readme:
 	python3 docs/github_readme.py
 
-docs: clean-docs readme
-	# -P include private; -M modules first (before submodules); -T No TOC
-	sphinx-apidoc -PMTE --output-dir=$(DOCSSOURCEDIR)/ cache_requests
+docs: clean-docs builddocs readme
+
+builddocs: builddocs
+	sphinx-apidoc \
+		--private \
+		--no-toc \
+		--module-first \
+		--no-headings \
+		--output-dir=$(DOCSSOURCEDIR)/ cache_requests
 	$(MAKE) -C docs html
-	$(BROWSER) $(DOCSBUILDDIR)/html/index.html
+
 
 servedocs: docs
-	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
+	$(BROWSER) $(DOCSBUILDDIR)/html/index.html
+	watchmedo shell-command \
+		--pattern '*.rst;*.py' \
+		--command '$(MAKE) builddocs' \
+		--ignore-pattern '$(DOCSBUILDDIR)/*;$(DOCSSOURCEDIR)/cache_requests.rst' \
+		--ignore-directories \
+		--recursive
+
 
 release: clean docs
 	python setup.py sdist upload

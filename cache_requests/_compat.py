@@ -1,11 +1,17 @@
 #!/usr/bin/env python
 # coding=utf-8
 """
-cache_requests._compat
-~~~~~~~~~~~~~~~~~~~~~~
+:mod:`cache_requests._compat`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. module:: cache_requests._compat
+    :synopsis: Python 2to3 compatibility handling.
+.. moduleauthor:: Manu Phatak <bionikspoon@gmail.com>
 
 Python 2to3 compatibility handling.
+
 """
+
 import logging
 
 try:  # Python 2.7+
@@ -25,6 +31,3 @@ try:
     from functools import singledispatch
 except ImportError:  # pragma: no cover
     from singledispatch import singledispatch
-
-# noinspection PyUnresolvedReferences
-__all__ = ['pickle', 'singledispatch', 'NullHandler']

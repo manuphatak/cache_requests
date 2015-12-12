@@ -1,75 +1,96 @@
 #!/usr/bin/env python
 # coding=utf-8
 """
-cache_requests.sessions
-~~~~~~~~~~~~~~~~~~~~~~~
+:mod:`cache_requests.sessions`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Public API:
-
-    * ``Session``
-
-Private API:
-
-    * ``@Memoize``
-    * ``CacheConfig``
+.. module:: cache_requests.sessions
+    :synopsis:
+.. moduleauthor:: Manu Phatak <bionikspoon@gmail.com>
 
 
+Public Api
+**********
+    * :class:`Session`
+
+Private API
+***********
+    * :class:`MemoizeRequest`
+    * :class:`CacheConfig`
+
+Source
+******
 """
 from __future__ import absolute_import
 
 from requests import Session as RequestsSession
 
-from .memoize import Memoize as RedisMemoize
+from .memoize import Memoize
 from .utils import AttributeDict
 
-__all__ = ['Session']
+__all__ = ['MemoizeRequest', 'CacheConfig', 'Session']
 
 
-class Memoize(RedisMemoize):
+class MemoizeRequest(Memoize):
+    """Cache session method calls."""
+
     def __call__(self, this, *args, **kwargs):
+        """
+
+        :param this:
+        :param args:
+        :param kwargs:
+        :return:
+        """
         override = this.cache.all is None
         use_cache = getattr(this.cache, self.func.__name__) if override else override
 
         if not use_cache:
             return self.func(this, *args, **kwargs)
 
-        return super(Memoize, self).__call__(this, *args, **kwargs)
+        return super(MemoizeRequest, self).__call__(this, *args, **kwargs)
 
 
 class CacheConfig(AttributeDict):
+    """A strict dict with attribute access."""
     __attr__ = 'get', 'options', 'head', 'post', 'put', 'patch', 'delete', 'all'
 
 
 class Session(RequestsSession):
+    """:class:`requests.Session` with memoized methods."""
+
     def __init__(self):
+        """
+        Set reference to cache configuration on object.
+        """
         super(Session, self).__init__()
         self.cache = CacheConfig(get=True, options=True, head=True, post=False, put=False, patch=False, delete=False,
                                  all=None)
 
-    @Memoize
+    @MemoizeRequest
     def get(self, url, **kwargs):
         return super(Session, self).get(url, **kwargs)
 
-    @Memoize
+    @MemoizeRequest
     def options(self, url, **kwargs):
         return super(Session, self).options(url, **kwargs)
 
-    @Memoize
+    @MemoizeRequest
     def head(self, url, **kwargs):
         return super(Session, self).head(url, **kwargs)
 
-    @Memoize
+    @MemoizeRequest
     def post(self, url, data=None, json=None, **kwargs):
         return super(Session, self).post(url, data=data, json=json, **kwargs)
 
-    @Memoize
+    @MemoizeRequest
     def put(self, url, data=None, **kwargs):
         return super(Session, self).put(url, data=data, **kwargs)
 
-    @Memoize
+    @MemoizeRequest
     def patch(self, url, data=None, **kwargs):
         return super(Session, self).patch(url, data=data, **kwargs)
 
-    @Memoize
+    @MemoizeRequest
     def delete(self, url, **kwargs):
         return super(Session, self).delete(url, **kwargs)
