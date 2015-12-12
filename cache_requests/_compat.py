@@ -11,8 +11,9 @@
 Python 2to3 compatibility handling.
 
 """
-
 import logging
+
+__all__ = ['NullHandler', 'pickle', 'singledispatch']
 
 try:  # Python 2.7+
     from logging import NullHandler

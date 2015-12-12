@@ -5,10 +5,10 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. module:: cache_requests.utils
-    :synopsis:
+    :synopsis: Package utilities.
 .. moduleauthor:: Manu Phatak <bionikspoon@gmail.com>
 
-
+Package utilities.
 
 Private API
 ***********
@@ -30,14 +30,16 @@ __all__ = ['AttributeDict', 'normalize_signature', 'deep_hash']
 
 
 class AttributeDict(object):
+    """Strict dict with attribute access"""
+
     __attr__ = ()
+    """Allowed attributes.  Must be explicitly defined."""
 
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
             self[key] = value
 
     def __getattr__(self, name):
-
         try:
             return self.__dict__[name]
         except KeyError:
@@ -63,6 +65,8 @@ class AttributeDict(object):
 
 
 def normalize_signature(func):
+    """Decorator.  Combine args and kwargs. Unpack single item tuples."""
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         if kwargs:
@@ -78,10 +82,10 @@ def normalize_signature(func):
 @singledispatch
 def deep_hash(args):
     """
-    Recursively hash nested mixed objects (dicts, lists, other).
+    Recursively hash nested mixed objects (dicts, lists, sets, tuple, hashable objects).
 
-    :param args: an object
-    :return: hash representation of the object
+    :param args: Value to hash.
+    :return: Hashed value.
     :rtype: int
     """
     return hash(args)

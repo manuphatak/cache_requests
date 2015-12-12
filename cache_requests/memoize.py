@@ -33,16 +33,16 @@ __all__ = ['Memoize']
 
 
 class Memoize(object):
-    """Class decorator.  Implements LRU cache pattern with :mod:`redislite` storage."""
+    """Decorator class.  Implements LRU cache pattern that syncs cache with :mod:`redislite` storage."""
     _ex = NotImplemented
 
     def __new__(cls, func=None, ex=None, connection=None):
         """
+        Decorate functions with or without decorator arguments.
 
-        :param func:
-        :param ex:
-        :param connection:
-        :return:
+        :param function func: Function to be decorated.
+        :param int ex: Expiration time in seconds.
+        :param connection: Redis connection handle.
         """
 
         if func is not None and callable(func):
@@ -55,11 +55,11 @@ class Memoize(object):
 
     def __init__(self, func, ex=None, connection=None):
         """
+        Set options.
 
-        :param func:
-        :param ex:
-        :param connection:
-        :return:
+        :param function func: Function to be decorated.
+        :param int ex: Expiration time in seconds.
+        :param connection: Redis connection handle.
         """
 
         update_wrapper(self, func)
@@ -70,10 +70,11 @@ class Memoize(object):
 
     def __call__(self, *args, **kwargs):
         """
+        Call decorated function.
 
-        :param args:
-        :param kwargs:
-        :return:
+        :param tuple args: Arguments passed to function.
+        :param dict kwargs: Keyword arguments passed to function.
+        :return: Function results.
         """
 
         memo_key = deep_hash(*args, **kwargs)
@@ -87,23 +88,15 @@ class Memoize(object):
         return self[memo_key]
 
     def __setitem__(self, key, value):
-        """
+        """Store value in key."""
 
-        :param key:
-        :param value:
-        :return:
-        """
         if value is None:
             return False
 
         return self.redis.set(name=key, value=pickle.dumps(value), ex=self.ex)
 
     def __getitem__(self, item):
-        """
-
-        :param item:
-        :return:
-        """
+        """Get results from cache."""
 
         value = self.redis.get(item)
         if not value:
@@ -112,12 +105,7 @@ class Memoize(object):
         return pickle.loads(value)
 
     def __get__(self, instance, _):
-        """
-
-        :param instance:
-        :param _:
-        :return:
-        """
+        # Decorator class best practices.
 
         if instance is None:
             return self  # pragma: no cover
@@ -126,28 +114,16 @@ class Memoize(object):
 
     @property
     def redis(self):
-        """
-
-        :return:
-        """
+        """Provide access to the redis connection handle."""
 
         return self.connection
 
     @property
     def ex(self):
-        """
-
-        :return:
-        """
+        """Lazy load expiration value from config if necessary."""
 
         return self._ex or config.ex
 
     @ex.setter
     def ex(self, value):
-        """
-
-        :param value:
-        :return:
-        """
-
         self._ex = value

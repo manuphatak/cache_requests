@@ -18,7 +18,7 @@ from __future__ import absolute_import
 import logging
 
 from ._compat import NullHandler
-from .memoize import  Memoize
+from .memoize import Memoize
 from .sessions import Session
 
 logging.getLogger(__name__).addHandler(NullHandler())
@@ -26,4 +26,4 @@ logging.getLogger(__name__).addHandler(NullHandler())
 __author__ = 'Manu Phatak'
 __email__ = 'bionikspoon@gmail.com'
 __version__ = '1.0.0'
-__all__ = ['config', 'Session',  'Memoize', ]
+__all__ = ['config', 'Session', 'Memoize']
