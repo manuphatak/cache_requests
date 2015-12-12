@@ -36,12 +36,14 @@ def memoize(func=None, ex=None, connection=None):
 
 
 class RedisMemoize(object):
+    _ex = NotImplemented
+
     def __init__(self, func, ex=None, connection=None):
         update_wrapper(self, func)
         self.func = func
         connection = config.connection if connection is None else connection
         self.connection = connection() if callable(connection) else connection
-        self.ex = config.ex if ex is None else ex
+        self.ex = ex
 
     def __call__(self, *args, **kwargs):
         memo_key = deep_hash(*args, **kwargs)
@@ -76,3 +78,11 @@ class RedisMemoize(object):
     @property
     def redis(self):
         return self.connection
+
+    @property
+    def ex(self):
+        return self._ex or config.ex
+
+    @ex.setter
+    def ex(self, value):
+        self._ex = value

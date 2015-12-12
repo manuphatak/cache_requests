@@ -26,9 +26,6 @@ __all__ = ['Session']
 
 
 class Memoize(RedisMemoize):
-    def __init__(self, *args, **kwargs):
-        super(Memoize, self).__init__(*args, **kwargs)
-
     def __call__(self, this, *args, **kwargs):
         override = this.cache.all is None
         use_cache = getattr(this.cache, self.func.__name__) if override else override
