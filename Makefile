@@ -75,7 +75,7 @@ coverage:
 	$(MAKE) -C docs coverage
 
 readme:
-	python3 github_readme.py
+	python3 docs/github_readme.py
 
 docs: clean-docs readme
 	# -P include private; -M modules first (before submodules); -T No TOC
