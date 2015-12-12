@@ -7,7 +7,7 @@ cache_requests.memoize
 Public Api:
 
     * ``@memoize``: Simple recipe for decorator that optionally takes parameters
-    * ``@RedisMemoize``  The actual decorator.
+    * ``@Memoize``  The actual decorator.
 
     ``@memoize`` is a perfectly valid LRU cache (using redislite).  It can be applied to most any function.
 
@@ -25,18 +25,17 @@ from .utils import deep_hash
 logger = logging.getLogger(__name__)
 
 
-def memoize(func=None, ex=None, connection=None):
-    if func is not None and callable(func):
-        return RedisMemoize(func, ex=ex, connection=connection)
-
-    if func is not None:
-        raise TypeError('func must be a callable function.')
-
-    return partial(RedisMemoize, ex=ex, connection=connection)
-
-
-class RedisMemoize(object):
+class Memoize(object):
     _ex = NotImplemented
+
+    def __new__(cls, func=None, ex=None, connection=None):
+        if func is not None and callable(func):
+            return object.__new__(cls)
+
+        if func is not None:
+            raise TypeError('func must be a callable function.')
+
+        return partial(cls, ex=ex, connection=connection)
 
     def __init__(self, func, ex=None, connection=None):
         update_wrapper(self, func)

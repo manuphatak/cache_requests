@@ -17,6 +17,7 @@ from pytest import fixture, raises
 def amazing_function():
     from cache_requests import config
     from redislite import StrictRedis
+    from cache_requests import Memoize
 
     def _side_effect(*args, **kwargs):
         return len(args), len(kwargs)
@@ -25,9 +26,7 @@ def amazing_function():
 
     connection = StrictRedis(dbfilename=config.dbfilename)
 
-    from cache_requests import memoize
-
-    return memoize(_amazing_function, ex=1, connection=connection)
+    return Memoize(_amazing_function, ex=1, connection=connection)
 
 
 def test_memoized_function_called_only_once_per_arguments(amazing_function):
@@ -90,18 +89,18 @@ def test_expiration(amazing_function):
 
 
 def test_raises_with_bad_params():
-    from cache_requests import memoize
+    from cache_requests import Memoize
 
     with raises(TypeError):
-        memoize(func=1)
+        Memoize(func=1)
 
 
 def test_access_to_memoized_functions_attributes():
-    from cache_requests import memoize, config
+    from cache_requests import Memoize, config
 
     config.ex = 1
 
-    @memoize
+    @Memoize
     def hello():
         pass
 
@@ -109,11 +108,11 @@ def test_access_to_memoized_functions_attributes():
 
 
 def test_decorator_with_params():
-    from cache_requests import memoize, config
+    from cache_requests import Memoize, config
 
     assert config.ex == 3600
 
-    @memoize(ex=1)
+    @Memoize(ex=1)
     def hello():
         pass
 

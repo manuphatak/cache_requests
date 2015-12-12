@@ -11,10 +11,10 @@ def test_session_uses_config():
 
 
 def test_memoize_uses_config():
-    from cache_requests import config, memoize
+    from cache_requests import config, Memoize
     config.ex = 10
 
-    @memoize
+    @Memoize
     def hello():
         pass
 

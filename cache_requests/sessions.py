@@ -19,7 +19,7 @@ from __future__ import absolute_import
 
 from requests import Session as RequestsSession
 
-from .memoize import RedisMemoize
+from .memoize import Memoize as RedisMemoize
 from .utils import AttributeDict
 
 __all__ = ['Session']
