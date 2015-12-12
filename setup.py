@@ -51,7 +51,7 @@ setup(  # :off
     name='cache_requests',
     version='1.0.0',
     description='Simple. Powerful. Persistent LRU caching for the requests library.',
-    long_description='\n\n'.join([readme, __doc__, history]),
+    long_description='\n\n'.join([readme, history]),
     author='Manu Phatak',
     author_email='bionikspoon@gmail.com',
     url='https://github.com/bionikspoon/cache_requests',

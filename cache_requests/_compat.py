@@ -26,4 +26,5 @@ try:
 except ImportError:  # pragma: no cover
     from singledispatch import singledispatch
 
+# noinspection PyUnresolvedReferences
 __all__ = ['pickle', 'singledispatch', 'NullHandler']
