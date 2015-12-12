@@ -66,6 +66,8 @@ def sanitize(lines):
     """:param (str) lines:"""
     # optional: text manipulation goes here.
     for line in lines:
+
+        # rule: remove orphan comments
         if line.startswith(':orphan:'):
             continue
 
