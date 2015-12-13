@@ -7,8 +7,7 @@ python:
   - "3.5"
 
 install:
-  - pip install tox
-  - pip install coveralls
+  - pip install tox coveralls
 
 env:
   - TOXENV=py27
@@ -33,7 +32,7 @@ deploy:
   distributions: sdist bdist_wheel
   user: bionikspoon
   password:
-    secure: PLEASE_REPLACE_ME
+    secure: a2oHURXk+nRy8gW9xfAS5gmJ/jgPKBFgxox6Rfge4XsCAZSY//WuAJTdCPJdumGgpjyOUOXTU7dS2m0joXC/A+JSNvvjSOGQdRHJjbdGQ0J7rM6Nu4DUjTIsS8ZQbks629Nix+GgZW5jiJJqTDKpkkKRb0A6tGFxzykXBA8+faU=
   on:
     tags: true
     repo: bionikspoon/cache_requests
