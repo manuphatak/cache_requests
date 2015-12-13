@@ -156,7 +156,6 @@ To use ``cache_requests`` in a project
 Config Options
 --------------
 
-.. currentmodule:: cache_requests
 
 :mod:`cache_requests.config`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -140,6 +140,9 @@ def rule__everything_else(lines):
         if line.startswith(':orphan:'):
             continue
 
+        if line.startswith('.. currentmodule::'):
+            continue
+
         yield line
 
 
