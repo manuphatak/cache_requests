@@ -10,7 +10,7 @@
 .. role:: envvar(literal)
 
 
-.. Source defined in readme_title.rst
+.. Source defined in docs/source/readme_title.rst
 
 
 ==============
@@ -55,7 +55,7 @@ cache_requests
 **Simple. Powerful. Persistent LRU caching for the requests library.**
 
 
-.. Source defined in readme_features.rst
+.. Source defined in docs/source/readme_features.rst
 
 
 Features
@@ -82,7 +82,7 @@ Features
 * Collect and reuse entire response objects.
 
 
-.. Source defined in installation.rst
+.. Source defined in docs/source/installation.rst
 
 
 ============
@@ -115,7 +115,7 @@ Or, if you have virtualenvwrapper installed
     $ pip uninstall cache_requests
 
 
-.. Source defined in usage.rst
+.. Source defined in docs/source/usage.rst
 
 =====
 Usage
@@ -347,7 +347,7 @@ Usage: memoize
         print("You're going to like this")
 
 
-.. Source defined in readme_credits.rst
+.. Source defined in docs/source/readme_credits.rst
 
 
 Credits
