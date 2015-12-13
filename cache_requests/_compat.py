@@ -2,14 +2,11 @@
 # coding=utf-8
 """
 :mod:`cache_requests._compat`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. module:: cache_requests._compat
-    :synopsis: Python 2to3 compatibility handling.
 .. moduleauthor:: Manu Phatak <bionikspoon@gmail.com>
 
 Python 2to3 compatibility handling.
-
 """
 import logging
 

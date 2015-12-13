@@ -8,6 +8,7 @@
 .. role:: mod(literal)
 .. role:: data(literal)
 .. role:: envvar(literal)
+.. role:: currentmodule(literal)
 
 
 .. Source defined in docs/source/readme_title.rst
@@ -43,7 +44,7 @@ cache_requests
 
 ------------
 
-.. image:: https://img.shields.io/badge/Python-2.6,_2.7,_3.3,_3.4,,_3.5,_pypy-brightgreen.svg
+.. image:: https://img.shields.io/badge/Python-2.7,_3.3,_3.4,_3.5,_pypy-brightgreen.svg
     :target: https://pypi.python.org/pypi/cache_requests/
     :alt: Supported Python versions
 
@@ -155,7 +156,6 @@ To use ``cache_requests`` in a project
 Config Options
 --------------
 
-.. currentmodule:: cache_requests
 
 :mod:`cache_requests.config`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -2,10 +2,8 @@
 # coding=utf-8
 """
 :mod:`cache_requests.utils`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. module:: cache_requests.utils
-    :synopsis: Package utilities.
 .. moduleauthor:: Manu Phatak <bionikspoon@gmail.com>
 
 Package utilities.
@@ -15,6 +13,7 @@ Private API
     * :class:`AttributeDict`
     * :func:`deep_hash`
     * :func:`normalize_signature`
+
 Source
 ******
 
