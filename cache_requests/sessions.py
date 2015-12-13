@@ -4,8 +4,6 @@
 :mod:`cache_requests.sessions`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. module:: cache_requests.sessions
-    :synopsis: Extend requests with cache decorator.
 .. moduleauthor:: Manu Phatak <bionikspoon@gmail.com>
 
 Extend :mod:`requests` with cache decorator.

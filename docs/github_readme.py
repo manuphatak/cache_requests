@@ -34,6 +34,7 @@ role_overrides = """
 .. role:: mod(literal)
 .. role:: data(literal)
 .. role:: envvar(literal)
+.. role:: currentmodule(literal)
 """
 
 
@@ -137,6 +138,9 @@ def rule__everything_else(lines):
 
         # remove orphan directive.
         if line.startswith(':orphan:'):
+            continue
+
+        if line.startswith('.. currentmodule::'):
             continue
 
         yield line

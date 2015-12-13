@@ -2,10 +2,8 @@
 # coding=utf-8
 """
 :mod:`cache_requests.memoize`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. module:: cache_requests.memoize
-    :synopsis: Memoize cache decorator.
 .. moduleauthor:: Manu Phatak <bionikspoon@gmail.com>
 
 :class:`Memoize` cache decorator.
