@@ -23,13 +23,5 @@ mock
 sphinx
 watchdog
 
-# DIST UTILITIES
-# -------------------------------------
-# required by `travis_pypi_setup.py`
-cryptography
-PyYAML
-
 # DEV UTILITIES (Your stuff here)
 # -------------------------------------
-psutil
-ipdb
