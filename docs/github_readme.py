@@ -2,7 +2,7 @@
 # coding=utf-8
 from datetime import datetime
 from functools import partial, reduce
-from os.path import dirname, realpath, join
+from os.path import dirname, realpath, join, basename
 
 
 # CONFIG UTILS
@@ -30,6 +30,7 @@ roles_override = """
 .. role:: envvar(literal)
 """
 
+
 def include_documents(_=None):
     yield read_text(comment_line)
     yield read_text(roles_override)
@@ -53,11 +54,13 @@ def write_out(lines):
 # PROCESS PIPELINE
 # ----------------------------------------------------------------------------
 def read_file(file_name):
+    yield ".. Source defined in %s\n\n" % basename(file_name)
     with open(file_name) as f:
         yield from f
 
 
 def read_text(text):
+    yield ".. Source defined in %s\n\n" % __file__
     yield from text.splitlines(True)
 
 
@@ -67,7 +70,31 @@ def concatenate(sources):
         yield '\n\n'
 
 
+def sanitize_rule__code_blocks(lines):
+    """Reimplement highlight directive"""
+    code_block_language = 'python'  # default rst code block language
+
+    for line in lines:
+
+        # setup rule
+        if line.startswith('.. highlight:: '):
+            code_block_language = '.. highlight:: shell'.rsplit(maxsplit=1)[-1]
+            continue
+
+        if line.startswith('.. Source defined in'):
+            code_block_language = 'python'
+
+        if line.endswith('::\n'):
+            yield line.replace('::', '')
+            yield '\n.. code-block:: %s\n' % code_block_language
+            continue
+
+        yield line
+
+
 def sanitize(lines):
+    process = sanitize_rule__code_blocks,
+    lines = pipeline(process, lines)
     # optional: text manipulation goes here.
     for line in lines:
 
