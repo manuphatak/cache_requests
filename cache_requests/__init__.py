@@ -25,5 +25,5 @@ logging.getLogger(__name__).addHandler(NullHandler())
 
 __author__ = 'Manu Phatak'
 __email__ = 'bionikspoon@gmail.com'
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 __all__ = ['config', 'Session', 'Memoize']
