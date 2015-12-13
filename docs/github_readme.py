@@ -34,6 +34,7 @@ role_overrides = """
 .. role:: mod(literal)
 .. role:: data(literal)
 .. role:: envvar(literal)
+.. role:: currentmodule(literal)
 """
 
 

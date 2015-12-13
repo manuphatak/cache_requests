@@ -4,8 +4,6 @@
 :mod:`cache_requests.config`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. module:: cache_requests.config
-    :synopsis: Global config, default package settings.
 .. moduleauthor:: Manu Phatak <bionikspoon@gmail.com>
 
 Global config, default package settings.
@@ -17,6 +15,7 @@ Global config, default package settings.
     Default expiration for cached keys in seconds.
 
     :default: ``3600``  # 1 hour
+
     :env: :envvar:`REDIS_EX`
 
     .. tip:: Set to ``None`` for permanent caching.
@@ -26,10 +25,10 @@ Global config, default package settings.
     Filepath for :mod:`redislite` connection.
 
     :default: ``temp_file('cache_requests.redislite')``
+
     :env: :envvar:`REDIS_EX`
 
-    .. tip:: :mod:`redislite` will automatically use a unique tmp file if this is set to ``None``.  This can be used
-    to turn off persistence between sessions.
+    .. tip:: :mod:`redislite` will automatically use a unique tmp file if this is set to ``None``.  This can be used to turn off persistence between sessions.
 
     .. note:: :mod:`redislite` will NOT implicitly create directories.
 
@@ -38,6 +37,7 @@ Global config, default package settings.
     Callback to create a :mod:`redislite` connection handle.  This can be either callable or already opened.
 
     :default: ``functools.partial(redislite.StrictRedis, dbfilename=config.dbfilename)``
+
     :env: :envvar:`REDIS_CONNECTION`
 
     .. tip:: Use a :mod:`redis` connection here as a drop in replacement.

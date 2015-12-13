@@ -5,13 +5,9 @@
 :mod:`cache_requests`
 =====================
 
-.. module:: cache_requests
-    :synopsis: Simple. Powerful. Persistent LRU caching for the requests library.
 .. moduleauthor:: Manu Phatak <bionikspoon@gmail.com>
 
 **Simple. Powerful. Persistent LRU caching for the requests library.**
-
-
 """
 from __future__ import absolute_import
 

@@ -8,6 +8,7 @@
 .. role:: mod(literal)
 .. role:: data(literal)
 .. role:: envvar(literal)
+.. role:: currentmodule(literal)
 
 
 .. Source defined in docs/source/readme_title.rst
