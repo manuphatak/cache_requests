@@ -20,6 +20,7 @@ Next Release
 * PY26 and PY32 support is dropped, because of dependency constraints.
 * PY35 support is added.
 * Docs are rewritten.
+* Move towards idiomatic code.
 
 1.0.0 (2015-04-23)
 ------------------
