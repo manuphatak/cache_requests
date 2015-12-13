@@ -1,0 +1,27 @@
+# GIT UTILITIES
+# -------------------------------------
+bumpversion
+
+# PIP UTILITIES
+# -------------------------------------
+wheel
+pip-tools
+
+# LINT UTILITIES
+# -------------------------------------
+flake8
+
+# TEST UTILITIES
+# -------------------------------------
+tox
+coverage
+pytest
+mock
+
+# DOC UTILITIES
+# -------------------------------------
+sphinx
+watchdog
+
+# DEV UTILITIES (Your stuff here)
+# -------------------------------------

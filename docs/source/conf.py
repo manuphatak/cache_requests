@@ -2,28 +2,26 @@
 # -*- coding: utf-8 -*-
 import sys
 from os.path import abspath, relpath
-
 import sphinx.environment
 
 
 def _warn_node(func):
     def wrapper(self, msg, node):
-        if not msg.startswith('nonlocal image URI found:'):
-            return func(self, msg, node)
+        if msg.startswith('nonlocal image URI found:'):
+            return
+
+        return func(self, msg, node)
 
     return wrapper
 
 
-sphinx.environment.BuildEnvironment.warn_node = _warn_node(
-    sphinx.environment.BuildEnvironment.warn_node)
+sphinx.environment.BuildEnvironment.warn_node = _warn_node(sphinx.environment.BuildEnvironment.warn_node)
 
 sys.path.insert(0, abspath(relpath('../', __file__)))
 
 import cache_requests
 
-
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.coverage',
-              'sphinx.ext.viewcode', ]
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.coverage', 'sphinx.ext.viewcode', ]
 
 templates_path = ['_templates']
 
@@ -34,80 +32,94 @@ source_encoding = 'utf-8-sig'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Cache Requests'
-copyright = u'2015, Manu Phatak'
+project = 'cache_requests'
+copyright = '2015, Manu Phatak'
 author = cache_requests.__author__
 version = cache_requests.__version__
 release = cache_requests.__version__
 
-
-primary_domain = 'py'
 # language = None
-#today = ''
-#today_fmt = '%B %d, %Y'
+# today = ''
+# today_fmt = '%B %d, %Y'
 exclude_patterns = ['build']
-#default_role = None
-#add_function_parentheses = True
-#add_module_names = True
-#show_authors = False
+# default_role = None
+# add_function_parentheses = True
+# add_module_names = True
+# show_authors = False
 pygments_style = 'sphinx'
-#modindex_common_prefix = []
-#keep_warnings = False
+# modindex_common_prefix = []
+# keep_warnings = False
 
 viewcode_import = True
 # -- Options for HTML output -------------------------------------------
-html_theme = 'sphinx_rtd_theme'
-#html_theme_options = {}
-#html_theme_path = []
-#html_title = None
-#html_short_title = None
-#html_logo = None
-#html_favicon = None
+html_theme = 'alabaster'
+# html_theme_options = {}
+# html_theme_path = []
+# html_title = None
+# html_short_title = None
+# html_logo = None
+# html_favicon = None
 html_static_path = ['_static']
-#html_last_updated_fmt = '%b %d, %Y'
-#html_use_smartypants = True
-#html_sidebars = {}
-#html_additional_pages = {}
-#html_domain_indices = True
-#html_use_index = True
-#html_split_index = False
-#html_show_sourcelink = True
-#html_show_sphinx = True
-#html_show_copyright = True
-#html_use_opensearch = ''
-#html_file_suffix = None
+# html_last_updated_fmt = '%b %d, %Y'
+# html_use_smartypants = True
+# html_sidebars = {}
+# html_additional_pages = {}
+# html_domain_indices = True
+# html_use_index = True
+# html_split_index = False
+# html_show_sourcelink = True
+# html_show_sphinx = True
+# html_show_copyright = True
+# html_use_opensearch = ''
+# html_file_suffix = None
 htmlhelp_basename = 'cache_requestsdoc'
-
 
 # -- Options for LaTeX output ------------------------------------------
 
 latex_elements = {}
-#'papersize': 'letterpaper',
-#'pointsize': '10pt',
-#'preamble': '',
+# 'papersize': 'letterpaper',
+# 'pointsize': '10pt',
+# 'preamble': '',
 
-latex_documents = [('index', 'cache_requests.tex', u'Cache Requests Documentation',
-                    u'Manu Phatak', 'manual'), ]
+latex_documents = [(  # :off
+    'index',
+    'cache_requests.tex',
+    'cache_requests Documentation',
+    'Manu Phatak',
+    'manual',
+)]  # :on
 
-#latex_logo = None
-#latex_use_parts = False
-#latex_show_pagerefs = False
-#latex_show_urls = False
-#latex_appendices = []
-#latex_domain_indices = True
+# latex_logo = None
+# latex_use_parts = False
+# latex_show_pagerefs = False
+# latex_show_urls = False
+# latex_appendices = []
+# latex_domain_indices = True
 
 # -- Options for manual page output ------------------------------------
 
-man_pages = [
-    ('index', 'cache_requests', u'Cache Requests Documentation', [u'Manu Phatak'], 1)]
-#man_show_urls = False
+man_pages = [(  # :off
+    'index',
+    'cache_requests',
+    'cache_requests Documentation',
+    ['Manu Phatak'],
+    1
+)]  # :on
+# man_show_urls = False
 
 # -- Options for Texinfo output ----------------------------------------
 
-texinfo_documents = [('index', 'cache_requests', u'Cache Requests Documentation',
-                      u'Manu Phatak', 'cache_requests',
-                      'One line description of project.', 'Miscellaneous'), ]
-#texinfo_appendices = []
-#texinfo_domain_indices = True
-#texinfo_show_urls = 'footnote'
-#texinfo_no_detailmenu = False
+texinfo_documents = [(  # :off
+    'index',
+    'cache_requests',
+    'cache_requests Documentation',
+    'Manu Phatak',
+    'cache_requests',
+    'One line description of project.',
+    'Miscellaneous'
+)]  # :on
+
+# texinfo_appendices = []
+# texinfo_domain_indices = True
+# texinfo_show_urls = 'footnote'
+# texinfo_no_detailmenu = False

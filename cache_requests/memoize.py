@@ -1,113 +1,129 @@
 #!/usr/bin/env python
 # coding=utf-8
 """
-memoize module
---------------
+:mod:`cache_requests.memoize`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This module implements a basic LRU decorator that syncs calls with a redislite database.
+.. module:: cache_requests.memoize
+    :synopsis: Memoize cache decorator.
+.. moduleauthor:: Manu Phatak <bionikspoon@gmail.com>
+
+:class:`Memoize` cache decorator.
+
+Public Api
+**********
+    * :class:`Memoize`
+
+Source
+******
 """
 from __future__ import absolute_import
-import copy
-import functools
+
 import logging
+import types
+from functools import partial, update_wrapper
 
-from cache_requests import config
+from . import config
+from ._compat import pickle
+from .utils import deep_hash
 
-try:
-    # noinspection PyPep8Naming
-    import cPickle as pickle  # PY2X
-except ImportError:
-    import pickle
-import redislite
+logger = logging.getLogger(__name__)
 
-
-
-log = logging.getLogger(__name__)
-
-
-def make_hash(obj):
-    """
-    Recursively hash nested mixed objects (dicts, lists, other).
-
-
-    :rtype : int
-    :param object obj: an object
-    :return: hash representation of the object
-    """
-    if isinstance(obj, (set, tuple, list)):
-        return tuple(make_hash(item) for item in obj if item)
-    elif not isinstance(obj, dict):
-        return hash(obj)
-    else:
-        copied_obj = copy.deepcopy(obj)
-        for k, v in copied_obj.items():
-            copied_obj[k] = make_hash(v)
-
-        return hash(tuple(frozenset(sorted(copied_obj.items()))))
+__all__ = ['Memoize']
 
 
 class Memoize(object):
-    """
-    Decorator Class.  Standard LRU. With redis key/value caching.
-    """
+    """Decorator class.  Implements LRU cache pattern that syncs cache with :mod:`redislite` storage."""
+    _ex = NotImplemented
 
-    _redis_connection = config.REDIS_CONNECTION or redislite.StrictRedis(
-        dbfilename=config.REDISLITE_DB)
-
-    _redis_expiration = config.EXPIRATION
-
-    def __init__(self, function):
-        self.function = function
-        functools.update_wrapper(self, function)
-
-    @property
-    def redis(self):
+    def __new__(cls, func=None, ex=None, connection=None):
         """
-        Get redis connection string.
+        Decorate functions with or without decorator arguments.
 
-        :return: redis connection handle
+        :param function func: Function to be decorated.
+        :param int ex: Expiration time in seconds.
+        :param connection: Redis connection handle.
         """
-        return self.__class__._redis_connection
 
-    def __getitem__(self, item):
+        if func is not None and callable(func):
+            return object.__new__(cls)
+
+        if func is not None:
+            raise TypeError('func must be a callable function.')
+
+        return partial(cls, ex=ex, connection=connection)
+
+    def __init__(self, func, ex=None, connection=None):
         """
-        Query db for key, de-pickle results.
+        Set options.
 
-        :rtype : object
-        :param item: tuple of hashed args and kwargs
-        :return: object from storage
+        :param function func: Function to be decorated.
+        :param int ex: Expiration time in seconds.
+        :param connection: Redis connection handle.
         """
-        value = self.redis.get(item)
 
-        return None if not value else pickle.loads(value)
-
-    def __setitem__(self, key, value):
-        """
-        Store a pickled object in the db.
-
-        :param key: hash key
-        :param object value: object to store
-        """
-        self.redis.set(name=key, value=pickle.dumps(value),
-                       ex=self.__class__._redis_expiration)
-
+        update_wrapper(self, func)
+        self.func = func
+        connection = config.connection if connection is None else connection
+        self.connection = connection() if callable(connection) else connection
+        self.ex = ex
 
     def __call__(self, *args, **kwargs):
         """
-        Wrap :attr:`self.function`
+        Call decorated function.
 
-        :param args: Arguments passed to decorated function
-        :param kwargs: Keyword Arguments passed to decorated function
-        :return: function results
+        :param tuple args: Arguments passed to function.
+        :param dict kwargs: Keyword arguments passed to function.
+        :return: Function results.
         """
 
-        #: hashed tuple of args and kwargs
-        memo_key = make_hash((args, kwargs))
+        memo_key = deep_hash(*args, **kwargs)
 
-        # if no record in db, create a record
-        if not self[memo_key]:
-            self[memo_key] = self.function(*args, **kwargs)
-            log.info('Caching results for hash: %s ', memo_key)
-        else:
-            log.debug('Results from cache hash: %s', memo_key)
+        if self[memo_key]:
+            logger.debug('Results from cache hash: %s', memo_key)
+            return self[memo_key]
+
+        self[memo_key] = self.func(*args, **kwargs)
+        logger.debug('Caching results for hash: %s ', memo_key)
         return self[memo_key]
+
+    def __setitem__(self, key, value):
+        """Store value in key."""
+
+        if value is None:
+            return False
+
+        return self.redis.set(name=key, value=pickle.dumps(value), ex=self.ex)
+
+    def __getitem__(self, item):
+        """Get results from cache."""
+
+        value = self.redis.get(item)
+        if not value:
+            return value
+
+        return pickle.loads(value)
+
+    def __get__(self, instance, _):
+        # Decorator class best practices.
+
+        if instance is None:
+            return self  # pragma: no cover
+        else:
+            return types.MethodType(self, instance)
+
+    @property
+    def redis(self):
+        """Provide access to the redis connection handle."""
+
+        return self.connection
+
+    @property
+    def ex(self):
+        """Lazy load expiration value from config if necessary."""
+
+        return self._ex or config.ex
+
+    @ex.setter
+    def ex(self, value):
+        self._ex = value

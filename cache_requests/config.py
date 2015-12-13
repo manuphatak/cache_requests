@@ -1,54 +1,61 @@
 #!/usr/bin/env python
 # coding=utf-8
 """
-config module
--------------
+:mod:`cache_requests.config`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Module configuration options
+.. module:: cache_requests.config
+    :synopsis: Global config, default package settings.
+.. moduleauthor:: Manu Phatak <bionikspoon@gmail.com>
+
+Global config, default package settings.
+
+.. note:: Environment variables are all caps prefixed with ``REDIS_``
+
+.. data:: ex
+
+    Default expiration for cached keys in seconds.
+
+    :default: ``3600``  # 1 hour
+    :env: :envvar:`REDIS_EX`
+
+    .. tip:: Set to ``None`` for permanent caching.
+
+.. data:: dbfilename
+
+    Filepath for :mod:`redislite` connection.
+
+    :default: ``temp_file('cache_requests.redislite')``
+    :env: :envvar:`REDIS_EX`
+
+    .. tip:: :mod:`redislite` will automatically use a unique tmp file if this is set to ``None``.  This can be used
+    to turn off persistence between sessions.
+
+    .. note:: :mod:`redislite` will NOT implicitly create directories.
+
+.. data:: connection
+
+    Callback to create a :mod:`redislite` connection handle.  This can be either callable or already opened.
+
+    :default: ``functools.partial(redislite.StrictRedis, dbfilename=config.dbfilename)``
+    :env: :envvar:`REDIS_CONNECTION`
+
+    .. tip:: Use a :mod:`redis` connection here as a drop in replacement.
+
+
 """
-import os
+from __future__ import absolute_import
 
+from functools import partial
+from os import environ, path
+from tempfile import gettempdir
 
-EXPIRATION = os.environ.get('EXPIRATION', 60 * 60)  # 1 hour
-"""
-Time in seconds until the key is destroyed.
+from redislite import StrictRedis
 
-Default: ``os.environ.get('EXPIRATION', 60 * 60)``  # 1 hour
+temp_file = partial(path.join, gettempdir())
 
-.. tip::
+__all__ = ['ex', 'dbfilename', 'connection']
 
-    Set to ``None`` for permanent caching.
-"""
-
-REDISLITE_DB = os.environ.get('REDISLITE_DB', 'cache_requests.redislite')
-"""
-Filepath to redislite DB.
-
-Default: ``os.environ.get('REDISLITE_DB', 'cache_requests.redislite')``
-
-None automatically uses a unique tmp file.  Unique tmp file means NO
-data persistence; which makes this an ordinary LRU cache.
-
-.. tip::
-
-    ``redislite`` will automatically use a unique tmp file if this is set to ``None``.
-    This means new storage every time you run your program.
-
-    **TLDR:** Make sure this is set for data persistence from one run to the next.
-
-.. note::
-
-    ``redislite`` will NOT implicitly create directories.
-"""
-
-REDIS_CONNECTION = os.environ.get('REDIS_CONNECTION', None)
-"""
-Redis connection handle.
-
-Default: ``os.environ.get('REDIS_CONNECTION', None)``
-
-This connection takes precedence, overriding behavior related to :const:`REDISLITE_DB`
-
-.. note::
-    Fully compatible with a full version of ``redis``.
-"""
+ex = environ.get('REDIS_EX', 60 * 60)  # 1 hour
+dbfilename = environ.get('REDIS_DBFILENAME', temp_file('cache_requests.redislite'))
+connection = environ.get('REDIS_CONNECTION') or partial(StrictRedis, dbfilename=dbfilename)

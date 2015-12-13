@@ -1,0 +1,7 @@
+# PROJECT REQUIREMENTS (Your stuff here)
+# -------------------------------------
+requests
+redislite
+pytest
+mock
+singledispatch
