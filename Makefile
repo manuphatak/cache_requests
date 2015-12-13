@@ -1,4 +1,4 @@
-.PHONY: clean clean-build clean-pyc clean-test clean-docs lint test test-all coverage coverage readme docs servedocs release dist install register requirements
+.PHONY: clean clean-build clean-pyc clean-test clean-docs lint test test-all coverage coverage readme docs builddocs servedocs release dist install register requirements
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
 try:
@@ -122,4 +122,4 @@ requirements:
 	pip install --quiet -r requirements.txt
 	pip wheel --quiet -r requirements_dev.txt
 	pip wheel --quiet -r requirements.txt
-	git diff --word-diff requirements.txt requirements_dev.txt &> .requirements.diff
+	git diff --word-diff requirements.txt requirements_dev.txt 2>&1 | tee .requirements.diff

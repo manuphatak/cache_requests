@@ -64,9 +64,3 @@ target/
 
 # pip wheels
 wheelhouse/
-
-.requirements.diff
-
-cache_requests/redis/
-*redis.log
-docs/source/cache_requests.redislite

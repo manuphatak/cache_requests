@@ -10,7 +10,7 @@ mock==1.3.0
 pbr==1.8.1                # via mock
 psutil==3.3.0             # via redislite
 py==1.4.31                # via pytest
-pytest==2.8.4
+pytest==2.8.5
 redis==2.10.5             # via redislite
 redislite==3.0.271
 requests==2.8.1
