@@ -24,7 +24,7 @@ help:
 	@echo "test        		run tests quickly with the default Python"
 	@echo "test-all    		run tests on every Python version with tox"
 	@echo "coverage    		check code coverage quickly with the default Python"
-	@echo "readme        	generate github's README"
+	@echo "readme      		generate github's README"
 	@echo "docs        		generate Sphinx HTML documentation, including API docs"
 	@echo "servedocs   		semi-live edit docs"
 	@echo "release     		package and upload a release"
@@ -79,7 +79,7 @@ readme:
 
 docs: clean-docs builddocs readme
 
-builddocs: builddocs
+builddocs:
 	sphinx-apidoc \
 		--private \
 		--no-toc \
@@ -97,7 +97,6 @@ servedocs: docs
 		--ignore-pattern '$(DOCSBUILDDIR)/*;$(DOCSSOURCEDIR)/cache_requests.rst' \
 		--ignore-directories \
 		--recursive
-
 
 release: clean docs
 	python setup.py sdist upload

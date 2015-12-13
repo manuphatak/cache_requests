@@ -1,5 +1,3 @@
-.. :changelog:
-
 =======
 History
 =======
@@ -7,7 +5,7 @@ History
 Next Release
 ------------
 
-* Coming soon.
+* Coming Soon
 
 2.0.0 (2015-12-12)
 --------------------

@@ -1,13 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
-"""
-=============
-Documentation
-=============
-
-The full documentation is at https://cache_requests.readthedocs.org.
-
-"""
+"""The full documentation is at https://cache_requests.readthedocs.org."""
 
 try:
     from setuptools import setup
@@ -42,7 +35,7 @@ with open('README.rst') as readme_file:
     readme = readme_file.read()
 
 with open('HISTORY.rst') as history_file:
-    history = history_file.read().replace('.. :changelog:', '')
+    history = history_file.read()
 
 requirements = ['redislite', 'requests', 'singledispatch']
 test_requirements = ['pytest', 'mock']
