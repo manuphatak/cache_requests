@@ -31,7 +31,72 @@ To use ``cache_requests`` in a project::
 
 Config Options
 --------------
-    * TODO
+
+.. currentmodule:: cache_requests
+
+:mod:`cache_requests.config`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:data:`config.ex`
+    sets the default expiration (seconds) for new cache entries. Can be configured with env :envvar:`REDIS_EX`.
+
+:data:`config.dbfilename`
+    sets the default location for the database.  The default location is a spot in your OS' temp directory.  Can be configured with env :envvar:`REDIS_DBFILENAME`.
+
+:data:`config.connection`
+    creates the connection to the :mod:`redis` or :mod:`redislite` database.  By default this is a :mod:`redislite` connection, but a redis connection can be dropped in for an easy upgrade.  Can be configured with env :envvar:`REDIS_CONNECTION`.
+
+
+:mod:`cache_requests.Session`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Caching individual session methods is turned on and off independently.
+
+These methods are accessed through the Session objects ``cache.[method name]``.
+They can be overridden with the ``cache.all`` setting.
+
+For example::
+
+        from cache_requests import Session
+
+        requests = Session()
+
+        requests.cache.delete = True
+
+        # cached, only called once.
+        requests.delete('http://google.com')
+        requests.delete('http://google.com')
+
+        requests.cache.delete = True
+
+        # not cached, called twice.
+        requests.delete('http://google.com')
+        requests.delete('http://google.com')
+
+        # cache ALL methods
+        requests.cache.all = True
+
+        # don't cache any methods
+        requests.cache.all = False
+
+        # Use individual method cache options.
+        requests.cache.all = None
+
+Default settings
+****************
+===========  ========
+Method       Cached
+===========  ========
+``get``      ``True``
+``head``     ``True``
+``options``  ``True``
+``post``     ``False``
+``put``      ``False``
+``patch``    ``False``
+``delete``   ``False``
+``all``      ``None``
+===========  ========
+
 
 Use Case Scenarios
 ------------------
