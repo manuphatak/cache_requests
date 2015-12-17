@@ -75,7 +75,7 @@ coverage:
 	$(MAKE) -C docs coverage
 
 readme:
-	python3 docs/github_readme.py
+	python docs/github_docs.py
 
 docs: clean-docs builddocs readme
 
