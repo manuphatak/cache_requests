@@ -42,7 +42,7 @@ test_requirements = ['pytest', 'mock']
 
 setup(  # :off
     name='cache_requests',
-    version='2.0.4',
+    version='2.0.5',
     description='Simple. Powerful. Persistent LRU caching for the requests library.',
     long_description='\n\n'.join([readme, history]),
     author='Manu Phatak',
@@ -55,7 +55,7 @@ setup(  # :off
     license='MIT',
     zip_safe=False,
     cmdclass={'test': PyTest},
-    keywords='cache_requests',
+    keywords='cache_requests Manu Phatak',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
