@@ -73,7 +73,7 @@ Ready to contribute? Here's how to set up `cache_requests` for local development
 4. Create a branch for local development::
 
     $ git checkout -b feature/name-of-your-feature
-    $ git checkout -b fix/name-of-your-bugfix
+    $ git checkout -b hotfix/name-of-your-bugfix
 
    Now you can make your changes locally.
 

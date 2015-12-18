@@ -88,7 +88,6 @@ builddocs:
 		--output-dir=$(DOCSSOURCEDIR)/ cache_requests
 	$(MAKE) -C docs html
 
-
 servedocs: docs
 	$(BROWSER) $(DOCSBUILDDIR)/html/index.html
 	watchmedo shell-command \

@@ -12,9 +12,10 @@ import logging
 
 __all__ = ['NullHandler', 'pickle', 'singledispatch']
 
-try:  # Python 2.7+
+try:
     from logging import NullHandler
 except ImportError:  # pragma: no cover
+    # Python < 2.7
     class NullHandler(logging.Handler):
         def emit(self, record):
             pass
