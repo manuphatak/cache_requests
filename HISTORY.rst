@@ -8,7 +8,7 @@ Next Release
 * Coming Soon
 
 2.0.0 (2015-12-12)
---------------------
+------------------
 
 * API completely rewritten
 * New API extends ``requests`` internals as opposed to monkeypatching.

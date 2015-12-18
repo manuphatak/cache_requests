@@ -1,4 +1,4 @@
-.PHONY: clean clean-build clean-pyc clean-test clean-docs lint test test-all coverage coverage readme docs builddocs servedocs release dist install register requirements
+.PHONY: clean clean-build clean-pyc clean-test clean-docs lint test test-all coverage coverage github docs builddocs servedocs release dist install register requirements
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
 try:
@@ -24,7 +24,7 @@ help:
 	@echo "test        		run tests quickly with the default Python"
 	@echo "test-all    		run tests on every Python version with tox"
 	@echo "coverage    		check code coverage quickly with the default Python"
-	@echo "readme      		generate github's README"
+	@echo "github      		generate github's docs (i.e. README)"
 	@echo "docs        		generate Sphinx HTML documentation, including API docs"
 	@echo "servedocs   		semi-live edit docs"
 	@echo "release     		package and upload a release"
@@ -74,10 +74,10 @@ coverage:
 	$(BROWSER) htmlcov/index.html
 	$(MAKE) -C docs coverage
 
-readme:
-	python3 docs/github_readme.py
+github:
+	python docs/github_docs.py
 
-docs: clean-docs builddocs readme
+docs: clean-docs builddocs github
 
 builddocs:
 	sphinx-apidoc \
@@ -87,7 +87,6 @@ builddocs:
 		--no-headings \
 		--output-dir=$(DOCSSOURCEDIR)/ cache_requests
 	$(MAKE) -C docs html
-
 
 servedocs: docs
 	$(BROWSER) $(DOCSBUILDDIR)/html/index.html

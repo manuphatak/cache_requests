@@ -55,7 +55,7 @@ setup(  # :off
     license='MIT',
     zip_safe=False,
     cmdclass={'test': PyTest},
-    keywords='cache_requests',
+    keywords='cache_requests Manu Phatak',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
