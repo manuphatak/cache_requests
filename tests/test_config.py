@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 
+
 def test_session_uses_config():
     from cache_requests import config, Session
 

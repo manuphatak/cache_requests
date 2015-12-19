@@ -75,7 +75,7 @@ class Memoize(object):
         :return: Function results.
         """
         # setup
-        hash_key = deep_hash(*args, **kwargs)
+        hash_key = deep_hash(self.func.__qualname__, *args, **kwargs)
         cache_results = self[hash_key]
 
         # return results from cache
