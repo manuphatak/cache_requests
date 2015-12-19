@@ -9,7 +9,7 @@ Tests for ``cache_requests`` module.
 """
 import time
 
-from mock import MagicMock, Mock
+from mock import MagicMock
 from pytest import fixture, raises
 
 
@@ -27,28 +27,6 @@ def amazing_function():
     connection = StrictRedis(dbfilename=config.dbfilename)
 
     return Memoize(_amazing_function, ex=1, connection=connection)
-
-
-@fixture
-def MockRedis():
-    from cache_requests import config
-
-    cache = {}
-
-    def set(name=None, value=None, **_):
-        cache[name] = value
-
-    def get(name):
-        return cache.get(name)
-
-    _MockRedis = Mock(spec='redislite.StrictRedis')
-    _MockRedis.return_value = _MockRedis
-    _MockRedis.get = Mock(side_effect=get)
-    _MockRedis.set = Mock(side_effect=set)
-    _MockRedis.flushall = Mock()
-
-    config.connection = _MockRedis
-    return _MockRedis
 
 
 def test_memoized_function_called_only_once_per_arguments(amazing_function):

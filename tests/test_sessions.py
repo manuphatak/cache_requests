@@ -2,7 +2,7 @@
 # coding=utf-8
 
 from mock import MagicMock
-from pytest import fixture
+from pytest import fixture, mark
 
 
 @fixture
@@ -12,8 +12,10 @@ def mock_requests(monkeypatch, tmpdir):
     def mock_response(*args, **kwargs):
         return args, kwargs
 
-    mock = MagicMock(spec=mock_response)
+    mock = MagicMock()
+    mock.return_value = mock
     mock.side_effect = mock_response
+    mock.status_code = 200
     monkeypatch.setattr('requests.sessions.Session.get', mock)
     monkeypatch.setattr('requests.sessions.Session.options', mock)
     monkeypatch.setattr('requests.sessions.Session.head', mock)
@@ -131,3 +133,15 @@ def test_memoize_toggled_off(requests, mock_requests):
     requests.get('http://google.com')
     requests.get('http://google.com')
     assert mock_requests.call_count == 2
+
+# @mark.skipif
+# @mark.usefixtures('mock_requests')
+# def test_only_cache_200_response(requests, MockRedis):
+#     requests.get.connection = MockRedis
+#
+#     assert isinstance(requests.get.redis, MagicMock)
+#     requests.get('http://google.com')
+#     requests.get('http://google.com')
+#
+#     assert MockRedis.set.call_count == 1
+#     assert MockRedis.get.call_count == 2
