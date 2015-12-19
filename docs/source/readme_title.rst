@@ -4,10 +4,6 @@
 cache_requests
 ==============
 
-.. image:: https://img.shields.io/github/downloads/bionikspoon/cache_requests/total.svg
-    :target: https://github.com/bionikspoon/cache_requests
-    :alt: Github Downloads
-
 .. image:: https://badge.fury.io/py/cache_requests.svg
     :target: https://pypi.python.org/pypi/cache_requests/
     :alt: Latest Version
