@@ -6,6 +6,7 @@ Next Release
 ------------
 
 * Cache busting! Use keyword argument ``bust_cache=True`` to force reevaluation.
+* Fix: Unique cache per function in shared db.
 
 2.0.0 (2015-12-12)
 ------------------
