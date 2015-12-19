@@ -30,8 +30,7 @@ def amazing_function():
 
 
 @fixture
-def MockRedis(monkeypatch):
-    """:type monkeypatch: _pytest.monkeypatch.monkeypatch"""
+def MockRedis():
     from cache_requests import config
 
     cache = {}
@@ -48,7 +47,6 @@ def MockRedis(monkeypatch):
     _MockRedis.set = Mock(side_effect=set)
     _MockRedis.flushall = Mock()
 
-    # monkeypatch.setattr('redislite.StrictRedis', _MockRedis)
     config.connection = _MockRedis
     return _MockRedis
 
@@ -192,3 +190,19 @@ def test_kwarg_to_optionally_cache(MockRedis):
 
     assert MockRedis.set.call_count == 2
     assert MockRedis.get.call_count == 5
+
+
+def test_cache_results_are_unique_per_function():
+    from cache_requests import Memoize
+
+    @Memoize
+    def hello(*args, **kwargs):
+        return len(args), len(kwargs)
+
+    @Memoize
+    def world(*args, **kwargs):
+        return len(args) * len(kwargs)
+
+    test_args = 'I', 'Like', 'Turtles'
+
+    assert hello(*test_args) != world(*test_args)
