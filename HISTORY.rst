@@ -5,7 +5,7 @@ History
 Next Release
 ------------
 
-* Coming Soon
+* Cache busting! Use keyword argument ``bust_cache=True`` to force reevaluation.
 
 2.0.0 (2015-12-12)
 ------------------
