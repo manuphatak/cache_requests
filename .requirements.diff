@@ -1,42 +1,21 @@
-diff --git a/requirements.txt b/requirements.txt
-index c309912..c5168f9 100644
---- a/requirements.txt
-+++ b/requirements.txt
-@@ -6,13 +6,9 @@
- #
- jinja2==2.8               # via redislite
- markupsafe==0.23          # via jinja2
--mock==1.3.0
--pbr==1.8.1                # via mock
- psutil==3.3.0             # via redislite
--py==1.4.31                # via pytest
--pytest==2.8.5
- redis==2.10.5             # via redislite
- redislite==3.0.271
--requests==2.8.1
-+requests==2.9.0
- singledispatch==3.4.0.3
--six==1.10.0               # via mock, singledispatch
-+six==1.10.0               # via singledispatch
 diff --git a/requirements_dev.txt b/requirements_dev.txt
-index 424f859..9c5c5b7 100644
+index 9c5c5b7..8c4b387 100644
 --- a/requirements_dev.txt
 +++ b/requirements_dev.txt
-@@ -20,7 +20,7 @@ mock==1.3.0
- pathtools==0.1.2          # via watchdog
- pbr==1.8.1                # via mock
- pep8==1.5.7               # via flake8
--pip-tools==1.3.0
-+pip-tools==1.4.2
- pluggy==0.3.1             # via tox
- py==1.4.31                # via pytest, tox
- pyflakes==1.0.0           # via flake8
-@@ -32,7 +32,7 @@ six==1.10.0               # via mock, pip-tools, sphinx
+@@ -10,7 +10,7 @@ babel==2.1.1              # via sphinx
+ bumpversion==0.5.3
+ click==6.2                # via pip-tools
+ coverage==4.0.3
+-docutils==0.12            # via sphinx
++docutils==0.12            # via restructuredtext-lint, sphinx
+ first==2.0.1              # via pip-tools
+ flake8==2.5.1
+ jinja2==2.8               # via sphinx
+@@ -28,6 +28,7 @@ pygments==2.0.2           # via sphinx
+ pytest==2.8.5
+ pytz==2015.7              # via babel
+ pyyaml==3.11              # via watchdog
++restructuredtext-lint==0.14.0
+ six==1.10.0               # via mock, pip-tools, sphinx
  snowballstemmer==1.2.0    # via sphinx
  sphinx-rtd-theme==0.1.9   # via sphinx
- sphinx==1.3.3
--tox==2.3.0
-+tox==2.3.1
- virtualenv==13.1.2        # via tox
- watchdog==0.8.3
- wheel==0.26.0

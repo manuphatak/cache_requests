@@ -51,7 +51,7 @@ clean-pyc:
 clean-test:
 	rm -fr .tox/
 	rm -f .coverage
-	rm -fr htmlcov/
+	rm -fr .htmlcov/
 
 clean-docs:
 	rm -f $(DOCSSOURCEDIR)/cache_requests.rst
@@ -68,14 +68,15 @@ test-all: lint
 	tox
 
 coverage:
-	coverage run --source cache_requests setup.py test
-	coverage report --show-missing
+	coverage run cache_requests setup.py test
+	coverage report
 	coverage html
 	$(BROWSER) htmlcov/index.html
 	$(MAKE) -C docs coverage
 
 github:
 	python docs/github_docs.py
+	rst-lint README.rst
 
 docs: clean-docs builddocs github
 
