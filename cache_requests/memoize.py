@@ -66,40 +66,49 @@ class Memoize(object):
         self.connection = connection() if callable(connection) else connection
         self.ex = ex
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, bust_cache=False, **kwargs):
         """
-        Call decorated function.
+        Cache getter setter.
 
         :param tuple args: Arguments passed to function.
         :param dict kwargs: Keyword arguments passed to function.
         :return: Function results.
         """
+        # setup
+        hash_key = deep_hash(*args, **kwargs)
+        cache_results = self[hash_key]
 
-        memo_key = deep_hash(*args, **kwargs)
+        # return results from cache
+        if bust_cache is False and cache_results is not None:
+            return cache_results
 
-        if self[memo_key]:
-            logger.debug('Results from cache hash: %s', memo_key)
-            return self[memo_key]
-
-        self[memo_key] = self.func(*args, **kwargs)
-        logger.debug('Caching results for hash: %s ', memo_key)
-        return self[memo_key]
+        # save results to cache
+        func_results = self.func(*args, **kwargs)
+        self[hash_key] = func_results
+        return func_results
 
     def __setitem__(self, key, value):
         """Store value in key."""
 
+        # Guard, no value
         if value is None:
-            return False
+            return None
 
+        # Serialize value
+        logger.info('Caching results for hash: %s ', key)
         return self.redis.set(name=key, value=pickle.dumps(value), ex=self.ex)
 
     def __getitem__(self, item):
         """Get results from cache."""
-
+        # setup, get item from cache
         value = self.redis.get(item)
+
+        # Guard, no value, don't try to deserialize
         if not value:
             return value
 
+        # deserialize value
+        logger.debug('Retrieving item from cache: %s', item)
         return pickle.loads(value)
 
     def __get__(self, instance, _):
@@ -107,8 +116,8 @@ class Memoize(object):
 
         if instance is None:
             return self  # pragma: no cover
-        else:
-            return types.MethodType(self, instance)
+
+        return types.MethodType(self, instance)
 
     @property
     def redis(self):

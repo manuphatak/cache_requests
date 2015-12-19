@@ -9,7 +9,7 @@ Tests for ``cache_requests`` module.
 """
 import time
 
-from mock import MagicMock
+from mock import MagicMock, Mock
 from pytest import fixture, raises
 
 
@@ -27,6 +27,30 @@ def amazing_function():
     connection = StrictRedis(dbfilename=config.dbfilename)
 
     return Memoize(_amazing_function, ex=1, connection=connection)
+
+
+@fixture
+def MockRedis(monkeypatch):
+    """:type monkeypatch: _pytest.monkeypatch.monkeypatch"""
+    from cache_requests import config
+
+    cache = {}
+
+    def set(name=None, value=None, **_):
+        cache[name] = value
+
+    def get(name):
+        return cache.get(name)
+
+    _MockRedis = Mock(spec='redislite.StrictRedis')
+    _MockRedis.return_value = _MockRedis
+    _MockRedis.get = Mock(side_effect=get)
+    _MockRedis.set = Mock(side_effect=set)
+    _MockRedis.flushall = Mock()
+
+    # monkeypatch.setattr('redislite.StrictRedis', _MockRedis)
+    config.connection = _MockRedis
+    return _MockRedis
 
 
 def test_memoized_function_called_only_once_per_arguments(amazing_function):
@@ -119,3 +143,52 @@ def test_decorator_with_params():
     assert hello.ex == 1
     hello()
     assert hello.redis.dbsize() == 0
+
+
+def test_kwarg_to_optionally_cache(MockRedis):
+    """
+    :type MockRedis: mock.MagicMock
+    """
+
+    from cache_requests import Memoize
+
+    MockRedis.assert_not_called()
+    MockRedis.get.assert_not_called()
+    MockRedis.set.assert_not_called()
+    result = {
+        'test': 'sample text'
+    }
+
+    @Memoize
+    def hello(*_):
+        return result.get('test')
+
+    MockRedis.get.assert_not_called()
+    MockRedis.set.assert_not_called()
+
+    assert hello('hello', 'world') == 'sample text'
+
+    assert MockRedis.set.call_count == 1
+    assert MockRedis.get.call_count == 1
+
+    result['test'] = 'bad cache target'
+    assert hello('hello', 'world') == 'sample text'
+
+    assert MockRedis.set.call_count == 1
+    assert MockRedis.get.call_count == 2
+
+    assert hello('hello', 'world', bust_cache=True) == 'bad cache target'
+
+    assert MockRedis.set.call_count == 2
+    assert MockRedis.get.call_count == 3
+
+    assert hello('hello', 'world') == 'bad cache target'
+
+    assert MockRedis.set.call_count == 2
+    assert MockRedis.get.call_count == 4
+
+    result['test'] = 'really bad cache target'
+    assert hello('hello', 'world') == 'bad cache target'
+
+    assert MockRedis.set.call_count == 2
+    assert MockRedis.get.call_count == 5

@@ -97,6 +97,12 @@ Method       Cached
 ``all``      ``None``
 ===========  ========
 
+Function Level Config
+~~~~~~~~~~~~~~~~~~~~~
+
+Cache Busting
+    Use kw ``bust_cache=True`` in a memoized function to force reevaluation.
+
 
 Use Case Scenarios
 ------------------
