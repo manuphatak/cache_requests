@@ -19,6 +19,7 @@ Next Release
 * PY35 support is added.
 * Docs are rewritten.
 * Move towards idiomatic code.
+* 2.0.6 Fix broken coverage, broken rst render.
 
 1.0.0 (2015-04-23)
 ------------------
