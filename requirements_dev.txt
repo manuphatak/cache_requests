@@ -10,7 +10,7 @@ babel==2.1.1              # via sphinx
 bumpversion==0.5.3
 click==6.2                # via pip-tools
 coverage==4.0.3
-docutils==0.12            # via sphinx
+docutils==0.12            # via restructuredtext-lint, sphinx
 first==2.0.1              # via pip-tools
 flake8==2.5.1
 jinja2==2.8               # via sphinx
@@ -28,6 +28,7 @@ pygments==2.0.2           # via sphinx
 pytest==2.8.5
 pytz==2015.7              # via babel
 pyyaml==3.11              # via watchdog
+restructuredtext-lint==0.14.0
 six==1.10.0               # via mock, pip-tools, sphinx
 snowballstemmer==1.2.0    # via sphinx
 sphinx-rtd-theme==0.1.9   # via sphinx
