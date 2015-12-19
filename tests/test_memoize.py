@@ -30,8 +30,7 @@ def amazing_function():
 
 
 @fixture
-def MockRedis(monkeypatch):
-    """:type monkeypatch: _pytest.monkeypatch.monkeypatch"""
+def MockRedis():
     from cache_requests import config
 
     cache = {}
@@ -48,7 +47,6 @@ def MockRedis(monkeypatch):
     _MockRedis.set = Mock(side_effect=set)
     _MockRedis.flushall = Mock()
 
-    # monkeypatch.setattr('redislite.StrictRedis', _MockRedis)
     config.connection = _MockRedis
     return _MockRedis
 

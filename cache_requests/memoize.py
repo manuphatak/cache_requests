@@ -18,8 +18,9 @@ Source
 from __future__ import absolute_import
 
 import logging
-import types
 from functools import partial, update_wrapper
+
+import types
 
 from . import config
 from ._compat import pickle
@@ -66,7 +67,7 @@ class Memoize(object):
         self.connection = connection() if callable(connection) else connection
         self.ex = ex
 
-    def __call__(self, *args, bust_cache=False, **kwargs):
+    def __call__(self, *args, **kwargs):
         """
         Cache getter setter.
 
@@ -75,7 +76,8 @@ class Memoize(object):
         :return: Function results.
         """
         # setup
-        hash_key = deep_hash(self.func.__qualname__, *args, **kwargs)
+        bust_cache = kwargs.pop('bust_cache', False)
+        hash_key = deep_hash(self.func.__name__, *args, **kwargs)
         cache_results = self[hash_key]
 
         # return results from cache
@@ -98,17 +100,17 @@ class Memoize(object):
         logger.info('Caching results for hash: %s ', key)
         return self.redis.set(name=key, value=pickle.dumps(value), ex=self.ex)
 
-    def __getitem__(self, item):
+    def __getitem__(self, key):
         """Get results from cache."""
-        # setup, get item from cache
-        value = self.redis.get(item)
+        # setup, get key from cache
+        value = self.redis.get(key)
 
         # Guard, no value, don't try to deserialize
         if not value:
             return value
 
         # deserialize value
-        logger.debug('Retrieving item from cache: %s', item)
+        logger.debug('Retrieving item from cache: %s', key)
         return pickle.loads(value)
 
     def __get__(self, instance, _):
