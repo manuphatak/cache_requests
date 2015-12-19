@@ -8,6 +8,7 @@
 
 Python 2to3 compatibility handling.
 """
+
 import logging
 
 __all__ = ['NullHandler', 'pickle', 'singledispatch']
@@ -21,7 +22,6 @@ except ImportError:  # pragma: no cover
             pass
 
 try:
-    # noinspection PyPep8Naming
     import cPickle as pickle
 except ImportError:
     import pickle

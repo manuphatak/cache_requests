@@ -10,6 +10,7 @@
 **Simple. Powerful. Persistent LRU caching for the requests library.**
 """
 from __future__ import absolute_import
+
 import logging
 
 from ._compat import NullHandler

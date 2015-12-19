@@ -7,7 +7,6 @@ from pytest import fixture
 
 @fixture
 def mock_requests(monkeypatch, tmpdir):
-    """:type request: _pytest.python.FixtureRequest"""
     from cache_requests import config
 
     def mock_response(*args, **kwargs):

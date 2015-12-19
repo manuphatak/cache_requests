@@ -15,7 +15,6 @@ def config():
 
 
 def test_get_attr_raises_error_for_missing_attr():
-
     config = AttributeDict()
     with raises(AttributeError):
         _ = config.fail  # noqa

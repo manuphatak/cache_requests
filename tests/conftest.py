@@ -2,9 +2,10 @@
 # coding=utf-8
 
 from functools import partial
-# noinspection PyDeprecation
-from imp import reload
+
 from pytest import fixture
+
+from ._compat import reload
 
 
 @fixture(autouse=True)
@@ -17,6 +18,7 @@ def function_setup(tmpdir):
 
 @fixture(autouse=True)
 def function_tear_down(request):
+    """:type request: _pytest.python.FixtureRequest"""
     from cache_requests import config
 
     def cleanup():

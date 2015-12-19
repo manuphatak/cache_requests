@@ -28,7 +28,8 @@ Global config, default package settings.
 
     :env: :envvar:`REDIS_EX`
 
-    .. tip:: :mod:`redislite` will automatically use a unique tmp file if this is set to ``None``.  This can be used to turn off persistence between sessions.
+    .. tip:: :mod:`redislite` will automatically use a unique tmp file if this is set to ``None``.  This can be used
+    to turn off persistence between sessions.
 
     .. note:: :mod:`redislite` will NOT implicitly create directories.
 
