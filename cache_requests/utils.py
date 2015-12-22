@@ -21,11 +21,18 @@ Source
 from __future__ import absolute_import
 
 from collections import namedtuple
-from functools import wraps
+from functools import partial, wraps
+from tempfile import gettempdir
+
+from os import path
+from redislite import StrictRedis
 
 from ._compat import singledispatch
 
 __all__ = ['AttributeDict', 'normalize_signature', 'deep_hash']
+
+temp_file = partial(path.join, gettempdir())
+default_connection = partial(StrictRedis, dbfilename=temp_file('cache_requests.redislite'))
 
 
 class AttributeDict(object):

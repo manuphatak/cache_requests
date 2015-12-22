@@ -15,18 +15,13 @@ from pytest import fixture, raises
 
 @fixture
 def amazing_function():
-    from cache_requests import config
-    from redislite import StrictRedis
     from cache_requests import Memoize
 
     def _side_effect(*args, **kwargs):
         return len(args), len(kwargs)
 
     _amazing_function = MagicMock(spec=_side_effect, side_effect=_side_effect)
-
-    connection = StrictRedis(dbfilename=config.dbfilename)
-
-    return Memoize(_amazing_function, ex=1, connection=connection)
+    return Memoize(_amazing_function, ex=1)
 
 
 def test_memoized_function_called_only_once_per_arguments(amazing_function):
@@ -96,22 +91,20 @@ def test_raises_with_bad_params():
         Memoize(func=1)
 
 
-def test_access_to_memoized_functions_attributes():
-    from cache_requests import Memoize, config
-
-    config.ex = 1
-
-    @Memoize
-    def hello():
-        pass
-
-    assert hello.ex == 1 == config.ex
+# def test_access_to_memoized_functions_attributes():
+#     from cache_requests import Memoize
+#
+#     config.ex = 1
+#
+#     @Memoize()
+#     def hello():
+#         pass
+#
+#     assert hello.ex == 1 == config.ex
 
 
 def test_decorator_with_params():
-    from cache_requests import Memoize, config
-
-    assert config.ex == 3600
+    from cache_requests import Memoize
 
     @Memoize(ex=1)
     def hello():
@@ -122,52 +115,52 @@ def test_decorator_with_params():
     assert hello.redis.dbsize() == 0
 
 
-def test_kwarg_to_optionally_cache(MockRedis):
-    """:type MockRedis: mock.MagicMock"""
+def test_kwarg_to_optionally_cache(redis_mock):
+    """:type redis_mock: mock.MagicMock"""
 
     from cache_requests import Memoize
 
-    MockRedis.assert_not_called()
-    MockRedis.get.assert_not_called()
-    MockRedis.set.assert_not_called()
+    redis_mock.assert_not_called()
+    redis_mock.get.assert_not_called()
+    redis_mock.set.assert_not_called()
 
     result = {
         'test': 'sample text'
     }
 
-    @Memoize
+    @Memoize(connection=redis_mock)
     def hello(*_):
         return result.get('test')
 
-    MockRedis.get.assert_not_called()
-    MockRedis.set.assert_not_called()
+    redis_mock.get.assert_not_called()
+    redis_mock.set.assert_not_called()
 
     assert hello('hello', 'world') == 'sample text'
 
-    assert MockRedis.set.call_count == 1
-    assert MockRedis.get.call_count == 1
+    assert redis_mock.set.call_count == 1
+    assert redis_mock.get.call_count == 1
 
     result['test'] = 'bad cache target'
     assert hello('hello', 'world') == 'sample text'
 
-    assert MockRedis.set.call_count == 1
-    assert MockRedis.get.call_count == 2
+    assert redis_mock.set.call_count == 1
+    assert redis_mock.get.call_count == 2
 
     assert hello('hello', 'world', bust_cache=True) == 'bad cache target'
 
-    assert MockRedis.set.call_count == 2
-    assert MockRedis.get.call_count == 3
+    assert redis_mock.set.call_count == 2
+    assert redis_mock.get.call_count == 3
 
     assert hello('hello', 'world') == 'bad cache target'
 
-    assert MockRedis.set.call_count == 2
-    assert MockRedis.get.call_count == 4
+    assert redis_mock.set.call_count == 2
+    assert redis_mock.get.call_count == 4
 
     result['test'] = 'really bad cache target'
     assert hello('hello', 'world') == 'bad cache target'
 
-    assert MockRedis.set.call_count == 2
-    assert MockRedis.get.call_count == 5
+    assert redis_mock.set.call_count == 2
+    assert redis_mock.get.call_count == 5
 
 
 def test_cache_results_are_unique_per_function():
@@ -185,14 +178,15 @@ def test_cache_results_are_unique_per_function():
 
     assert hello(*test_args) != world(*test_args)
 
-def test_callback_to_optionally_cache(MockRedis):
-    """:type MockRedis: mock.MagicMock"""
+
+def test_callback_to_optionally_cache(redis_mock):
+    """:type redis_mock: mock.MagicMock"""
 
     from cache_requests import Memoize
 
-    MockRedis.assert_not_called()
-    MockRedis.get.assert_not_called()
-    MockRedis.set.assert_not_called()
+    redis_mock.assert_not_called()
+    redis_mock.get.assert_not_called()
+    redis_mock.set.assert_not_called()
 
     result = {
         'test': 'sample text'
@@ -202,8 +196,8 @@ def test_callback_to_optionally_cache(MockRedis):
     def hello(*_):
         return result.get('test')
 
-    MockRedis.get.assert_not_called()
-    MockRedis.set.assert_not_called()
+    redis_mock.get.assert_not_called()
+    redis_mock.set.assert_not_called()
 
     assert hello(set_cache=False) == 'sample text'
 
@@ -211,7 +205,7 @@ def test_callback_to_optionally_cache(MockRedis):
     assert hello(set_cache=False) == 'not using cache'
 
     result['test'] = 'still not using cache'
-    assert hello(set_cache=lambda _:False) == 'still not using cache'
+    assert hello(set_cache=lambda _: False) == 'still not using cache'
 
     def sample_callback(results):
         return results != 'setup: using results in callback'
