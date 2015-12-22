@@ -77,6 +77,8 @@ class Memoize(object):
         """
         # setup
         bust_cache = kwargs.pop('bust_cache', False)
+        set_cache = kwargs.pop('set_cache', True)
+        set_cache_cb = set_cache if callable(set_cache) else lambda _: set_cache
         hash_key = deep_hash(self.func.__name__, *args, **kwargs)
         cache_results = self[hash_key]
 
@@ -84,9 +86,13 @@ class Memoize(object):
         if bust_cache is False and cache_results is not None:
             return cache_results
 
-        # save results to cache
+        # get function results
         func_results = self.func(*args, **kwargs)
-        self[hash_key] = func_results
+
+        # optionally add results to cache
+        if set_cache_cb(func_results):
+            self[hash_key] = func_results
+
         return func_results
 
     def __setitem__(self, key, value):

@@ -31,6 +31,7 @@ def amazing_function():
 
 def test_memoized_function_called_only_once_per_arguments(amazing_function):
     """Function is only called with unique parameters"""
+
     assert amazing_function.redis.dbsize() == 0
     assert amazing_function.func.call_count == 0
     assert amazing_function(1, 2, 'three', '45') == (4, 0)
@@ -122,15 +123,14 @@ def test_decorator_with_params():
 
 
 def test_kwarg_to_optionally_cache(MockRedis):
-    """
-    :type MockRedis: mock.MagicMock
-    """
+    """:type MockRedis: mock.MagicMock"""
 
     from cache_requests import Memoize
 
     MockRedis.assert_not_called()
     MockRedis.get.assert_not_called()
     MockRedis.set.assert_not_called()
+
     result = {
         'test': 'sample text'
     }
@@ -184,3 +184,43 @@ def test_cache_results_are_unique_per_function():
     test_args = 'I', 'Like', 'Turtles'
 
     assert hello(*test_args) != world(*test_args)
+
+def test_callback_to_optionally_cache(MockRedis):
+    """:type MockRedis: mock.MagicMock"""
+
+    from cache_requests import Memoize
+
+    MockRedis.assert_not_called()
+    MockRedis.get.assert_not_called()
+    MockRedis.set.assert_not_called()
+
+    result = {
+        'test': 'sample text'
+    }
+
+    @Memoize
+    def hello(*_):
+        return result.get('test')
+
+    MockRedis.get.assert_not_called()
+    MockRedis.set.assert_not_called()
+
+    assert hello(set_cache=False) == 'sample text'
+
+    result['test'] = 'not using cache'
+    assert hello(set_cache=False) == 'not using cache'
+
+    result['test'] = 'still not using cache'
+    assert hello(set_cache=lambda _:False) == 'still not using cache'
+
+    def sample_callback(results):
+        return results != 'setup: using results in callback'
+
+    result['test'] = 'setup: using results in callback'
+    assert hello(set_cache=sample_callback) == 'setup: using results in callback'
+
+    result['test'] = 'test: using results in callback'
+    assert hello(set_cache=sample_callback) == 'test: using results in callback'
+
+    result['test'] = 'test: should still be using last results'
+    assert hello(set_cache=sample_callback) == 'test: using results in callback'
