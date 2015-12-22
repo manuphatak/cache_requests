@@ -7,7 +7,6 @@ test_cache_requests
 
 Tests for ``cache_requests`` module.
 """
-import time
 
 from mock import MagicMock
 from pytest import fixture, raises
@@ -21,6 +20,7 @@ def amazing_function():
         return len(args), len(kwargs)
 
     _amazing_function = MagicMock(spec=_side_effect, side_effect=_side_effect)
+    _amazing_function.__name__ = 'amazing_function'
     return Memoize(_amazing_function, ex=1)
 
 
@@ -67,21 +67,17 @@ def test_memoized_function_called_only_once_per_arguments(amazing_function):
 
 
 def test_expiration(amazing_function):
+    from cache_requests.utils import deep_hash
+
+    # SETUP
+    args, kwargs = ('amazing_function', 1, 2, 'three', 45), dict(this="is not", a="test")
+    key = deep_hash(*args, **kwargs)
     assert amazing_function.redis.dbsize() == 0
-    assert amazing_function.func.call_count == 0
-    assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
-    assert amazing_function.func.call_count == 1
-    assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
-    assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
-    assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
-    assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
-    assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
-    assert amazing_function.func.call_count == 1
-    time.sleep(1)
-    assert amazing_function.func.call_count == 1
+
     assert amazing_function(1, 2, 'three', 45, this="is not", a="test") == (4, 2)
 
-    assert amazing_function.func.call_count == 2
+    # TEST EXPIRATION SET
+    assert 990 < amazing_function.redis.pttl(key) <= 1000
 
 
 def test_raises_with_bad_params():
@@ -89,7 +85,6 @@ def test_raises_with_bad_params():
 
     with raises(TypeError):
         Memoize(func=1)
-
 
 
 def test_decorator_with_params():
@@ -127,7 +122,6 @@ def test_kwarg_to_optionally_cache(redis_mock):
     def hello(*_):
         return result.get('test')
 
-
     # TEST SETUP
     # ------------------------------------------------------------------------
     assert call_count() == (0, 0)
@@ -146,14 +140,12 @@ def test_kwarg_to_optionally_cache(redis_mock):
     assert hello('hello', 'world') == 'sample text'
     assert call_count() == (1, 0)
 
-
     # TEST BUSTING CACHE
     # ------------------------------------------------------------------------
 
     # 0 gets, 1 set
     assert hello('hello', 'world', bust_cache=True) == 'bad cache target'
     assert call_count() == (0, 1)
-
 
     # TEST GETTING RESULTS FROM CACHE AFTER BUST
     # ------------------------------------------------------------------------
@@ -167,7 +159,6 @@ def test_kwarg_to_optionally_cache(redis_mock):
     # 1 get, 0 sets
     assert hello('hello', 'world') == 'bad cache target'
     assert call_count() == (2, 0)
-
 
 
 def test_cache_results_are_unique_per_function():
@@ -227,7 +218,6 @@ def test_callback_to_optionally_cache(redis_mock):
     result['test'] = 'not using cache'
     assert hello(set_cache=False) == 'not using cache'
     assert call_count() == (1, 0)
-
 
     # TEST NO CACHE WHEN CALLBACK IS FALSE
     # ------------------------------------------------------------------------

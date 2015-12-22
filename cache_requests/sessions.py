@@ -60,7 +60,7 @@ class MemoizeRequest(Memoize):
         if not use_cache:
             return self.func(*args, **kwargs)
 
-        kwargs.setdefault('set_cache',self.set_cache_cb)
+        kwargs.setdefault('set_cache', self.set_cache_cb)
 
         return super(MemoizeRequest, self).__call__(*args, **kwargs)
 
@@ -81,8 +81,19 @@ class Session(RequestsSession):
 
         super(Session, self).__init__()
 
-        self.cache = CacheConfig(get=True, options=True, head=True, post=False, put=False, patch=False, delete=False,
-                                 all=None, status_codes=[200])
+        options = {
+            'get': True,
+            'options': True,
+            'head': True,
+            'post': False,
+            'put': False,
+            'patch': False,
+            'delete': False,
+            'all': None,
+            'status_codes': [200]
+        }
+
+        self.cache = CacheConfig(**options)
 
         self.get = MemoizeRequest(self.get, session=self)
         self.options = MemoizeRequest(self.options, session=self)
