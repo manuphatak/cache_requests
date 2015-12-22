@@ -16,7 +16,7 @@ def mock_session_request():
     session_request = MagicMock(spec=Request)
     session_request.response = response
     session_request.return_value = response
-    session_request.status_code = 200
+    # session_request.status_code = 200
 
     return session_request
 
@@ -160,25 +160,32 @@ def test_memoize_toggled_off(requests, mock_session_request):
     assert mock_session_request.call_count == 2
 
 
-@mark.skipif
+# @mark.skipif
 @mark.usefixtures('patch_requests')
 def test_only_cache_200_response(requests, redis_mock, mock_session_request):
+    def call_count():
+        return redis_mock.get.call_count, redis_mock.set.call_count
+
     requests.get.connection = redis_mock
 
     redis_mock.assert_not_called()
-    redis_mock.get.assert_not_called()
-    redis_mock.set.assert_not_called()
+    assert call_count() == (0, 0)
 
     requests.get('http://google.com')
     requests.get('http://google.com')
 
-    assert redis_mock.get.call_count == 2
-    assert redis_mock.set.call_count == 1
+    assert call_count() == (2, 1)
 
-    mock_session_request.status_code = 404
+    mock_session_request.response.status_code = 404
 
     requests.get('http://google.com', bust_cache=True)
     requests.get('http://google.com')
 
-    assert redis_mock.get.call_count == 2
-    assert redis_mock.set.call_count == 1
+    assert call_count() == (3, 1)
+
+    mock_session_request.response.status_code = 200
+
+    requests.get('http://google.com')
+    requests.get('http://google.com')
+
+    assert call_count() == (5, 2)

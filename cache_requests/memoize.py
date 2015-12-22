@@ -23,7 +23,7 @@ from functools import partial, update_wrapper
 import types
 
 from ._compat import pickle
-from .utils import deep_hash, default_connection
+from .utils import deep_hash, default_connection, make_callback
 
 logger = logging.getLogger(__name__)
 
@@ -75,22 +75,32 @@ class Memoize(object):
         """
         # setup
         bust_cache = kwargs.pop('bust_cache', False)
-        set_cache = kwargs.pop('set_cache', True)
-        set_cache_cb = set_cache if callable(set_cache) else lambda _: set_cache
         hash_key = deep_hash(self.func.__name__, *args, **kwargs)
-        cache_results = self[hash_key]
+        set_cache_cb = make_callback(kwargs.pop('set_cache', True))
+        func_akw = args, kwargs
 
-        # return results from cache
-        if bust_cache is False and cache_results is not None:
-            return cache_results
+        # Guard, don't get results from cache.
+        if bust_cache:
+            del self[hash_key]
+            return self.put_cache_results(hash_key, func_akw, set_cache_cb)
+
+        # Results are in cache, use results
+        results_from_cache = self[hash_key]
+        if results_from_cache is not None:
+            return results_from_cache
+
+        # Set and return results from cache
+        return self.put_cache_results(hash_key, func_akw, set_cache_cb)
+
+    def put_cache_results(self, key, func_akw, set_cache_cb):
+        args, kwargs = func_akw
 
         # get function results
         func_results = self.func(*args, **kwargs)
 
         # optionally add results to cache
         if set_cache_cb(func_results):
-            self[hash_key] = func_results
-
+            self[key] = func_results
         return func_results
 
     def __setitem__(self, key, value):
@@ -116,6 +126,9 @@ class Memoize(object):
         # deserialize value
         logger.debug('Retrieving item from cache: %s', key)
         return pickle.loads(value)
+
+    def __delitem__(self, key):
+        return self.redis.delete(key)
 
     def __get__(self, instance, _):
         # Decorator class best practices.

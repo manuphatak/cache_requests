@@ -60,14 +60,12 @@ class MemoizeRequest(Memoize):
         if not use_cache:
             return self.func(*args, **kwargs)
 
-        updated_kwargs = {
-            'set_cache': self.set_cache
-        }
-        updated_kwargs.update(kwargs)
-        return super(MemoizeRequest, self).__call__(*args, **updated_kwargs)
+        kwargs.setdefault('set_cache',self.set_cache_cb)
 
-    def set_cache(self, response):
-        return response.status_code in self.cache.status_codes
+        return super(MemoizeRequest, self).__call__(*args, **kwargs)
+
+    def set_cache_cb(self, response):
+        return int(response.status_code) in self.cache.status_codes
 
 
 class CacheConfig(AttributeDict):

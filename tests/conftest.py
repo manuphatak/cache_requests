@@ -37,9 +37,14 @@ def redis_mock():
     def get(name):
         return cache.get(name)
 
+    def delete(key):
+        cache.pop(key)
+
     _MockRedis = Mock(spec='redislite.StrictRedis')
+    _MockRedis.cache = cache
     _MockRedis.get = Mock(side_effect=get)
     _MockRedis.set = Mock(side_effect=set)
+    _MockRedis.delete = Mock(side_effect=delete)
     _MockRedis.flushall = Mock()
 
     return _MockRedis

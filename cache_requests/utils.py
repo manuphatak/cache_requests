@@ -35,6 +35,10 @@ temp_file = partial(path.join, gettempdir())
 default_connection = partial(StrictRedis, dbfilename=temp_file('cache_requests.redislite'))
 
 
+def make_callback(value):
+    return value if callable(value) else lambda *args, **kwargs: value
+
+
 class AttributeDict(object):
     """Strict dict with attribute access"""
 
