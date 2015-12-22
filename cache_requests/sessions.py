@@ -25,7 +25,6 @@ from __future__ import absolute_import
 
 from requests import Session as RequestsSession
 
-# from ._config import config
 from .memoize import Memoize
 from .utils import AttributeDict
 
@@ -54,18 +53,26 @@ class MemoizeRequest(Memoize):
         :param dict kwargs: Function kwargs.
         :return: Function results.
         """
+
         all_is_unset = self.cache.all is None
         use_cache = getattr(self.cache, self.func.__name__) if all_is_unset else self.cache.all
 
         if not use_cache:
             return self.func(*args, **kwargs)
 
-        return super(MemoizeRequest, self).__call__(*args, **kwargs)
+        updated_kwargs = {
+            'set_cache': self.set_cache
+        }
+        updated_kwargs.update(kwargs)
+        return super(MemoizeRequest, self).__call__(*args, **updated_kwargs)
+
+    def set_cache(self, response):
+        return response.status_code in self.cache.status_codes
 
 
 class CacheConfig(AttributeDict):
     """A strict dict with attribute access."""
-    __attr__ = 'get', 'options', 'head', 'post', 'put', 'patch', 'delete', 'all'
+    __attr__ = 'get', 'options', 'head', 'post', 'put', 'patch', 'delete', 'all', 'status_codes'
 
 
 class Session(RequestsSession):
@@ -75,8 +82,10 @@ class Session(RequestsSession):
         """Set reference to cache configuration on object."""
 
         super(Session, self).__init__()
+
         self.cache = CacheConfig(get=True, options=True, head=True, post=False, put=False, patch=False, delete=False,
-                                 all=None)
+                                 all=None, status_codes=[200])
+
         self.get = MemoizeRequest(self.get, session=self)
         self.options = MemoizeRequest(self.options, session=self)
         self.head = MemoizeRequest(self.head, session=self)
