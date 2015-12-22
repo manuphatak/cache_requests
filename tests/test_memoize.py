@@ -91,17 +91,6 @@ def test_raises_with_bad_params():
         Memoize(func=1)
 
 
-# def test_access_to_memoized_functions_attributes():
-#     from cache_requests import Memoize
-#
-#     config.ex = 1
-#
-#     @Memoize()
-#     def hello():
-#         pass
-#
-#     assert hello.ex == 1 == config.ex
-
 
 def test_decorator_with_params():
     from cache_requests import Memoize
@@ -120,10 +109,16 @@ def test_kwarg_to_optionally_cache(redis_mock):
 
     from cache_requests import Memoize
 
-    redis_mock.assert_not_called()
-    redis_mock.get.assert_not_called()
-    redis_mock.set.assert_not_called()
+    # LOCAL TEST HELPER
+    # ------------------------------------------------------------------------
+    def call_count():
+        try:
+            return redis_mock.get.call_count, redis_mock.set.call_count
+        finally:
+            redis_mock.reset_mock()
 
+    # LOCAL SETUP
+    # ------------------------------------------------------------------------
     result = {
         'test': 'sample text'
     }
@@ -132,35 +127,47 @@ def test_kwarg_to_optionally_cache(redis_mock):
     def hello(*_):
         return result.get('test')
 
-    redis_mock.get.assert_not_called()
-    redis_mock.set.assert_not_called()
 
+    # TEST SETUP
+    # ------------------------------------------------------------------------
+    assert call_count() == (0, 0)
+
+    # 1 get, 1 set
     assert hello('hello', 'world') == 'sample text'
+    assert call_count() == (1, 1)
 
-    assert redis_mock.set.call_count == 1
-    assert redis_mock.get.call_count == 1
+    assert call_count() == (0, 0)
 
+    # TEST GETTING RESULTS FROM CACHE
+    # ------------------------------------------------------------------------
     result['test'] = 'bad cache target'
+
+    # 1 get, 0 sets
     assert hello('hello', 'world') == 'sample text'
+    assert call_count() == (1, 0)
 
-    assert redis_mock.set.call_count == 1
-    assert redis_mock.get.call_count == 2
 
+    # TEST BUSTING CACHE
+    # ------------------------------------------------------------------------
+
+    # 0 gets, 1 set
     assert hello('hello', 'world', bust_cache=True) == 'bad cache target'
+    assert call_count() == (0, 1)
 
-    assert redis_mock.set.call_count == 2
-    assert redis_mock.get.call_count == 3
 
+    # TEST GETTING RESULTS FROM CACHE AFTER BUST
+    # ------------------------------------------------------------------------
+
+    # 1 get, 0 sets
     assert hello('hello', 'world') == 'bad cache target'
 
-    assert redis_mock.set.call_count == 2
-    assert redis_mock.get.call_count == 4
-
+    # NO FUNNY BUSINESS
     result['test'] = 'really bad cache target'
-    assert hello('hello', 'world') == 'bad cache target'
 
-    assert redis_mock.set.call_count == 2
-    assert redis_mock.get.call_count == 5
+    # 1 get, 0 sets
+    assert hello('hello', 'world') == 'bad cache target'
+    assert call_count() == (2, 0)
+
 
 
 def test_cache_results_are_unique_per_function():
@@ -184,37 +191,65 @@ def test_callback_to_optionally_cache(redis_mock):
 
     from cache_requests import Memoize
 
-    redis_mock.assert_not_called()
-    redis_mock.get.assert_not_called()
-    redis_mock.set.assert_not_called()
+    # LOCAL TEST HELPER
+    # ------------------------------------------------------------------------
+    def call_count():
+        try:
+            return redis_mock.get.call_count, redis_mock.set.call_count
+        finally:
+            redis_mock.reset_mock()
 
+    # LOCAL SETUP
+    # ------------------------------------------------------------------------
     result = {
         'test': 'sample text'
     }
 
-    @Memoize
+    @Memoize(connection=redis_mock)
     def hello(*_):
         return result.get('test')
 
-    redis_mock.get.assert_not_called()
-    redis_mock.set.assert_not_called()
+    # TEST SETUP
+    # ------------------------------------------------------------------------
+    assert call_count() == (0, 0)
+
+    # 1 get, 1 set
+    assert hello('hello', 'world') == 'sample text'
+    assert call_count() == (1, 1)
+    assert call_count() == (0, 0)
+
+    # TEST NO CACHE WHEN FALSE
+    # ------------------------------------------------------------------------
 
     assert hello(set_cache=False) == 'sample text'
+    assert call_count() == (1, 0)
 
     result['test'] = 'not using cache'
     assert hello(set_cache=False) == 'not using cache'
+    assert call_count() == (1, 0)
 
+
+    # TEST NO CACHE WHEN CALLBACK IS FALSE
+    # ------------------------------------------------------------------------
     result['test'] = 'still not using cache'
     assert hello(set_cache=lambda _: False) == 'still not using cache'
+    assert call_count() == (1, 0)
 
+    # TEST CALLBACK THAT USES FUNC RESULTS
+    # ------------------------------------------------------------------------
+
+    # setup
     def sample_callback(results):
         return results != 'setup: using results in callback'
 
     result['test'] = 'setup: using results in callback'
     assert hello(set_cache=sample_callback) == 'setup: using results in callback'
+    assert call_count() == (1, 0)
 
     result['test'] = 'test: using results in callback'
     assert hello(set_cache=sample_callback) == 'test: using results in callback'
+    assert call_count() == (1, 1)
 
     result['test'] = 'test: should still be using last results'
     assert hello(set_cache=sample_callback) == 'test: using results in callback'
+    assert call_count() == (1, 0)

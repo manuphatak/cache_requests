@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # coding=utf-8
-
-
 from mock import MagicMock
 from pytest import fixture, mark
 
@@ -16,7 +14,6 @@ def mock_session_request():
     session_request = MagicMock(spec=Request)
     session_request.response = response
     session_request.return_value = response
-    # session_request.status_code = 200
 
     return session_request
 
@@ -160,32 +157,45 @@ def test_memoize_toggled_off(requests, mock_session_request):
     assert mock_session_request.call_count == 2
 
 
-# @mark.skipif
 @mark.usefixtures('patch_requests')
 def test_only_cache_200_response(requests, redis_mock, mock_session_request):
-    def call_count():
-        return redis_mock.get.call_count, redis_mock.set.call_count
 
+    # LOCAL TEST HELPER
+    # ------------------------------------------------------------------------
+    def call_count():
+        try:
+            return redis_mock.get.call_count, redis_mock.set.call_count
+        finally:
+            redis_mock.reset_mock()
+
+    # LOCAL SETUP
+    # ------------------------------------------------------------------------
     requests.get.connection = redis_mock
 
+    # TEST SETUP
+    # ------------------------------------------------------------------------
     redis_mock.assert_not_called()
     assert call_count() == (0, 0)
 
-    requests.get('http://google.com')
-    requests.get('http://google.com')
+    requests.get('http://google.com')  # 1 get, 1 set
+    requests.get('http://google.com')  # 1 get, 0 sets
 
     assert call_count() == (2, 1)
 
+    # TEST 404 RESPONSE DOES NOT CACHE
+    # ------------------------------------------------------------------------
     mock_session_request.response.status_code = 404
 
-    requests.get('http://google.com', bust_cache=True)
-    requests.get('http://google.com')
+    requests.get('http://google.com', bust_cache=True)  # 0 gets, 0 sets
+    requests.get('http://google.com')  # 1 get, 0 set
 
-    assert call_count() == (3, 1)
+    assert call_count() == (1, 0)
 
+    # TEST 200 RESPONSE DOES CACHE
+    # ------------------------------------------------------------------------
     mock_session_request.response.status_code = 200
 
-    requests.get('http://google.com')
-    requests.get('http://google.com')
+    requests.get('http://google.com')  # 1 get, 1 set
+    requests.get('http://google.com')  # 1 get, 0 sets
 
-    assert call_count() == (5, 2)
+    assert call_count() == (2, 1)
