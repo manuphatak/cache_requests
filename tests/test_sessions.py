@@ -170,7 +170,7 @@ def test_only_cache_200_response(requests, redis_mock, mock_session_request):
 
     # LOCAL SETUP
     # ------------------------------------------------------------------------
-    requests.get.connection = redis_mock
+    requests.connection = redis_mock
 
     # TEST SETUP
     # ------------------------------------------------------------------------

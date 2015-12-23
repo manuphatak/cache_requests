@@ -26,7 +26,7 @@ from __future__ import absolute_import
 from requests import Session as RequestsSession
 
 from .memoize import Memoize
-from .utils import AttributeDict
+from .utils import AttributeDict, default_connection, default_ex
 
 __all__ = ['MemoizeRequest', 'CacheConfig', 'Session']
 
@@ -36,13 +36,12 @@ class MemoizeRequest(Memoize):
 
     def __init__(self, func=None, **kwargs):
         session = kwargs.pop('session')
+        self.session = session
 
-        if not hasattr(session, 'cache'):
+        if not hasattr(self.session, 'cache'):
             raise TypeError('Must pass in a cache config object.')
 
         super(MemoizeRequest, self).__init__(func=func, **kwargs)
-
-        self.cache = session.cache
 
     def __call__(self, *args, **kwargs):
         """
@@ -54,8 +53,8 @@ class MemoizeRequest(Memoize):
         :return: Function results.
         """
 
-        all_is_unset = self.cache.all is None
-        use_cache = getattr(self.cache, self.func.__name__) if all_is_unset else self.cache.all
+        all_is_unset = self.session.cache.all is None
+        use_cache = getattr(self.session.cache, self.func.__name__) if all_is_unset else self.session.cache.all
 
         if not use_cache:
             return self.func(*args, **kwargs)
@@ -65,7 +64,23 @@ class MemoizeRequest(Memoize):
         return super(MemoizeRequest, self).__call__(*args, **kwargs)
 
     def set_cache_cb(self, response):
-        return int(response.status_code) in self.cache.status_codes
+        return int(response.status_code) in self.session.cache.status_codes
+
+    @property
+    def redis(self):
+        return self.session.connection
+
+    @redis.setter
+    def redis(self, value):
+        self.session.connection = value
+
+    @property
+    def ex(self):
+        return self.session.ex
+
+    @ex.setter
+    def ex(self, value):
+        self.session.ex = value
 
 
 class CacheConfig(AttributeDict):
@@ -76,7 +91,7 @@ class CacheConfig(AttributeDict):
 class Session(RequestsSession):
     """:class:`requests.Session` with memoized methods."""
 
-    def __init__(self):
+    def __init__(self, ex=None, connection=None):
         """Set reference to cache configuration on object."""
 
         super(Session, self).__init__()
@@ -94,6 +109,8 @@ class Session(RequestsSession):
         }
 
         self.cache = CacheConfig(**options)
+        self.connection = connection or default_connection()
+        self.ex = ex or default_ex
 
         self.get = MemoizeRequest(self.get, session=self)
         self.options = MemoizeRequest(self.options, session=self)

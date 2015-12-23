@@ -23,7 +23,7 @@ from functools import partial, update_wrapper
 import types
 
 from ._compat import pickle
-from .utils import deep_hash, default_connection, make_callback
+from .utils import deep_hash, default_connection, make_callback, default_ex
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +63,7 @@ class Memoize(object):
         update_wrapper(self, func)
         self.func = func
         self.connection = connection or default_connection()
-        self.ex = ex or 3600
+        self.ex = ex or default_ex
 
     def __call__(self, *args, **kwargs):
         """
