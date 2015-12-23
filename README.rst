@@ -166,27 +166,37 @@ To use ``cache_requests`` in a project
 Config Options
 --------------
 
+Decorated Methods
+~~~~~~~~~~~~~~~~~
 
-:mod:`cache_requests.config`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``method.ex``
+    sets the default expiration (seconds) for new cache entries.
 
-:data:`config.ex`
-    sets the default expiration (seconds) for new cache entries. Can be configured with env :envvar:`REDIS_EX`.
-
-:data:`config.dbfilename`
-    sets the default location for the database.  The default location is a spot in your OS' temp directory.  Can be configured with env :envvar:`REDIS_DBFILENAME`.
-
-:data:`config.connection`
-    creates the connection to the :mod:`redis` or :mod:`redislite` database.  By default this is a :mod:`redislite` connection, but a redis connection can be dropped in for an easy upgrade.  Can be configured with env :envvar:`REDIS_CONNECTION`.
+``method.redis``
+    creates the connection to the ``redis`` or ``redislite`` database. By default this is a ``redislite`` connection. However, a redis connection can be dropped in for easy scalability.
 
 
 :mod:`cache_requests.Session`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Caching individual session methods is turned on and off independently.
+- ``ex`` and ``redis`` are shared between request methods.  They can be accessed by ``Session.ex`` or ``Session.get.ex``, where ``get`` is the ``requests.get`` method
 
-These methods are accessed through the Session objects ``cache.[method name]``.
-They can be overridden with the ``cache.all`` setting.
+- By default requests that return and error will not be cached.  This can be overridden by overriding the ``Session.set_cache_cb`` to return ``False``.  The callback takes the response object as an argument
+
+.. code-block:: python
+
+        from cache_requests import Session
+
+        requests = Session()
+
+        requests.set_cache_db = lambda _:False
+
+- By default only autonomous methods are cached (``get``, ``head``, ``options``).  Each method can be setup to be cached using the ``Session.cache`` config option.
+
+
+
+These methods are accessed through the Session objects ``Session.cache.[method name]``.
+They can be overridden with the ``Session.cache.all`` setting.
 
 For example
 

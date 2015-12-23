@@ -56,18 +56,9 @@ class MemoizeRequest(Memoize):
         if not use_cache:
             return self.func(*args, **kwargs)
 
-        kwargs.setdefault('set_cache', self.set_cache_cb)
+        kwargs.setdefault('set_cache', self.session.set_cache_cb)
 
         return super(MemoizeRequest, self).__call__(*args, **kwargs)
-
-    def set_cache_cb(self, response):
-        """:type response: requests.Response"""
-        try:
-            response.raise_for_status()
-        except  HTTPError:
-            return False
-
-        return True
 
     @property
     def redis(self):
@@ -121,3 +112,12 @@ class Session(RequestsSession):
         self.put = MemoizeRequest(self.put, session=self)
         self.patch = MemoizeRequest(self.patch, session=self)
         self.delete = MemoizeRequest(self.delete, session=self)
+
+    def set_cache_cb(self, response):
+        """:type response: requests.Response"""
+        try:
+            response.raise_for_status()
+        except  HTTPError:
+            return False
+
+        return True
