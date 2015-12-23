@@ -7,6 +7,7 @@ Next Release
 
 - Feature: Cache busting! Use keyword argument ``bust_cache=True`` to force reevaluation.
 - Feature: Automatically skip caching errors.
+- Feature: Decorated Session methods share a centralized configuration per session.
 - Design: Remove global config, in favor component level config.  Reasoning: Adds way too much complexity for a simple package for.  (Everything needs to lazy load the config at the last moment)
 - Fix: Unique cache per function in shared db.
 
