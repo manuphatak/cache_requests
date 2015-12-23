@@ -103,19 +103,29 @@ def test_redis_getter_setter(tmpdir):
     from cache_requests import Memoize
     from redislite import StrictRedis
 
-    patched_db_file = tmpdir.join('test_redis.db').strpath
-
+    # LOCAL SETUP
+    # ------------------------------------------------------------------------
     @Memoize(ex=1)
     def hello():
         pass
 
-    assert hello.redis.db == patched_db_file
+    test_connection = hello.redis
+    test_db = tmpdir.join('test_redis.db').strpath
+    alt_db = tmpdir.join('test_redis_getter_setter.db').strpath
+    alt_connection = StrictRedis(dbfilename=alt_db)
 
-    new_file = tmpdir.join('test_redis_getter_setter.db').strpath
-    hello.redis = StrictRedis(dbfilename=new_file)
+    # TEST SETUP
+    # ------------------------------------------------------------------------
+    assert test_connection.db == test_db
+    assert alt_connection.db == alt_db
+    assert test_db != alt_db
 
-    assert hello.redis.db != patched_db_file
-    assert hello.redis.db == new_file
+    # TEST MEMOIZE REDIS SETTER
+    # ------------------------------------------------------------------------
+    hello.redis = alt_connection
+
+    assert hello.redis.db != test_db
+    assert hello.redis.db == alt_db
 
 
 def test_bust_cache_reevaluates_function(redis_mock):
@@ -141,7 +151,7 @@ def test_bust_cache_reevaluates_function(redis_mock):
     def hello(*_):
         return result.get('test')
 
-    # TEST SETUP
+    # TEST LOCAL SETUP
     # ------------------------------------------------------------------------
     assert call_count() == (0, 0)
 

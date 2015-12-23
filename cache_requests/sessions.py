@@ -38,9 +38,6 @@ class MemoizeRequest(Memoize):
         session = kwargs.pop('session')
         self.session = session
 
-        if not hasattr(self.session, 'cache'):
-            raise TypeError('Must pass in a cache config object.')
-
         super(MemoizeRequest, self).__init__(func=func, **kwargs)
 
     def __call__(self, *args, **kwargs):
