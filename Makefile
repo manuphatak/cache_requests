@@ -68,10 +68,10 @@ test-all: lint
 	tox
 
 coverage:
-	coverage run cache_requests setup.py test
+	coverage run setup.py test
 	coverage report
 	coverage html
-	$(BROWSER) htmlcov/index.html
+	$(BROWSER) .htmlcov/index.html
 	$(MAKE) -C docs coverage
 
 github:

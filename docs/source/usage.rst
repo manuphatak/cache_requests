@@ -32,20 +32,6 @@ To use ``cache_requests`` in a project::
 Config Options
 --------------
 
-.. currentmodule:: cache_requests
-
-:mod:`cache_requests.config`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-:data:`config.ex`
-    sets the default expiration (seconds) for new cache entries. Can be configured with env :envvar:`REDIS_EX`.
-
-:data:`config.dbfilename`
-    sets the default location for the database.  The default location is a spot in your OS' temp directory.  Can be configured with env :envvar:`REDIS_DBFILENAME`.
-
-:data:`config.connection`
-    creates the connection to the :mod:`redis` or :mod:`redislite` database.  By default this is a :mod:`redislite` connection, but a redis connection can be dropped in for an easy upgrade.  Can be configured with env :envvar:`REDIS_CONNECTION`.
-
 
 :mod:`cache_requests.Session`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
