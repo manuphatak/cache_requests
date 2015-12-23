@@ -130,11 +130,12 @@ class Memoize(object):
     def __delitem__(self, key):
         return self.redis.delete(key)
 
-    def __get__(self, instance, _):
+    def __get__(self, instance, _):  # pragma: no cover
+
         # Decorator class best practices.
 
         if instance is None:
-            return self  # pragma: no cover
+            return self
 
         return types.MethodType(self, instance)
 

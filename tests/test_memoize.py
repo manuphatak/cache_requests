@@ -99,7 +99,26 @@ def test_decorator_with_params():
     assert hello.redis.dbsize() == 0
 
 
-def test_kwarg_to_optionally_cache(redis_mock):
+def test_redis_getter_setter(tmpdir):
+    from cache_requests import Memoize
+    from redislite import StrictRedis
+
+    patched_db_file = tmpdir.join('test_redis.db').strpath
+
+    @Memoize(ex=1)
+    def hello():
+        pass
+
+    assert hello.redis.db == patched_db_file
+
+    new_file = tmpdir.join('test_redis_getter_setter.db').strpath
+    hello.redis = StrictRedis(dbfilename=new_file)
+
+    assert hello.redis.db != patched_db_file
+    assert hello.redis.db == new_file
+
+
+def test_bust_cache_reevaluates_function(redis_mock):
     """:type redis_mock: mock.MagicMock"""
 
     from cache_requests import Memoize
@@ -177,7 +196,7 @@ def test_cache_results_are_unique_per_function():
     assert hello(*test_args) != world(*test_args)
 
 
-def test_callback_to_optionally_cache(redis_mock):
+def test_set_cache_cb_is_used_to_skip_cache(redis_mock):
     """:type redis_mock: mock.MagicMock"""
 
     from cache_requests import Memoize

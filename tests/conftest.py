@@ -1,18 +1,22 @@
 #!/usr/bin/env python
 # coding=utf-8
+from functools import partial
 
 from mock import Mock
 from pytest import fixture
 
 
 @fixture(autouse=True)
-def function_setup(tmpdir, monkeypatch):
+def a_function_setup(tmpdir, monkeypatch):
     """:param py.path.local tmpdir:"""
 
-    def temp_file(_):
-        return tmpdir.join('test_redis.db').strpath
+    from redislite import StrictRedis
 
-    monkeypatch.setattr('cache_requests.utils.temp_file', temp_file)
+    default_connection = partial(StrictRedis, dbfilename=tmpdir.join('test_redis.db').strpath)
+
+    monkeypatch.setattr('cache_requests.memoize.default_connection', default_connection)
+    monkeypatch.setattr('cache_requests.utils.default_connection', default_connection)
+    monkeypatch.setattr('cache_requests.sessions.default_connection', default_connection)
 
 
 @fixture(autouse=True)
