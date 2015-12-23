@@ -284,10 +284,10 @@ Make a request one time. Cache the results for the rest of your work session.
     import os
 
     if os.environ.get('ENV') == 'DEVELOP':
-        from cache_requests import Session, config
+        from cache_requests import Session
 
-        config.ex = 60 * 60  # 60 min
-        request = Session()
+        ex = 60 * 60  # Set expiration, 60 min
+        request = Session(ex=ex)
     else:
         import requests
 
@@ -315,21 +315,13 @@ Make a request one time. Cache the results for the rest of your work session.
     response = requests.get('http://google.com/search', headers=headers, params=payload)
 
 
-Optionally.  Setup with environment variables.
-
-.. code-block:: shell
-
-    $ export ENV=DEVELOP
-    $ export REDIS_DBFILENAME='redis/requests.redislite'  # make sure directory exists
-    $ export REDIS_EX=3600  # 1 hour; default
-
 
 Production: Web Scraping
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 Automatically expire old content.
 
-    * How often? After a day? A week? A Month? etc.  100% of this logic is built in with the ``config.ex`` setting.
+    * How often? After a day? A week? A Month? etc.  100% of this logic is built in with the ``Session.ex`` setting.
     * Effectively it can manage all of the time-based rotation.
     * Perfect if you theres more data then what your API caps allow.
 
@@ -338,20 +330,21 @@ One line of code to use a ``redis`` full database.
     * Try ``redislite``; it can handle quite a bit.  The ``redislite`` api used by this module is 1:1 with the redis package.  Just replace the connection parameter/config value.
     * ``redis`` is a drop in:
 
-    .. code-block:: python
+.. code-block:: python
 
-        config.connection  = redis.StrictRedis(host='localhost', port=6379, db=0)
+        connection  = redis.StrictRedis(host='localhost', port=6379, db=0)
+        requests = Session(connection=connection)
 
     * Everything else just works.  There's no magic required.
 
-    .. code-block:: python
+.. code-block:: python
 
-        from cache_requests import Session, config
+        from cache_requests import Session
 
-        config.connection  = redis.StrictRedis(host='localhost', port=6379, db=0)
-        config.ex = 7 * 24 * 60 * 60 # 1 week
+        connection  = redis.StrictRedis(host='localhost', port=6379, db=0)
+        ex = 7 * 24 * 60 * 60 # 1 week
 
-        requests = Session()
+        requests = Session(ex=ex, connection=connection)
 
         for i in range(1000)
             payload = dict(q=i)
@@ -365,12 +358,12 @@ Usage: memoize
 ~~~~~~~~~~~~~~
 
 
+
 .. code-block:: python
 
-    from cache_requests import memoize, config
-    config.ex = 15 * 60  # 15 min, defult, 60 min
+    from cache_requests import Memoize
 
-    @memoize
+    @Memoize(ex=15 * 60)  # 15 min, default, 60 min
     def amazing_but_expensive_function(*args, **kwargs)
         print("You're going to like this")
 
