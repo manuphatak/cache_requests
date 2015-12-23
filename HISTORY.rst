@@ -5,11 +5,20 @@ History
 Next Release
 ------------
 
+- Stay Tuned.
+
+3.0.0 (2015-12-22)
+------------------
+
 - Feature: Cache busting! Use keyword argument ``bust_cache=True`` to force reevaluation.
-- Feature: Automatically skip caching errors.
+- Feature: Session automatically skips caching error responses.
+- Feature: Callback argument to decide if results should be cached.
 - Feature: Decorated Session methods share a centralized configuration per session.
-- Design: Remove global config, in favor component level config.  Reasoning: Adds way too much complexity for a simple package for.  (Everything needs to lazy load the config at the last moment)
+- BREAKING: Remove global config, in favor component level config.  Reasoning: Global config adds way too much complexity and adds too little value.  (Everything needs to lazy load the config at the last moment)
 - Fix: Unique cache per function in shared db.
+- Fix: Tweaks to keep the classes sub classable.
+- Fix: Cleaned up tests.
+- Updated requirements.
 
 2.0.0 (2015-12-12)
 ------------------
