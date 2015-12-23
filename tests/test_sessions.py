@@ -25,6 +25,10 @@ def mock_session_request():
 
 @fixture
 def patch_requests(monkeypatch, mock_session_request):
+    """
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    :type mock_session_request: mock.MagicMock
+    """
     import json
 
     def pickle_dumps(value):
@@ -57,6 +61,11 @@ def requests():
 
 @mark.usefixtures('patch_requests')
 def test_requests_get(requests, mock_session_request):
+    """
+    :type requests: cache_requests.sessions.Session
+    :type mock_session_request: mock.MagicMock
+    """
+
     mock_session_request.assert_not_called()
     # 1st unique call
     requests.get('http://google.com')
@@ -91,6 +100,11 @@ def test_requests_get(requests, mock_session_request):
 
 @mark.usefixtures('patch_requests')
 def test_requests_options(requests, mock_session_request):
+    """
+    :type requests: cache_requests.sessions.Session
+    :type mock_session_request: mock.MagicMock
+    """
+
     mock_session_request.assert_not_called()
     requests.options('http://google.com')
     requests.options('http://google.com')
@@ -100,6 +114,11 @@ def test_requests_options(requests, mock_session_request):
 
 @mark.usefixtures('patch_requests')
 def test_requests_head(requests, mock_session_request):
+    """
+    :type requests: cache_requests.sessions.Session
+    :type mock_session_request: mock.MagicMock
+    """
+
     mock_session_request.assert_not_called()
     requests.head('http://google.com')
     requests.head('http://google.com')
@@ -110,6 +129,11 @@ def test_requests_head(requests, mock_session_request):
 
 @mark.usefixtures('patch_requests')
 def test_requests_post(requests, mock_session_request):
+    """
+    :type requests: cache_requests.sessions.Session
+    :type mock_session_request: mock.MagicMock
+    """
+
     requests.cache.post = True
 
     mock_session_request.assert_not_called()
@@ -121,6 +145,11 @@ def test_requests_post(requests, mock_session_request):
 
 @mark.usefixtures('patch_requests')
 def test_requests_put(requests, mock_session_request):
+    """
+    :type requests: cache_requests.sessions.Session
+    :type mock_session_request: mock.MagicMock
+    """
+
     requests.cache.put = True
 
     mock_session_request.assert_not_called()
@@ -132,6 +161,11 @@ def test_requests_put(requests, mock_session_request):
 
 @mark.usefixtures('patch_requests')
 def test_requests_patch(requests, mock_session_request):
+    """
+    :type requests: cache_requests.sessions.Session
+    :type mock_session_request: mock.MagicMock
+    """
+
     requests.cache.patch = True
 
     mock_session_request.assert_not_called()
@@ -143,6 +177,11 @@ def test_requests_patch(requests, mock_session_request):
 
 @mark.usefixtures('patch_requests')
 def test_requests_delete(requests, mock_session_request):
+    """
+    :type requests: cache_requests.sessions.Session
+    :type mock_session_request: mock.MagicMock
+    """
+
     requests.cache.delete = True
 
     mock_session_request.assert_not_called()
@@ -154,6 +193,11 @@ def test_requests_delete(requests, mock_session_request):
 
 @mark.usefixtures('patch_requests')
 def test_memoize_toggled_off(requests, mock_session_request):
+    """
+    :type requests: cache_requests.sessions.Session
+    :type mock_session_request: mock.MagicMock
+    """
+
     requests.cache.get = False
 
     mock_session_request.assert_not_called()
@@ -164,6 +208,11 @@ def test_memoize_toggled_off(requests, mock_session_request):
 
 @mark.usefixtures('patch_requests')
 def test_only_cache_200_response(requests, redis_mock, mock_session_request):
+    """
+    :type requests: cache_requests.sessions.Session
+    :type mock_session_request: mock.MagicMock
+    :type redis_mock: mock.MagicMock
+    """
     # LOCAL TEST HELPER
     # ------------------------------------------------------------------------
     def call_count():
@@ -206,6 +255,8 @@ def test_only_cache_200_response(requests, redis_mock, mock_session_request):
 
 
 def test_redis_getter_setter(tmpdir):
+    """:type tmpdir: py.path.local"""
+    
     from cache_requests import Session
     from redislite import StrictRedis
 

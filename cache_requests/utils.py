@@ -29,7 +29,8 @@ from redislite import StrictRedis
 
 from ._compat import singledispatch
 
-__all__ = ['AttributeDict', 'deep_hash', 'normalize_signature', 'make_callback', 'temp_file', 'default_connection']
+__all__ = ['AttributeDict', 'deep_hash', 'default_connection', 'default_ex', 'normalize_signature', 'make_callback',
+           'temp_file']
 
 default_ex = 3600
 temp_file = partial(path.join, gettempdir())
@@ -37,6 +38,7 @@ default_connection = partial(StrictRedis, dbfilename=temp_file('cache_requests.r
 
 
 def make_callback(value):
+    """Convert bool values to callback"""
     return value if callable(value) else lambda *args, **kwargs: value
 
 

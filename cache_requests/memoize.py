@@ -71,6 +71,8 @@ class Memoize(object):
 
         :param tuple args: Arguments passed to function.
         :param dict kwargs: Keyword arguments passed to function.
+        :param bool bust_cache: Forcefully reset cache.
+        :param bool|function set_cache: Optionally skip setting cache.
         :return: Function results.
         """
         # setup
@@ -93,6 +95,7 @@ class Memoize(object):
         return self.put_cache_results(hash_key, func_akw, set_cache_cb)
 
     def put_cache_results(self, key, func_akw, set_cache_cb):
+        """Put function results into cache."""
         args, kwargs = func_akw
 
         # get function results
@@ -128,6 +131,7 @@ class Memoize(object):
         return pickle.loads(value)
 
     def __delitem__(self, key):
+        """Delete item from cache"""
         return self.redis.delete(key)
 
     def __get__(self, instance, _):  # pragma: no cover

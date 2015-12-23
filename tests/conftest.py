@@ -8,7 +8,10 @@ from pytest import fixture
 
 @fixture(autouse=True)
 def a_function_setup(tmpdir, monkeypatch):
-    """:param py.path.local tmpdir:"""
+    """
+    :type tmpdir: py.path.local
+    :type monkeypatch: _pytest.monkeypatch.monkeypatch
+    """
 
     from redislite import StrictRedis
 

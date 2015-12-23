@@ -44,8 +44,8 @@ class MemoizeRequest(Memoize):
         """
         Call decorated function.
 
-        :param Session this: Session object.
         :param tuple args: Function args.
+        :param Session session: Session object.
         :param dict kwargs: Function kwargs.
         :return: Function results.
         """
@@ -101,10 +101,12 @@ class Session(RequestsSession):
             'all': None
         }
 
+        # Setup
         self.cache = CacheConfig(**options)
         self.connection = connection or default_connection()
         self.ex = ex or default_ex
 
+        # Decorate methods
         self.get = MemoizeRequest(self.get, session=self)
         self.options = MemoizeRequest(self.options, session=self)
         self.head = MemoizeRequest(self.head, session=self)
@@ -113,11 +115,12 @@ class Session(RequestsSession):
         self.patch = MemoizeRequest(self.patch, session=self)
         self.delete = MemoizeRequest(self.delete, session=self)
 
-    def set_cache_cb(self, response):
+    @staticmethod
+    def set_cache_cb(response):
         """:type response: requests.Response"""
         try:
             response.raise_for_status()
-        except  HTTPError:
+        except HTTPError:
             return False
 
         return True

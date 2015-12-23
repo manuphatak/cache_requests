@@ -25,8 +25,11 @@ def amazing_function():
 
 
 def test_memoized_function_called_only_once_per_arguments(amazing_function):
-    """Function is only called with unique parameters"""
+    """
+    Function is only called with unique parameters
 
+    :type amazing_function: mock.MagicMock
+    """
     assert amazing_function.redis.dbsize() == 0
     assert amazing_function.func.call_count == 0
     assert amazing_function(1, 2, 'three', '45') == (4, 0)
@@ -67,6 +70,8 @@ def test_memoized_function_called_only_once_per_arguments(amazing_function):
 
 
 def test_expiration(amazing_function):
+    """:type amazing_function: mock.MagicMock"""
+
     from cache_requests.utils import deep_hash
 
     # SETUP
@@ -100,6 +105,8 @@ def test_decorator_with_params():
 
 
 def test_redis_getter_setter(tmpdir):
+    """:type tmpdir: py.path.local"""
+
     from cache_requests import Memoize
     from redislite import StrictRedis
 
