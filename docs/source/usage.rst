@@ -108,8 +108,10 @@ Function Level Config
 ~~~~~~~~~~~~~~~~~~~~~
 
 Cache Busting
-    Use kw ``bust_cache=True`` in a memoized function to force reevaluation.
+    Use keyword ``bust_cache=True`` in a memoized function to force reevaluation.
 
+Conditionally Set Cache
+    Use keyword ``set_cache`` to provide a callback.  The callback takes the results of function as an argument and must return a ``bool``. Alternatively, ``True`` and ``False`` can be used.
 
 Use Case Scenarios
 ------------------
