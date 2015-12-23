@@ -42,7 +42,7 @@ test_requirements = ['pytest', 'mock']
 
 setup(  # :off
     name='cache_requests',
-    version='2.0.6',
+    version='3.0.0',
     description='Simple. Powerful. Persistent LRU caching for the requests library.',
     long_description='\n\n'.join([readme, history]),
     author='Manu Phatak',
