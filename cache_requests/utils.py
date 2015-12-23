@@ -21,18 +21,30 @@ Source
 from __future__ import absolute_import
 
 from collections import namedtuple
-from functools import wraps
+from functools import partial, wraps
+from tempfile import gettempdir
+
+from os import path
+from redislite import StrictRedis
 
 from ._compat import singledispatch
 
-__all__ = ['AttributeDict', 'normalize_signature', 'deep_hash']
+__all__ = ['AttributeDict', 'deep_hash', 'normalize_signature', 'make_callback', 'temp_file', 'default_connection']
+
+default_ex = 3600
+temp_file = partial(path.join, gettempdir())
+default_connection = partial(StrictRedis, dbfilename=temp_file('cache_requests.redislite'))
+
+
+def make_callback(value):
+    return value if callable(value) else lambda *args, **kwargs: value
 
 
 class AttributeDict(object):
     """Strict dict with attribute access"""
 
     __attr__ = ()
-    """Allowed attributes.  Must be explicitly defined."""
+    """Attribute white list.  Must be explicitly set."""
 
     def __init__(self, **kwargs):
         for key, value in kwargs.items():

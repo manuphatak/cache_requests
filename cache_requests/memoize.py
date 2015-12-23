@@ -22,9 +22,8 @@ from functools import partial, update_wrapper
 
 import types
 
-from . import config
 from ._compat import pickle
-from .utils import deep_hash
+from .utils import deep_hash, default_connection, make_callback, default_ex
 
 logger = logging.getLogger(__name__)
 
@@ -33,9 +32,8 @@ __all__ = ['Memoize']
 
 class Memoize(object):
     """Decorator class.  Implements LRU cache pattern that syncs cache with :mod:`redislite` storage."""
-    _ex = NotImplemented
 
-    def __new__(cls, func=None, ex=None, connection=None):
+    def __new__(cls, func=None, **kwargs):
         """
         Decorate functions with or without decorator arguments.
 
@@ -44,15 +42,16 @@ class Memoize(object):
         :param connection: Redis connection handle.
         """
 
-        if func is not None and callable(func):
-            return object.__new__(cls)
+        is_decorator_without_args = func is not None and callable(func)
+        if is_decorator_without_args:
+            return super(Memoize, cls).__new__(cls)
 
         if func is not None:
             raise TypeError('func must be a callable function.')
 
-        return partial(cls, ex=ex, connection=connection)
+        return partial(cls, **kwargs)
 
-    def __init__(self, func, ex=None, connection=None):
+    def __init__(self, func=None, ex=None, connection=None):
         """
         Set options.
 
@@ -63,9 +62,8 @@ class Memoize(object):
 
         update_wrapper(self, func)
         self.func = func
-        connection = config.connection if connection is None else connection
-        self.connection = connection() if callable(connection) else connection
-        self.ex = ex
+        self.connection = connection or default_connection()
+        self.ex = ex or default_ex
 
     def __call__(self, *args, **kwargs):
         """
@@ -78,15 +76,31 @@ class Memoize(object):
         # setup
         bust_cache = kwargs.pop('bust_cache', False)
         hash_key = deep_hash(self.func.__name__, *args, **kwargs)
-        cache_results = self[hash_key]
+        set_cache_cb = make_callback(kwargs.pop('set_cache', True))
+        func_akw = args, kwargs
 
-        # return results from cache
-        if bust_cache is False and cache_results is not None:
-            return cache_results
+        # Guard, don't get results from cache.
+        if bust_cache:
+            del self[hash_key]
+            return self.put_cache_results(hash_key, func_akw, set_cache_cb)
 
-        # save results to cache
+        # Results are in cache, use results
+        results_from_cache = self[hash_key]
+        if results_from_cache is not None:
+            return results_from_cache
+
+        # Set and return results from cache
+        return self.put_cache_results(hash_key, func_akw, set_cache_cb)
+
+    def put_cache_results(self, key, func_akw, set_cache_cb):
+        args, kwargs = func_akw
+
+        # get function results
         func_results = self.func(*args, **kwargs)
-        self[hash_key] = func_results
+
+        # optionally add results to cache
+        if set_cache_cb(func_results):
+            self[key] = func_results
         return func_results
 
     def __setitem__(self, key, value):
@@ -113,6 +127,9 @@ class Memoize(object):
         logger.debug('Retrieving item from cache: %s', key)
         return pickle.loads(value)
 
+    def __delitem__(self, key):
+        return self.redis.delete(key)
+
     def __get__(self, instance, _):
         # Decorator class best practices.
 
@@ -127,12 +144,6 @@ class Memoize(object):
 
         return self.connection
 
-    @property
-    def ex(self):
-        """Lazy load expiration value from config if necessary."""
-
-        return self._ex or config.ex
-
-    @ex.setter
-    def ex(self, value):
-        self._ex = value
+    @redis.setter
+    def redis(self, value):
+        self.connection = value

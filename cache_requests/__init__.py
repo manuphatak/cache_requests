@@ -24,4 +24,4 @@ __version__ = '2.0.6'
 from .memoize import Memoize
 from .sessions import Session
 
-__all__ = ['config', 'Session', 'Memoize']
+__all__ = ['Session', 'Memoize']

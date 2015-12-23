@@ -26,7 +26,7 @@ from __future__ import absolute_import
 from requests import Session as RequestsSession
 
 from .memoize import Memoize
-from .utils import AttributeDict
+from .utils import AttributeDict, default_connection, default_ex
 
 __all__ = ['MemoizeRequest', 'CacheConfig', 'Session']
 
@@ -34,7 +34,16 @@ __all__ = ['MemoizeRequest', 'CacheConfig', 'Session']
 class MemoizeRequest(Memoize):
     """Cache session method calls."""
 
-    def __call__(self, this, *args, **kwargs):
+    def __init__(self, func=None, **kwargs):
+        session = kwargs.pop('session')
+        self.session = session
+
+        if not hasattr(self.session, 'cache'):
+            raise TypeError('Must pass in a cache config object.')
+
+        super(MemoizeRequest, self).__init__(func=func, **kwargs)
+
+    def __call__(self, *args, **kwargs):
         """
         Call decorated function.
 
@@ -43,67 +52,70 @@ class MemoizeRequest(Memoize):
         :param dict kwargs: Function kwargs.
         :return: Function results.
         """
-        override = this.cache.all is None
-        use_cache = getattr(this.cache, self.func.__name__) if override else override
+
+        all_is_unset = self.session.cache.all is None
+        use_cache = getattr(self.session.cache, self.func.__name__) if all_is_unset else self.session.cache.all
 
         if not use_cache:
-            return self.func(this, *args, **kwargs)
+            return self.func(*args, **kwargs)
 
-        return super(MemoizeRequest, self).__call__(this, *args, **kwargs)
+        kwargs.setdefault('set_cache', self.set_cache_cb)
+
+        return super(MemoizeRequest, self).__call__(*args, **kwargs)
+
+    def set_cache_cb(self, response):
+        return int(response.status_code) in self.session.cache.status_codes
+
+    @property
+    def redis(self):
+        return self.session.connection
+
+    @redis.setter
+    def redis(self, value):
+        self.session.connection = value
+
+    @property
+    def ex(self):
+        return self.session.ex
+
+    @ex.setter
+    def ex(self, value):
+        self.session.ex = value
 
 
 class CacheConfig(AttributeDict):
     """A strict dict with attribute access."""
-    __attr__ = 'get', 'options', 'head', 'post', 'put', 'patch', 'delete', 'all'
+    __attr__ = 'get', 'options', 'head', 'post', 'put', 'patch', 'delete', 'all', 'status_codes'
 
 
 class Session(RequestsSession):
     """:class:`requests.Session` with memoized methods."""
 
-    def __init__(self):
+    def __init__(self, ex=None, connection=None):
         """Set reference to cache configuration on object."""
 
         super(Session, self).__init__()
-        self.cache = CacheConfig(get=True, options=True, head=True, post=False, put=False, patch=False, delete=False,
-                                 all=None)
 
-    @MemoizeRequest
-    def get(self, url, **kwargs):
-        """Cached by default: True"""
-        return super(Session, self).get(url, **kwargs)
+        options = {
+            'get': True,
+            'options': True,
+            'head': True,
+            'post': False,
+            'put': False,
+            'patch': False,
+            'delete': False,
+            'all': None,
+            'status_codes': [200]
+        }
 
-    @MemoizeRequest
-    def options(self, url, **kwargs):
-        """Cached by default: True"""
+        self.cache = CacheConfig(**options)
+        self.connection = connection or default_connection()
+        self.ex = ex or default_ex
 
-        return super(Session, self).options(url, **kwargs)
-
-    @MemoizeRequest
-    def head(self, url, **kwargs):
-        """Cached by default: True"""
-
-        return super(Session, self).head(url, **kwargs)
-
-    @MemoizeRequest
-    def post(self, url, data=None, json=None, **kwargs):
-        """Cached by default: False"""
-
-        return super(Session, self).post(url, data=data, json=json, **kwargs)
-
-    @MemoizeRequest
-    def put(self, url, data=None, **kwargs):
-        """Cached by default: False"""
-
-        return super(Session, self).put(url, data=data, **kwargs)
-
-    @MemoizeRequest
-    def patch(self, url, data=None, **kwargs):
-        """Cached by default: False"""
-
-        return super(Session, self).patch(url, data=data, **kwargs)
-
-    @MemoizeRequest
-    def delete(self, url, **kwargs):
-        """Cached by default: False"""
-
-        return super(Session, self).delete(url, **kwargs)
+        self.get = MemoizeRequest(self.get, session=self)
+        self.options = MemoizeRequest(self.options, session=self)
+        self.head = MemoizeRequest(self.head, session=self)
+        self.post = MemoizeRequest(self.post, session=self)
+        self.put = MemoizeRequest(self.put, session=self)
+        self.patch = MemoizeRequest(self.patch, session=self)
+        self.delete = MemoizeRequest(self.delete, session=self)
