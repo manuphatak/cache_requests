@@ -1,15 +1,20 @@
 #!/usr/bin/env python
 # coding=utf-8
-from mock import MagicMock
+from mock import MagicMock, Mock
 from pytest import fixture, mark
 
 
 @fixture
 def mock_session_request():
-    from requests.models import Response, Request
+    from requests import Response, Request, HTTPError
+
+    def raise_for_status():
+        if response.status_code >= 400:
+            raise HTTPError
 
     response = MagicMock(spec=Response)
     response.status_code = 200
+    response.raise_for_status = Mock(spec=raise_for_status, side_effect=raise_for_status)
 
     session_request = MagicMock(spec=Request)
     session_request.response = response
@@ -159,7 +164,6 @@ def test_memoize_toggled_off(requests, mock_session_request):
 
 @mark.usefixtures('patch_requests')
 def test_only_cache_200_response(requests, redis_mock, mock_session_request):
-
     # LOCAL TEST HELPER
     # ------------------------------------------------------------------------
     def call_count():

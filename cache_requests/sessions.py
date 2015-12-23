@@ -23,7 +23,7 @@ Source
 """
 from __future__ import absolute_import
 
-from requests import Session as RequestsSession
+from requests import Session as RequestsSession, HTTPError
 
 from .memoize import Memoize
 from .utils import AttributeDict, default_connection, default_ex
@@ -64,7 +64,13 @@ class MemoizeRequest(Memoize):
         return super(MemoizeRequest, self).__call__(*args, **kwargs)
 
     def set_cache_cb(self, response):
-        return int(response.status_code) in self.session.cache.status_codes
+        """:type response: requests.Response"""
+        try:
+            response.raise_for_status()
+        except  HTTPError:
+            return False
+
+        return True
 
     @property
     def redis(self):
@@ -85,7 +91,7 @@ class MemoizeRequest(Memoize):
 
 class CacheConfig(AttributeDict):
     """A strict dict with attribute access."""
-    __attr__ = 'get', 'options', 'head', 'post', 'put', 'patch', 'delete', 'all', 'status_codes'
+    __attr__ = 'get', 'options', 'head', 'post', 'put', 'patch', 'delete', 'all'
 
 
 class Session(RequestsSession):
@@ -104,8 +110,7 @@ class Session(RequestsSession):
             'put': False,
             'patch': False,
             'delete': False,
-            'all': None,
-            'status_codes': [200]
+            'all': None
         }
 
         self.cache = CacheConfig(**options)
