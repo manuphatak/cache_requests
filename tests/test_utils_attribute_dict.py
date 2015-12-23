@@ -27,10 +27,14 @@ def test_set_attr_raises_error():
 
 
 def test_dict_like_access(config):
+    """:type config: Config"""
+
     assert config['test'] == 'success'
     config['test'] = 'success!'
     assert config['test'] == 'success!' == config.test
 
 
 def test_repr(config):
+    """:type config: Config"""
+
     assert repr(config) == 'Config(test=\'success\')'
