@@ -22,12 +22,13 @@ from __future__ import absolute_import
 
 from collections import namedtuple
 from functools import partial, wraps
+from hashlib import md5
+from inspect import isroutine
 from tempfile import gettempdir
 
 from os import path
 from redislite import StrictRedis
-
-from ._compat import singledispatch
+from six import string_types
 
 __all__ = ['AttributeDict', 'deep_hash', 'default_connection', 'default_ex', 'normalize_signature', 'make_callback',
            'temp_file']
@@ -35,6 +36,10 @@ __all__ = ['AttributeDict', 'deep_hash', 'default_connection', 'default_ex', 'no
 default_ex = 3600
 temp_file = partial(path.join, gettempdir())
 default_connection = partial(StrictRedis, dbfilename=temp_file('cache_requests.redislite'))
+
+
+def md5_hash(value):
+    return md5(value).hexdigest()
 
 
 def make_callback(value):
@@ -84,36 +89,89 @@ def normalize_signature(func):
     def wrapper(*args, **kwargs):
         if kwargs:
             args = args, kwargs
+
         if len(args) is 1:
             args = args[0]
+
         return func(args)
 
     return wrapper
 
 
 @normalize_signature
-@singledispatch
-def deep_hash(args):
-    """
-    Recursively hash nested mixed objects (dicts, lists, sets, tuple, hashable objects).
-
-    :param args: Value to hash.
-    :return: Hashed value.
-    :rtype: int
-    """
-    return hash(args)
+def deep_hash(obj):
+    hasher = DataHasher()
+    hasher.update(obj)
+    return hasher.digest()
 
 
-@deep_hash.register(tuple)
-@deep_hash.register(set)
-@deep_hash.register(list)
-def _(args):
-    return hash(tuple(deep_hash(item) for item in args))
+class DataHasher(object):
+    def __init__(self):
+        self.md5 = md5()
 
+    def update(self, obj):
 
-@deep_hash.register(dict)  # noqa
-def _(args):
-    args_copy = {}
-    for key, value in args.items():
-        args_copy[key] = deep_hash(value)
-    return hash(frozenset(sorted(args_copy.items())))
+        self.md5.update(str(type(obj)).encode('utf-8'))
+
+        if isinstance(obj, string_types):
+            self.md5.update(obj.encode('utf-8'))
+            return self
+
+        if isinstance(obj, (int, float)):
+            self.update(str(obj))
+            return self
+
+        if isinstance(obj, (tuple, list, set)):
+            for item in obj:
+                self.update(item)
+            return self
+
+        if isinstance(obj, dict):
+            for key, value in sorted(obj.items()):
+                self.update(key)
+                self.update(value)
+            return self
+
+        for attr in dir(obj):
+            if attr.startswith('__'):
+                continue
+
+            attr_value = getattr(obj, attr)
+            if isroutine(attr_value):
+                continue
+
+            self.update(attr)
+            self.update(attr_value)
+        return self
+
+    def digest(self):
+        return self.md5.hexdigest()
+
+#
+#
+# @normalize_signature
+# @singledispatch
+# def deep_hash(args):
+#     """
+#     Recursively hash nested mixed objects (dicts, lists, sets, tuple, hashable objects).
+#
+#     :param args: Value to hash.
+#     :return: Hashed value.
+#     :rtype: int
+#     """
+#     return hash(args)
+#
+#
+# @deep_hash.register(tuple)
+# @deep_hash.register(set)
+# @deep_hash.register(list)
+# def _(args):
+#     return hash(tuple(deep_hash(item) for item in args))
+#
+#
+# @deep_hash.register(dict)  # noqa
+# def _(args):
+#     args_copy = {}
+#     for key, value in args.items():
+#         args_copy[key] = deep_hash(value)
+#     return hash(frozenset(sorted(args_copy.items())))
