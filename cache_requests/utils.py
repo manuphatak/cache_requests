@@ -35,7 +35,7 @@ __all__ = ['AttributeDict', 'deep_hash', 'default_connection', 'default_ex', 'no
 
 default_ex = 3600
 temp_file = partial(path.join, gettempdir())
-default_connection = partial(StrictRedis, dbfilename=temp_file('cache_requests.redislite'))
+default_connection = partial(StrictRedis, dbfilename=temp_file('%s.cache_requests.redislite.db' % __name__))
 
 
 def md5_hash(value):
