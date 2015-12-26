@@ -19,7 +19,7 @@ logging.getLogger(__name__).addHandler(NullHandler())
 
 __author__ = 'Manu Phatak'
 __email__ = 'bionikspoon@gmail.com'
-__version__ = '3.0.0'
+__version__ = '4.0.0'
 
 from .memoize import Memoize
 from .sessions import Session
