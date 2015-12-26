@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements_dev.in
 #
-alabaster==0.7.6          # via sphinx
+alabaster==0.7.7          # via sphinx
 argh==0.26.1              # via watchdog
 babel==2.1.1              # via sphinx
 bumpversion==0.5.3
@@ -17,7 +17,7 @@ flake8==2.5.1
 ipdb==0.8.1
 ipython-genutils==0.1.0   # via traitlets
 ipython==4.0.1            # via ipdb
-jinja2==2.8               # via sphinx
+jinja2==2.8               # via redislite, sphinx
 markupsafe==0.23          # via jinja2
 mccabe==0.3.1             # via flake8
 mock==1.3.0
@@ -29,6 +29,7 @@ pexpect==4.0.1            # via ipython
 pickleshare==0.5          # via ipython
 pip-tools==1.4.2
 pluggy==0.3.1             # via tox
+psutil==3.3.0             # via redislite
 ptyprocess==0.5           # via pexpect
 py==1.4.31                # via pytest, tox
 pyflakes==1.0.0           # via flake8
@@ -36,10 +37,14 @@ pygments==2.0.2           # via sphinx
 pytest==2.8.5
 pytz==2015.7              # via babel
 pyyaml==3.11              # via watchdog
+redis==2.10.5             # via redislite
+redislite==3.0.271
+requests==2.9.1
 restructuredtext-lint==0.14.0
 simplegeneric==0.8.1      # via ipython
-six==1.10.0               # via mock, pip-tools, sphinx
-snowballstemmer==1.2.0    # via sphinx
+singledispatch==3.4.0.3
+six==1.10.0
+snowballstemmer==1.2.1    # via sphinx
 sphinx-rtd-theme==0.1.9   # via sphinx
 sphinx==1.3.3
 tox==2.3.1

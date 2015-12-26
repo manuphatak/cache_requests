@@ -223,7 +223,7 @@ def test_only_cache_200_response(requests, redis_mock, mock_session_request):
 
     # LOCAL SETUP
     # ------------------------------------------------------------------------
-    requests.connection = redis_mock
+    requests.cache.connection = redis_mock
 
     # TEST SETUP
     # ------------------------------------------------------------------------
@@ -256,7 +256,7 @@ def test_only_cache_200_response(requests, redis_mock, mock_session_request):
 
 def test_redis_getter_setter(tmpdir):
     """:type tmpdir: py.path.local"""
-    
+
     from cache_requests import Session
     from redislite import StrictRedis
 
@@ -265,7 +265,7 @@ def test_redis_getter_setter(tmpdir):
     request = Session()
 
     test_db = tmpdir.join('test_redis.db').strpath
-    test_connection = request.connection
+    test_connection = request.cache.connection
     alt_db = tmpdir.join('test_redis_getter_setter.db').strpath
     alt_connection = StrictRedis(dbfilename=alt_db)
 
@@ -278,17 +278,17 @@ def test_redis_getter_setter(tmpdir):
     # TEST SESSION CONNECTION IDENTITY WITH METHOD's REDIS HANDLE
     # ------------------------------------------------------------------------
 
-    assert request.get.redis is request.connection
-    assert request.connection.db == test_db
+    assert request.get.redis is request.cache.connection
+    assert request.cache.connection.db == test_db
 
     request.post.redis = alt_connection
 
     assert request.post.redis is request.patch.redis
-    assert request.post.redis is request.connection
+    assert request.post.redis is request.cache.connection
     assert request.post.redis.db == alt_db
 
-    request.connection = test_connection
+    request.cache.connection = test_connection
 
     assert request.delete.redis is request.patch.redis
-    assert request.delete.redis is request.connection
+    assert request.delete.redis is request.cache.connection
     assert request.delete.redis.db == test_db

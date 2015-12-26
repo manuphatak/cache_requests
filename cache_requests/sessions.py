@@ -35,8 +35,14 @@ class MemoizeRequest(Memoize):
     """Cache session method calls."""
 
     def __init__(self, func=None, **kwargs):
+
+        # setup shared cache
         session = kwargs.pop('session')
-        self.session = session
+        self.cache = session.cache
+
+        # set from shared cache defaults
+        kwargs.setdefault('ex', self.cache.ex)
+        kwargs.setdefault('connection', self.cache.connection)
 
         super(MemoizeRequest, self).__init__(func=func, **kwargs)
 
@@ -49,37 +55,40 @@ class MemoizeRequest(Memoize):
         :param dict kwargs: Function kwargs.
         :return: Function results.
         """
-
-        all_is_unset = self.session.cache.all is None
-        use_cache = getattr(self.session.cache, self.func.__name__) if all_is_unset else self.session.cache.all
-
-        if not use_cache:
+        # Guard, don't cache method.
+        if not self.use_cache:
             return self.func(*args, **kwargs)
 
-        kwargs.setdefault('set_cache', self.session.set_cache_cb)
+        # Don't cache errors.
+        kwargs.setdefault('set_cache', self.cache.set_cache_cb)
 
         return super(MemoizeRequest, self).__call__(*args, **kwargs)
 
     @property
+    def use_cache(self):
+        all_is_unset = self.cache.all is None
+        return getattr(self.cache, self.func.__name__) if all_is_unset else self.cache.all
+
+    @property
     def redis(self):
-        return self.session.connection
+        return self.cache.connection
 
     @redis.setter
     def redis(self, value):
-        self.session.connection = value
+        self.cache.connection = value
 
     @property
     def ex(self):
-        return self.session.ex
+        return self.cache.ex
 
     @ex.setter
     def ex(self, value):
-        self.session.ex = value
+        self.cache.ex = value
 
 
 class CacheConfig(AttributeDict):
     """A strict dict with attribute access."""
-    __attr__ = 'get', 'options', 'head', 'post', 'put', 'patch', 'delete', 'all'
+    __attr__ = 'get', 'options', 'head', 'post', 'put', 'patch', 'delete', 'all', 'connection', 'ex', 'set_cache_cb'
 
 
 class Session(RequestsSession):
@@ -98,13 +107,14 @@ class Session(RequestsSession):
             'put': False,
             'patch': False,
             'delete': False,
-            'all': None
+            'all': None,
+            'connection': connection or default_connection(),
+            'ex': ex or default_ex,
+            'set_cache_cb': set_cache_cb
         }
 
         # Setup
         self.cache = CacheConfig(**options)
-        self.connection = connection or default_connection()
-        self.ex = ex or default_ex
 
         # Decorate methods
         self.get = MemoizeRequest(self.get, session=self)
@@ -115,12 +125,12 @@ class Session(RequestsSession):
         self.patch = MemoizeRequest(self.patch, session=self)
         self.delete = MemoizeRequest(self.delete, session=self)
 
-    @staticmethod
-    def set_cache_cb(response):
-        """:type response: requests.Response"""
-        try:
-            response.raise_for_status()
-        except HTTPError:
-            return False
 
-        return True
+def set_cache_cb(response):
+    """:type response: requests.Response"""
+    try:
+        response.raise_for_status()
+    except HTTPError:
+        return False
+
+    return True

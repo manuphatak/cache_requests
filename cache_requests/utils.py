@@ -18,23 +18,42 @@ Source
 ******
 
 """
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
+import sys
 from collections import namedtuple
 from functools import partial, wraps
+from hashlib import md5
 from tempfile import gettempdir
 
 from os import path
 from redislite import StrictRedis
-
-from ._compat import singledispatch
+from six import string_types, text_type, integer_types
 
 __all__ = ['AttributeDict', 'deep_hash', 'default_connection', 'default_ex', 'normalize_signature', 'make_callback',
            'temp_file']
 
+
+def temp_file(name):
+    return temp_file_partial('%s.cache_requests.redislite.db' % name)
+
+
+def guess_caller():
+    file_name = path.splitext(path.split(sys.argv[0])[-1])[0]
+
+    if len(sys.argv) > 1:
+        # noinspection PyBroadException
+        try:
+            suffix = path.splitext(path.split(sys.argv[-1])[-1])[0]
+            file_name = '%s_%s' % (file_name, suffix)
+        except:  # catch all, do not be the point of failure to end user.
+            pass
+    return file_name
+
+
+temp_file_partial = partial(path.join, gettempdir())
 default_ex = 3600
-temp_file = partial(path.join, gettempdir())
-default_connection = partial(StrictRedis, dbfilename=temp_file('cache_requests.redislite'))
+default_connection = partial(StrictRedis, dbfilename=temp_file(guess_caller()))
 
 
 def make_callback(value):
@@ -84,36 +103,68 @@ def normalize_signature(func):
     def wrapper(*args, **kwargs):
         if kwargs:
             args = args, kwargs
+
         if len(args) is 1:
             args = args[0]
+
         return func(args)
 
     return wrapper
 
 
 @normalize_signature
-@singledispatch
-def deep_hash(args):
-    """
-    Recursively hash nested mixed objects (dicts, lists, sets, tuple, hashable objects).
-
-    :param args: Value to hash.
-    :return: Hashed value.
-    :rtype: int
-    """
-    return hash(args)
+def deep_hash(obj):
+    hasher = DataHasher()
+    hasher.update(obj)
+    return hasher.digest()
 
 
-@deep_hash.register(tuple)
-@deep_hash.register(set)
-@deep_hash.register(list)
-def _(args):
-    return hash(tuple(deep_hash(item) for item in args))
+class DataHasher(object):
+    def __init__(self):
+        self.md5 = md5()
 
+    def update(self, obj):
 
-@deep_hash.register(dict)  # noqa
-def _(args):
-    args_copy = {}
-    for key, value in args.items():
-        args_copy[key] = deep_hash(value)
-    return hash(frozenset(sorted(args_copy.items())))
+        self.md5.update(text_type(type(obj)).encode())
+
+        if isinstance(obj, string_types):
+            self.md5.update(obj.encode())
+            return self
+
+        if isinstance(obj, (integer_types, float)):
+            self.update(text_type(obj))
+            return self
+
+        if isinstance(obj, (tuple, list, set)):
+            for item in obj:
+                self.update(item)
+            return self
+
+        if isinstance(obj, dict):
+            for key, value in sorted(obj.items()):
+                self.update(key)
+                self.update(value)
+            return self
+
+        for attr in dir(obj):
+
+            # Guard, un serializable attributes
+            if attr.startswith('__'):
+                continue
+
+            # Guard, mock objects / added by inspection tools
+            if attr.startswith('func_'):
+                continue
+
+            attr_value = getattr(obj, attr)
+
+            # Guard, functions
+            if callable(attr_value):
+                continue
+
+            self.update(attr)
+            self.update(attr_value)
+        return self
+
+    def digest(self):
+        return self.md5.hexdigest()

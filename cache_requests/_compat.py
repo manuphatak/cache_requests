@@ -10,23 +10,28 @@ Python 2to3 compatibility handling.
 """
 
 import logging
+from sys import version_info
 
+from six import PY3
+
+PY26 = version_info[0:2] <= (2, 6)
 __all__ = ['NullHandler', 'pickle', 'singledispatch']
 
-try:
+if not PY26:
     from logging import NullHandler
-except ImportError:  # pragma: no cover
-    # Python < 2.7
+else:
     class NullHandler(logging.Handler):
         def emit(self, record):
             pass
 
-try:
-    import cPickle as pickle
-except ImportError:
+if PY3:
     import pickle
+else:
+    # noinspection PyPep8Naming
+    import cPickle as pickle
 
-try:
+if PY3:
+    # noinspection PyUnresolvedReferences
     from functools import singledispatch
-except ImportError:  # pragma: no cover
+else:
     from singledispatch import singledispatch
