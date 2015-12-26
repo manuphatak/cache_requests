@@ -45,15 +45,15 @@ Decorated Methods
 :mod:`cache_requests.Session`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- ``ex`` and ``redis`` are shared between request methods.  They can be accessed by ``Session.ex`` or ``Session.get.ex``, where ``get`` is the ``requests.get`` method
+- ``ex`` is shared between request methods.  They can be accessed by ``Session.cache.ex`` or ``Session.get.ex``, where ``get`` is the ``requests.get`` method
 
-- By default requests that return and error will not be cached.  This can be overridden by overriding the ``Session.set_cache_cb`` to return ``False``.  The callback takes the response object as an argument::
+- By default requests that return and error will not be cached.  This can be overridden by overriding the ``Session.cache.set_cache_cb`` to return ``False``.  The callback takes the response object as an argument::
 
         from cache_requests import Session
 
         requests = Session()
 
-        requests.set_cache_db = lambda _:False
+        requests.cache.set_cache_db = lambda _:False
 
 - By default only autonomous methods are cached (``get``, ``head``, ``options``).  Each method can be setup to be cached using the ``Session.cache`` config option.
 
@@ -146,8 +146,7 @@ Make a request one time. Cache the results for the rest of your work session.::
     if os.environ.get('ENV') == 'DEVELOP':
         from cache_requests import Session
 
-        ex = 60 * 60  # Set expiration, 60 min
-        request = Session(ex=ex)
+        request = Session(ex=60 * 60 )  # Set expiration, 60 min
     else:
         import requests
 
@@ -181,7 +180,7 @@ Production: Web Scraping
 
 Automatically expire old content.
 
-    * How often? After a day? A week? A Month? etc.  100% of this logic is built in with the ``Session.ex`` setting.
+    * How often? After a day? A week? A Month? etc.  100% of this logic is built in with the ``Session.cache.ex`` setting.
     * Effectively it can manage all of the time-based rotation.
     * Perfect if you theres more data then what your API caps allow.
 

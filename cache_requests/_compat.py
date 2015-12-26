@@ -29,9 +29,3 @@ if PY3:
 else:
     # noinspection PyPep8Naming
     import cPickle as pickle
-
-if PY3:
-    # noinspection PyUnresolvedReferences
-    from functools import singledispatch
-else:
-    from singledispatch import singledispatch

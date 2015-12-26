@@ -66,11 +66,11 @@ role_overrides = """
 def include_readme_docs(_=None):
     yield read_text(comment_line)
     yield read_text(role_overrides)
-    yield read_source('readme_title.rst')
-    yield read_source('readme_features.rst')
+    yield read_source('_partial/readme_title.rst')
+    yield read_source('_partial/readme_features.rst')
     yield read_source('installation.rst')
     yield read_source('usage.rst')
-    yield read_source('readme_credits.rst')
+    yield read_source('_partial/readme_credits.rst')
 
 
 def include_contributing_docs(_=None):
