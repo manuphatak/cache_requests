@@ -1,15 +1,28 @@
 #!/usr/bin/env python
 # coding=utf-8
+"""
+Instructions:
+
+.. code-block:: shell
+
+    $ make install
+    $ python examples/development_basics.py
+
+
+Demonstrates requests are made once per unique arguments.
+
+Sample output below.
+"""
+
 import logging
 
 from cache_requests import Session
 
 # setup log (used internally)
 format_ = '%(relativeCreated)-5d %(name)-12s %(levelname)-8s %(message)s'
-logging.basicConfig(level=logging.DEBUG, format=format_)
+logging.basicConfig(level=logging.INFO, format=format_)
 
-requests = Session()
-requests.ex = 15  # 15 seconds, default: 60 minutes
+requests = Session(ex=15)  # 15 seconds, default: 60 minutes
 
 # 1st unique call
 response = requests.get('http://google.com')
@@ -52,3 +65,39 @@ print(response)
 
 # One more thing, you may notice.  It runs almost 10x faster when it's not sending
 # requests.
+
+
+"""
+Sample output
+-------------
+
+1st run:
+
+.. code-block:: sh-session
+
+    $ python examples/development_basics.py
+
+    297   requests.packages.urllib3.connectionpool INFO     Starting new HTTP connection (1): google.com
+    402   requests.packages.urllib3.connectionpool INFO     Starting new HTTP connection (1): www.google.com
+    546   cache_requests.memoize INFO     Caching results for hash: 4cf379a8def12fe51f260ef0fe480221
+    1022  cache_requests.memoize INFO     Caching results for hash: f8ac21842f69ea4fbb4bbbe92a0251a8
+    <Response [200]>
+    1704  cache_requests.memoize INFO     Caching results for hash: 940a5abb40af3bd1b9f73751f172bbf0
+    <Response [200]>
+    <Response [200]>
+    <Response [200]>
+
+
+2nd, 3rd..nth run (before 15s expiration):
+
+.. code-block:: sh-session
+
+    $ python examples/development_basics.py
+
+    <Response [200]>
+    <Response [200]>
+    <Response [200]>
+    <Response [200]>
+
+After 15 seconds, it's back to the first result.
+"""

@@ -20,6 +20,7 @@ Source
 """
 from __future__ import absolute_import
 
+import sys
 from collections import namedtuple
 from functools import partial, wraps
 from hashlib import md5
@@ -33,13 +34,27 @@ from six import string_types
 __all__ = ['AttributeDict', 'deep_hash', 'default_connection', 'default_ex', 'normalize_signature', 'make_callback',
            'temp_file']
 
+
+def temp_file(name):
+    return temp_file_partial('%s.cache_requests.redislite.db' % name)
+
+
+def guess_caller():
+    file_name = path.splitext(path.split(sys.argv[0])[-1])[0]
+
+    if len(sys.argv) > 1:
+        # noinspection PyBroadException
+        try:
+            suffix = path.splitext(path.split(sys.argv[-1])[-1])[0]
+            file_name = '%s_%s' % (file_name, suffix)
+        except:  # catch all, do not be the point of failure to end user.
+            pass
+    return file_name
+
+
+temp_file_partial = partial(path.join, gettempdir())
 default_ex = 3600
-temp_file = partial(path.join, gettempdir())
-default_connection = partial(StrictRedis, dbfilename=temp_file('%s.cache_requests.redislite.db' % __name__))
-
-
-def md5_hash(value):
-    return md5(value).hexdigest()
+default_connection = partial(StrictRedis, dbfilename=temp_file(guess_caller()))
 
 
 def make_callback(value):
