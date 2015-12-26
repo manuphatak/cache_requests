@@ -18,18 +18,17 @@ Source
 ******
 
 """
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import sys
 from collections import namedtuple
 from functools import partial, wraps
 from hashlib import md5
-from inspect import isroutine
 from tempfile import gettempdir
 
 from os import path
 from redislite import StrictRedis
-from six import string_types
+from six import string_types, text_type, integer_types
 
 __all__ = ['AttributeDict', 'deep_hash', 'default_connection', 'default_ex', 'normalize_signature', 'make_callback',
            'temp_file']
@@ -126,14 +125,14 @@ class DataHasher(object):
 
     def update(self, obj):
 
-        self.md5.update(str(type(obj)).encode('utf-8'))
+        self.md5.update(text_type(type(obj)).encode())
 
         if isinstance(obj, string_types):
-            self.md5.update(obj.encode('utf-8'))
+            self.md5.update(obj.encode())
             return self
 
-        if isinstance(obj, (int, float)):
-            self.update(str(obj))
+        if isinstance(obj, (integer_types, float)):
+            self.update(text_type(obj))
             return self
 
         if isinstance(obj, (tuple, list, set)):
@@ -148,11 +147,19 @@ class DataHasher(object):
             return self
 
         for attr in dir(obj):
+
+            # Guard, un serializable attributes
             if attr.startswith('__'):
                 continue
 
+            # Guard, mock objects / added by inspection tools
+            if attr.startswith('func_'):
+                continue
+
             attr_value = getattr(obj, attr)
-            if isroutine(attr_value):
+
+            # Guard, functions
+            if callable(attr_value):
                 continue
 
             self.update(attr)
