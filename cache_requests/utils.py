@@ -168,32 +168,3 @@ class DataHasher(object):
 
     def digest(self):
         return self.md5.hexdigest()
-
-#
-#
-# @normalize_signature
-# @singledispatch
-# def deep_hash(args):
-#     """
-#     Recursively hash nested mixed objects (dicts, lists, sets, tuple, hashable objects).
-#
-#     :param args: Value to hash.
-#     :return: Hashed value.
-#     :rtype: int
-#     """
-#     return hash(args)
-#
-#
-# @deep_hash.register(tuple)
-# @deep_hash.register(set)
-# @deep_hash.register(list)
-# def _(args):
-#     return hash(tuple(deep_hash(item) for item in args))
-#
-#
-# @deep_hash.register(dict)  # noqa
-# def _(args):
-#     args_copy = {}
-#     for key, value in args.items():
-#         args_copy[key] = deep_hash(value)
-#     return hash(frozenset(sorted(args_copy.items())))
