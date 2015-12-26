@@ -19,13 +19,13 @@ __all__ = ['NullHandler', 'pickle']
 
 if not PY26:
     from logging import NullHandler
-else:
+else:  # pragma: no cover
     class NullHandler(logging.Handler):
         def emit(self, record):
             pass
 
 if PY3:
     import pickle
-else:
+else:  # pragma: no cover
     # noinspection PyPep8Naming
     import cPickle as pickle
