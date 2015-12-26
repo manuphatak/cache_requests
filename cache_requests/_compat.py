@@ -15,7 +15,7 @@ from sys import version_info
 from six import PY3
 
 PY26 = version_info[0:2] <= (2, 6)
-__all__ = ['NullHandler', 'pickle', 'singledispatch']
+__all__ = ['NullHandler', 'pickle']
 
 if not PY26:
     from logging import NullHandler
