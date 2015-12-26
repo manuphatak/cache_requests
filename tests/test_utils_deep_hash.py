@@ -8,7 +8,7 @@ from cache_requests.utils import deep_hash
 
 
 def is_int(p_object):  # Test helper
-    return isinstance(p_object, int)
+    return isinstance(p_object, str)
 
 
 sample_string_1 = 'this is a test'

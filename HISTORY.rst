@@ -5,7 +5,17 @@ History
 Next Release
 ------------
 
-- Stay Tuned.
+- Stay tuned.
+
+
+4.0.0 (2015-12-25)
+------------------
+
+- Fix: Use MD5 for hash to avoid PYTHONHASHSEED issue.
+- Fix: Give default dbfilename a more unique name, based on caller.
+- BREAKING:Move ``Session.ex`` and ``Session.connection`` to ``Session.cache`` config object.
+- Updated examples.  New example demonstrates Memoize decorator.
+- Updated requirements.
 
 3.0.0 (2015-12-22)
 ------------------

@@ -9,6 +9,5 @@ markupsafe==0.23          # via jinja2
 psutil==3.3.0             # via redislite
 redis==2.10.5             # via redislite
 redislite==3.0.271
-requests==2.9.0
-singledispatch==3.4.0.3
-six==1.10.0               # via singledispatch
+requests==2.9.1
+six==1.10.0

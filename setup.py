@@ -37,12 +37,12 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = ['redislite', 'requests', 'singledispatch']
+requirements = ['redislite', 'requests', 'six']
 test_requirements = ['pytest', 'mock']
 
 setup(  # :off
     name='cache_requests',
-    version='3.0.0',
+    version='4.0.0',
     description='Simple. Powerful. Persistent LRU caching for the requests library.',
     long_description='\n\n'.join([readme, history]),
     author='Manu Phatak',
