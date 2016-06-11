@@ -19,7 +19,7 @@ cache_requests
     :alt: Coverage Status
 
 .. image:: https://readthedocs.org/projects/cache_requests/badge/?version=develop
-    :target: https://cache_requests.readthedocs.org/en/develop/?badge=develop
+    :target: https://cache_requests.readthedocs.io/en/develop/?badge=develop
     :alt: Documentation Status
 
 ------------
