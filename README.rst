@@ -143,9 +143,8 @@ To use ``cache_requests`` in a project
 
 .. code-block:: python
 
-    >>> from cache_requests import Session()
-
-    requests = Session()
+    >>> from cache_requests import Session
+    >>> requests = Session()
 
     # from python-requests.org
     >>> r = requests.get('https://api.github.com/user', auth=('user', 'pass'))
@@ -183,11 +182,10 @@ Decorated Methods
 
 .. code-block:: python
 
-        from cache_requests import Session
+    from cache_requests import Session
 
-        requests = Session()
-
-        requests.cache.set_cache_db = lambda _:False
+    requests = Session()
+    requests.cache.set_cache_db = lambda _:False
 
 - By default only autonomous methods are cached (``get``, ``head``, ``options``).  Each method can be setup to be cached using the ``Session.cache`` config option.
 
@@ -200,30 +198,30 @@ For example
 
 .. code-block:: python
 
-        from cache_requests import Session
+    from cache_requests import Session
 
-        requests = Session()
+    requests = Session()
 
-        requests.cache.delete = True
+    requests.cache.delete = True
 
-        # cached, only called once.
-        requests.delete('http://google.com')
-        requests.delete('http://google.com')
+    # cached, only called once.
+    requests.delete('http://google.com')
+    requests.delete('http://google.com')
 
-        requests.cache.delete = True
+    requests.cache.delete = True
 
-        # not cached, called twice.
-        requests.delete('http://google.com')
-        requests.delete('http://google.com')
+    # not cached, called twice.
+    requests.delete('http://google.com')
+    requests.delete('http://google.com')
 
-        # cache ALL methods
-        requests.cache.all = True
+    # cache ALL methods
+    requests.cache.all = True
 
-        # don't cache any methods
-        requests.cache.all = False
+    # don't cache any methods
+    requests.cache.all = False
 
-        # Use individual method cache options.
-        requests.cache.all = None
+    # Use individual method cache options.
+    requests.cache.all = None
 
 Default settings
 ****************
@@ -266,8 +264,6 @@ Things you want:
     * Ability to focus on progress.
     * Perfect transition to a production environment.
 
-
-
 Things you don't want:
     * Dependency on network and server stability for development.
     * Spamming the API.  Especially APIs with limits.
@@ -292,25 +288,19 @@ Make a request one time. Cache the results for the rest of your work session.
     headers = {"accept-encoding": "gzip, deflate, sdch", "accept-language": "en-US,en;q=0.8"}
     payload = dict(sourceid="chrome-instant", ion="1", espv="2", ie="UTF-8", client="ubuntu",
                    q="hash%20a%20dictionary%20python")
-    response = requests.get('http://google.com/search', headers=headers, params=payload)
 
     # spam to prove a point
-    response = requests.get('http://google.com/search', headers=headers, params=payload)
-    response = requests.get('http://google.com/search', headers=headers, params=payload)
-    response = requests.get('http://google.com/search', headers=headers, params=payload)
-    response = requests.get('http://google.com/search', headers=headers, params=payload)
-    response = requests.get('http://google.com/search', headers=headers, params=payload)
-    response = requests.get('http://google.com/search', headers=headers, params=payload)
-    response = requests.get('http://google.com/search', headers=headers, params=payload)
+    responses = [
+        requests.get('http://google.com/search', headers=headers, payload=payload)
+        for _ in range(8)
+    ]
 
     # tweak your query, we're exploring here
     payload = dict(sourceid="chrome-instant", ion="1", espv="2", ie="UTF-8", client="ubuntu",
                    q="hash%20a%20dictionary%20python2")
+
     # do you see what changed? the caching tool did.
     response = requests.get('http://google.com/search', headers=headers, params=payload)
-    response = requests.get('http://google.com/search', headers=headers, params=payload)
-    response = requests.get('http://google.com/search', headers=headers, params=payload)
-
 
 
 Production: Web Scraping
@@ -327,34 +317,32 @@ One line of code to use a ``redis`` full database.
     * Try ``redislite``; it can handle quite a bit.  The ``redislite`` api used by this module is 1:1 with the redis package.  Just replace the connection parameter/config value.
     * ``redis`` is a drop in:
 
-.. code-block:: python
+        .. code-block:: python
 
-        connection  = redis.StrictRedis(host='localhost', port=6379, db=0)
-        requests = Session(connection=connection)
+                connection = redis.StrictRedis(host='localhost', port=6379, db=0)
+                requests = Session(connection=connection)
 
     * Everything else just works.  There's no magic required.
 
 .. code-block:: python
 
-        from cache_requests import Session
+    from cache_requests import Session
 
-        connection  = redis.StrictRedis(host='localhost', port=6379, db=0)
-        ex = 7 * 24 * 60 * 60 # 1 week
+    connection = redis.StrictRedis(host='localhost', port=6379, db=0)
+    ex = 7 * 24 * 60 * 60 # 1 week
 
-        requests = Session(ex=ex, connection=connection)
+    requests = Session(ex=ex, connection=connection)
 
-        for i in range(1000)
-            payload = dict(q=i)
-            response = requests.get('http://google.com/search', params=payload)
-            print(response.text)
+    for i in range(1000)
+        payload = dict(q=i)
+        response = requests.get('http://google.com/search', params=payload)
+        print(response.text)
 
 
 
 
 Usage: memoize
 ~~~~~~~~~~~~~~
-
-
 
 .. code-block:: python
 
