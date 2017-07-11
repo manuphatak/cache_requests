@@ -125,10 +125,10 @@ class DataHasher(object):
 
     def update(self, obj):
 
-        self.md5.update(text_type(type(obj)).encode())
+        self.md5.update(text_type(type(obj)).encode('utf-8'))
 
         if isinstance(obj, string_types):
-            self.md5.update(obj.encode())
+            self.md5.update(obj.encode('utf-8'))
             return self
 
         if isinstance(obj, (integer_types, float)):
