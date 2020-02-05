@@ -179,7 +179,7 @@ Decorated Methods
 
 - ``ex`` is shared between request methods.  They can be accessed by ``Session.cache.ex`` or ``Session.get.ex``, where ``get`` is the ``requests.get`` method
 
-- By default requests that return and error will not be cached.  This can be overridden by overriding the ``Session.cache.set_cache_cb`` to return ``False``.  The callback takes the response object as an argument
+- By default requests that return an error will not be cached.  This can be overridden by overriding the ``Session.cache.set_cache_cb`` to return ``False``.  The callback takes the response object as an argument
 
 .. code-block:: python
 
