@@ -50,7 +50,7 @@ Next Release
 - First real release.
 - Feature/ Unit test suite, very high coverage.
 - Feature/ ``redislite`` integration.
-- Feature/ Documentation.  https://cache-requests.readthedocs.org.
+- Feature/ Documentation.  https://cache-requests.readthedocs.io.
 - Feature/ Exposed the beefed up ``Memoize`` decorator.
 - Feature/ Upgraded compatibility to:
     - PY26

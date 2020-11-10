@@ -44,7 +44,7 @@ cache_requests
     :alt: Coverage Status
 
 .. image:: https://readthedocs.org/projects/cache_requests/badge/?version=develop
-    :target: https://cache_requests.readthedocs.org/en/develop/?badge=develop
+    :target: https://cache_requests.readthedocs.io/en/develop/?badge=develop
     :alt: Documentation Status
 
 ------------
@@ -67,7 +67,7 @@ cache_requests
 Features
 --------
 
-- Documentation: https://cache_requests.readthedocs.org
+- Documentation: https://cache_requests.readthedocs.io
 - Open Source: https://github.com/bionikspoon/cache_requests
 - Python version agnostic: tested against Python 2.7, 3.3, 3.4, 3.5 and Pypy
 - MIT license
